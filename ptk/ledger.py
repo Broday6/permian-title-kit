@@ -13,16 +13,23 @@ Estates:
     MI    mineral interest, as a fraction of the whole mineral estate
     NPRI  non-participating royalty, carried with its kind:
           fixed (fraction of production) or floating (fraction of royalty)
+    ALL   everything the grantor holds in the tract (minerals and NPRIs), for
+          probates, heirship distributions and "all right, title and interest" deeds
+
+Owner names match regardless of case, spacing and periods ("Baker Example" and
+"BAKER EXAMPLE" are one owner); each such match is reported as NAME_VARIANT.
 """
 
 from __future__ import annotations
 
 import csv
+import re
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from pathlib import Path
 
+from .dates import DateError, iso
 from .fracs import FractionError, fmt, parse_fraction
 
 ALL_DEPTHS = "ALL"
@@ -87,6 +94,11 @@ class Replay:
     flags: list[Flag]
 
 
+def name_key(name: str | None) -> str:
+    """Identity key for matching owners across instruments: case, spacing and periods ignored."""
+    return re.sub(r"\s+", " ", re.sub(r"[.,]", " ", name or "")).strip().upper()
+
+
 def _bool(v: str | None) -> bool:
     return str(v or "").strip().lower() in ("y", "yes", "true", "1", "warranty", "general", "special")
 
@@ -117,11 +129,15 @@ def load_events(path: str | Path) -> list[Event]:
             if shares and sum(shares) != 1:
                 raise ValueError(f"row {i}: grantee shares add to {fmt(sum(shares))}, not 1")
             npri_value = row.get("npri_value") or ""
+            try:
+                recorded = iso(row.get("recorded") or "")
+            except DateError as e:
+                raise ValueError(f"row {i}: recorded date: {e}") from e
             events.append(
                 Event(
                     seq=int(row.get("seq") or i),
                     instrument=(row.get("instrument") or f"row {i}").strip(),
-                    recorded=(row.get("recorded") or "").strip(),
+                    recorded=recorded,
                     tract=(row.get("tract") or "").strip(),
                     depth=(row.get("depth") or ALL_DEPTHS).strip() or ALL_DEPTHS,
                     estate=(row.get("estate") or "MI").strip().upper(),
@@ -137,6 +153,11 @@ def load_events(path: str | Path) -> list[Event]:
                 )
             )
     return events
+
+
+def _is_relative(interest: str) -> bool:
+    t = interest.strip().lower()
+    return t in ("", "all") or t.startswith("all of grantor") or t.startswith("all grantor") or " of grantor" in t
 
 
 def _amount(interest: str, balance: Fraction) -> tuple[Fraction, bool]:
@@ -177,10 +198,23 @@ def replay(
             raise ValueError(f"tract {tract}: depth {depth!r} isn't one of {known}")
         return [depth]
 
+    canon: dict[str, str] = {}
+
+    def canonical(name: str | None, ev: Event) -> str | None:
+        if not name:
+            return name
+        first = canon.setdefault(name_key(name), name)
+        if first != name:
+            flags.append(Flag("NAME_VARIANT", ev.tract, ev.depth, ev.instrument,
+                              f"{name!r} treated as the same owner as {first!r}"))
+        return first
+
+    as_of = iso(as_of) if as_of else None
     ordered = sorted(events, key=lambda e: (e.recorded or "9999", e.seq))
     for ev in ordered:
         if as_of and ev.recorded and ev.recorded > as_of:
             continue
+        ev = replace(ev, grantor=canonical(ev.grantor, ev), grantees=[canonical(g, ev) or g for g in ev.grantees])
         for depth in intervals(ev.tract, ev.depth):
             pos = positions.setdefault((ev.tract, depth), Position(ev.tract, depth))
             try:
@@ -188,6 +222,19 @@ def replay(
                     _apply_mineral(ev, pos, flags)
                 elif ev.estate == "NPRI":
                     _apply_npri(ev, pos, flags)
+                elif ev.estate == "ALL" and not _is_relative(ev.interest):
+                    flags.append(Flag("ALL_NEEDS_RELATIVE_INTEREST", pos.tract, pos.depth, ev.instrument,
+                                      f"estate ALL needs 'all' or 'x of grantor', not {ev.interest!r}; nothing moved"))
+                elif ev.estate == "ALL":
+                    has_mi = pos.minerals.get(ev.grantor or "", Fraction(0)) > 0
+                    has_npri = any(n.owner == ev.grantor for n in pos.npris)
+                    if not (has_mi or has_npri):
+                        flags.append(Flag("CHAIN_GAP", pos.tract, pos.depth, ev.instrument,
+                                          f"{ev.grantor} holds nothing here on this date; nothing moved"))
+                    if has_mi:
+                        _apply_mineral(ev, pos, flags)
+                    if has_npri:
+                        _apply_npri(ev, pos, flags)
                 else:
                     flags.append(Flag("UNKNOWN_ESTATE", ev.tract, depth, ev.instrument, ev.estate))
             except FractionError as e:
@@ -215,7 +262,9 @@ def _apply_mineral(ev: Event, pos: Position, flags: list[Flag]) -> None:
         _credit(pos, ev.grantees, ev.shares, amount)
         return
     if ev.kind == "reserve":
-        return  # mineral reservations are modeled by conveying less; NPRIs use estate NPRI
+        flags.append(Flag("MI_RESERVE_IGNORED", pos.tract, pos.depth, ev.instrument,
+                          "mineral reservations are modeled by conveying less; this row moved nothing"))
+        return
     grantor = ev.grantor or ""
     balance = pos.minerals.get(grantor, Fraction(0))
     if balance == 0:

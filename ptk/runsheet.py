@@ -15,9 +15,10 @@ from __future__ import annotations
 import csv
 import re
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
+from .dates import DateError, parse_date
 from .fracs import fmt, read_fraction_text
 
 COLUMNS = [
@@ -53,13 +54,10 @@ def image_key(state: str, county: str, series: str, volume: str = "", page: str 
 
 
 def _date(v: str) -> date | None:
-    v = (v or "").strip()
-    for pattern in ("%Y-%m-%d", "%m/%d/%Y", "%m/%d/%y"):
-        try:
-            return datetime.strptime(v, pattern).date()
-        except ValueError:
-            continue
-    return None
+    try:
+        return parse_date(v)
+    except DateError:
+        return None
 
 
 def _plus_years(d: date, years: int) -> date:
@@ -80,7 +78,8 @@ RULES: list[tuple[str, str, re.Pattern[str], str]] = [
                 r"\b(?:one|two|three)[-\s]\w+\s+of\s+(?:the\s+)?(?:usual\s+)?one[-\s]eighth", re.I),
      "Double fraction. Under Van Dyke (Tex. 2023) a 1/8 double fraction is presumed to mean the whole estate. Send to the examiner."),
     ("TERM_INTEREST", "review",
-     re.compile(r"for\s+a\s+(?:period|term)\s+of\s+[\w\s()-]{1,30}?years|years\s+and\s+as\s+long\s+thereafter", re.I),
+     re.compile(r"for\s+a\s+(?:period|term)\s+of\s+[\w\s()-]{1,30}?years|"
+                r"\byears?\b[^.;]{0,100}?\b(?:as|so)\s+long\s+(?:thereafter|as)\b", re.I),
      "Term interest. Pull production for the whole term window to decide whether it expired."),
     ("BLANKET_CONVEYANCE", "review",
      re.compile(r"all\s+(?:of\s+)?(?:my|our|its|grantors?'?s?|the\s+grantors?'?)\b.{0,80}?\b(?:interest|lands?|minerals?)\b.{0,100}?\bin\s+[\w\s]{2,30}?count(?:y|ies)", re.I | re.S),
@@ -135,8 +134,10 @@ def check_row(row: dict[str, str], images_dir: Path | None = None) -> list[RowFl
         add("NO_RECORDING_REF", "stop", "No volume/page or instrument number.")
 
     executed, filed = _date(row.get("instrument_date", "")), _date(row.get("filed_date", ""))
-    if row.get("filed_date") and not filed:
-        add("BAD_DATE", "stop", f"Can't read filed date {row.get('filed_date')!r}.")
+    for col, parsed in (("instrument_date", executed), ("filed_date", filed)):
+        raw = (row.get(col) or "").strip()
+        if raw and parsed is None:
+            add("BAD_DATE", "stop", f"Can't read {col} {raw!r}. Use 1948-05-10 or 5/10/1948 (full year).")
     if executed and filed and filed < executed:
         add("FILED_BEFORE_EXECUTED", "review", "Filed before it was signed. Check both dates against the image.")
 
@@ -146,13 +147,17 @@ def check_row(row: dict[str, str], images_dir: Path | None = None) -> list[RowFl
             add("WORD_NUMERAL_MISMATCH", "stop",
                 f"'{m.group(0).strip()}': words say {fmt(reading.words_value)}, numerals say {fmt(reading.numeral_value)}.")
 
+    # Deeds write "one-half (1/2) of the one-eighth (1/8)": match with and without the numerals.
+    plain = re.sub(r"\s*\([^)]*\d[^)]*\)", "", text)
     for code, sev, pattern, message in RULES:
-        if pattern.search(text) or (code == "FIDUCIARY_CAPACITY" and pattern.search(row.get("grantor") or "")):
+        if pattern.search(text) or pattern.search(plain) or (
+            code == "FIDUCIARY_CAPACITY" and pattern.search(row.get("grantor") or "")
+        ):
             add(code, sev, message)
 
     if re.search(r"quit\s*claim", itype + " " + text, re.I):
         add("QUITCLAIM", "info", "Quitclaim: no warranty, so Duhig doesn't apply, and the grantee generally can't be a bona fide purchaser.")
-    if LIEN_TYPES.search(itype):
+    if LIEN_TYPES.search(itype) and not re.match(r"\s*(?:partial\s+)?release", itype, re.I):
         add("LIEN_OR_LITIGATION", "review", "Lien, judgment or lis pendens. Search for the release or the outcome.")
     if (row.get("acknowledged") or "").strip().upper() in ("N", "NO"):
         add("UNACKNOWLEDGED", "review",

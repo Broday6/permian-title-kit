@@ -42,7 +42,10 @@ SURVEYS: list[tuple[re.Pattern[str], str, str]] = [
     ]
 ]
 
-_SECTION = re.compile(r"\bsec(?:tion|t)?\.?\s*(?:no\.?\s*)?(\d+[A-Z]?(?:\s*1/2|½)?)\b", re.I)
+_SECTION = re.compile(
+    r"\bsec(?:tion|t)?s?\.?\s*(?:nos?\.?\s*)?(\d+[A-Z]?(?:\s*1/2|½)?(?:\s*(?:,|and|&)\s*\d+[A-Z]?(?![\d/]))*)",
+    re.I,
+)
 _SURVEY_NO = re.compile(r"\bsurvey\s+(?:no\.?\s*)?(\d+[A-Z]?)\b", re.I)
 _BLOCK = re.compile(r"\b(?:block|blk)\.?\s*(?:no\.?\s*)?(?!(?:of|in|no|on|or|at)\b)([A-Z]{0,2}-?\d+(?:-[A-Z0-9]+)?|[A-Z]{1,2})\b", re.I)
 _TOWNSHIP = re.compile(r"\b(?:t(?:wp|sp|ownship)?)\.?\s*-?\s*(\d+)\s*-?\s*(n(?:orth)?|s(?:outh)?)\b", re.I)
@@ -70,7 +73,8 @@ class TxDescription:
     survey_no: str | None = None
     block: str | None = None
     township: str | None = None  # e.g. "2S"
-    section: str | None = None
+    section: str | None = None  # the first section; ``sections`` holds all of them
+    sections: list[str] = field(default_factory=list)
     aliquots: list[str] = field(default_factory=list)
     acres: str | None = None
     save_and_except: list[str] = field(default_factory=list)
@@ -91,6 +95,14 @@ class TxDescription:
             parts.append(f"T{self.township}")
         parts.append(f"SEC {self.section}" if self.section else f"SUR {self.survey_no}")
         return "|".join(parts)
+
+    def survey_keys(self) -> list[str]:
+        """One survey key per section named (``Sections 12 and 13`` gives two)."""
+        first = self.survey_key()
+        if not first or len(self.sections) < 2:
+            return [first] if first else []
+        stem = first.rsplit("|", 1)[0]
+        return [f"{stem}|SEC {sec}" for sec in self.sections]
 
 
 def _first(pattern: re.Pattern[str], text: str) -> str | None:
@@ -123,9 +135,11 @@ def parse(text: str, county: str | None = None) -> TxDescription:
         if named:
             d.survey_name = named.group(1).strip(" ,")
 
-    d.section = _first(_SECTION, clean)
-    if d.section:
-        d.section = d.section.replace(" ", "").replace("1/2", "½")
+    sec = _SECTION.search(clean)
+    if sec:
+        d.sections = [x.replace(" ", "").replace("1/2", "½")
+                      for x in re.split(r"\s*(?:,|and|&)\s*", sec.group(1)) if x.strip()]
+        d.section = d.sections[0]
     if not d.section:
         d.survey_no = _first(_SURVEY_NO, clean)
     blk = _BLOCK.search(clean)
@@ -158,4 +172,6 @@ def parse(text: str, county: str | None = None) -> TxDescription:
         d.issues.append("no survey named")
     if d.save_and_except:
         d.issues.append("save-and-except carve-outs: the tract is less than the whole section")
+    if len(d.sections) > 1 and d.aliquots:
+        d.issues.append("several sections with aliquots: confirm which part of each section is described")
     return d

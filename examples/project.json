@@ -5,14 +5,58 @@
   "takeoff": "takeoff.csv",
   "produce_depth": "ALL",
   "pooled": true,
-  "npri_ratified": {"Adams Example": false},
-  "participation": {"method": "completed lateral feet per tract", "weights": {"SEC12": 4800, "SEC13": 5200}},
+  "npri_ratified": {
+    "Adams Heir One": true,
+    "Adams Heir Two": true,
+    "Adams Heir Three": false
+  },
+  "participation": {
+    "method": "completed lateral feet per tract",
+    "weights": {
+      "SEC12": 4800,
+      "SEC13": 5200
+    }
+  },
   "leases": [
-    {"id": "L-100", "tract": "SEC12", "lessors": ["Baker Example"], "royalty": "1/4",
-     "lessees": {"Example Operating LLC": "1"}, "orris": {"Example ORRI Partners": "1/40"}},
-    {"id": "L-101", "tract": "SEC12", "lessors": ["Adams Heir One", "Adams Heir Two", "Adams Heir Three", "Carter Example"],
-     "royalty": "3/16", "lessees": {"Example Operating LLC": "3/4", "Example Non-Op LP": "1/4"}},
-    {"id": "L-200", "tract": "SEC13", "lessors": ["Fox Example"], "royalty": "1/5",
-     "lessees": {"Example Operating LLC": "1"}}
+    {
+      "id": "L-100",
+      "tract": "SEC12",
+      "lessors": [
+        "Baker Example"
+      ],
+      "royalty": "1/4",
+      "lessees": {
+        "Example Operating LLC": "1"
+      },
+      "orris": {
+        "Example ORRI Partners": "1/40"
+      }
+    },
+    {
+      "id": "L-101",
+      "tract": "SEC12",
+      "lessors": [
+        "Adams Heir One",
+        "Adams Heir Two",
+        "Adams Heir Three",
+        "Carter Example"
+      ],
+      "royalty": "3/16",
+      "lessees": {
+        "Example Operating LLC": "3/4",
+        "Example Non-Op LP": "1/4"
+      }
+    },
+    {
+      "id": "L-200",
+      "tract": "SEC13",
+      "lessors": [
+        "Fox Example"
+      ],
+      "royalty": "1/5",
+      "lessees": {
+        "Example Operating LLC": "1"
+      }
+    }
   ]
 }

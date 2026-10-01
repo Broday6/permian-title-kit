@@ -106,6 +106,12 @@ def parse_name(raw: str) -> ParsedName:
     if re.search(r"\btrust\b", text, re.I):
         core = re.sub(r"^THE\s+", "", ascii_upper(re.sub(r"[.,]", " ", text)))
         return ParsedName(raw, "trust", org_core=core, capacity=capacity, et=et_kind)
+    heirs = re.match(r"^(?:the\s+)?(?:unknown\s+)?heirs(?:\s+at\s+law)?\s+of\s+(.+)$", text, re.I)
+    if heirs:
+        inner = parse_name(heirs.group(1))
+        inner.kind, inner.raw = "heirs", raw
+        inner.notes.append("heirs of: identify each heir by name, then search the decedent's probate and affidavits of heirship")
+        return inner
     estate = re.match(r"^(?:the\s+)?estate\s+of\s+(.+)$", text, re.I) or re.match(r"^(.+?),?\s+estate$", text, re.I)
     if estate:
         inner = parse_name(estate.group(1))
@@ -127,16 +133,21 @@ def parse_name(raw: str) -> ParsedName:
     t = ascii_upper(text).replace(".", " ")
     mrs = bool(re.match(r"^MRS\b", t))
     t = re.sub(r"^(MRS|MR|MISS|MS|DR)\s+", "", t)
-    if "," in t:
-        last, _, rest = t.partition(",")
-        tokens = rest.replace(",", " ").split()
-        surname = last.strip()
-    else:
-        tokens = t.split()
+    parts = [x.strip() for x in t.split(",") if x.strip()]
+    trailing_suffix = ""
+    if len(parts) > 1 and parts[-1].lower() in _SUFFIXES:
+        trailing_suffix = parts.pop()
+    if len(parts) > 1:  # "Smith, John W" (index order)
+        surname = parts[0]
+        tokens = " ".join(parts[1:]).split() + ([trailing_suffix] if trailing_suffix else [])
+    else:  # "John W Smith" or "John W Smith, Jr"
+        tokens = parts[0].split() if parts else []
         surname = tokens.pop() if tokens else ""
         if surname.lower() in _SUFFIXES and tokens:
             tokens.append(surname)
             surname = tokens.pop(-2)
+        if trailing_suffix:
+            tokens.append(trailing_suffix)
     suffix = next((x for x in tokens if x.lower() in _SUFFIXES), "")
     given = [x for x in tokens if x.lower() not in _SUFFIXES]
     p = ParsedName(raw, "person", surname=surname, given=given, suffix=suffix, capacity=capacity, et=et_kind)
@@ -171,11 +182,40 @@ def _given_variants(given: list[str]) -> list[list[str]]:
     return out
 
 
+_SPOUSE_SPLIT = re.compile(r",?\s+(?:and\s+(?:his\s+)?wife|and\s+(?:her\s+)?husband|et\s*ux|et\s*vir)\.?,?\s+(?=[A-Z])", re.I)
+
+
+def split_parties(raw: str) -> list[str]:
+    """'John Smith and wife, Mary Smith' -> ['John Smith', 'Mary Smith']. A bare 'et ux' stays attached."""
+    parts = [p.strip(" ,") for p in _SPOUSE_SPLIT.split(raw.strip()) if p.strip(" ,")]
+    return parts or [raw]
+
+
 def search_variants(raw: str) -> dict[str, object]:
-    """Index searches to run for one name, most specific first."""
+    """Index searches to run for a grantor or grantee field, most specific first.
+
+    A field naming a couple ("John Smith and wife, Mary Smith") is split, and
+    the searches for each person are returned together under ``parties``.
+    """
+    parties = split_parties(raw)
+    if len(parties) > 1:
+        each = [_variants_one(p) for p in parties]
+        notes = ["joint grantors or grantees: search every person named, and check community property"]
+        return {
+            "input": raw,
+            "kind": "multiple",
+            "surname_soundex": each[0]["surname_soundex"],
+            "searches": list(dict.fromkeys(s for v in each for s in v["searches"])),
+            "notes": notes + [n for v in each for n in v["notes"]],
+            "parties": each,
+        }
+    return _variants_one(raw)
+
+
+def _variants_one(raw: str) -> dict[str, object]:
     p = parse_name(raw)
     searches: list[str] = []
-    if p.kind in ("person", "estate") and p.surname:
+    if p.kind in ("person", "estate", "heirs") and p.surname:
         for g in _given_variants(p.given):
             searches.append(" ".join([p.surname, *g]).strip())
             if p.suffix:

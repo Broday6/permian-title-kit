@@ -118,12 +118,26 @@ def _words_to_fraction(text: str) -> Fraction:
 
 
 _NUMERIC = re.compile(
-    r"^\s*(?P<a>\d+(?:\.\d+)?)\s*(?:/\s*(?P<b>\d+(?:\.\d+)?)\s*(?:st|nd|rd|th|ths)?)?\s*(?P<pct>%)?\s*$"
+    r"^\s*(?:(?P<whole>\d+)\s+(?=\d+\s*/))?(?P<a>\d+(?:\.\d+)?)\s*"
+    r"(?:/\s*(?P<b>\d+(?:\.\d+)?)\s*(?:st|nd|rd|th|ths)?)?\s*(?P<pct>%|percent)?\s*$",
+    re.I,
 )
+_VULGAR = {"½": "1/2", "¼": "1/4", "¾": "3/4", "⅛": "1/8", "⅜": "3/8", "⅝": "5/8", "⅞": "7/8",
+           "⅓": "1/3", "⅔": "2/3", "⅙": "1/6", "⅚": "5/6", "⅕": "1/5", "⅖": "2/5", "⅗": "3/5", "⅘": "4/5"}
+_TRAILING_NOUNS = re.compile(r"\s+(?:royalty|interest|royalty\s+interest|mineral\s+interest)\s*$", re.I)
+
+
+def _normalize(text: str) -> str:
+    """'12½%' -> '12 1/2%', '1⁄8' -> '1/8', '3/16 royalty' -> '3/16'."""
+    t = text.replace("\u2044", "/").replace(",", "")
+    for glyph, frac in _VULGAR.items():
+        t = re.sub(rf"(\d)\s*{glyph}", rf"\1 {frac}", t)
+        t = t.replace(glyph, frac)
+    return _TRAILING_NOUNS.sub("", t).strip()
 
 
 def _numeric(text: str) -> Fraction:
-    m = _NUMERIC.match(text.replace(",", ""))
+    m = _NUMERIC.match(_normalize(text))
     if not m:
         raise FractionError(f"not a numeric fraction: {text!r}")
     a = Fraction(m.group("a"))
@@ -132,6 +146,8 @@ def _numeric(text: str) -> Fraction:
         if b == 0:
             raise FractionError("zero denominator")
         a = a / b
+    if m.group("whole"):
+        a += int(m.group("whole"))
     if m.group("pct"):
         a = a / 100
     return a
@@ -192,7 +208,7 @@ def _read_single(part: str) -> tuple[Fraction | None, Fraction | None]:
 def read_fraction_text(text: str) -> FractionReading:
     """Read a fraction the way an abstractor does: words and numerals separately."""
     raw = text.strip()
-    parts = [p for p in re.split(r"\s+(?:of|x)\s+|\s*[×*]\s*", raw, flags=re.I) if p.strip()]
+    parts = [p for p in re.split(r"\s+(?:of|x)\s+|\s*[×*]\s*", _normalize(raw), flags=re.I) if p.strip()]
     if not parts:
         return FractionReading(raw, None, None, None, None, "empty")
     words_total = num_total = Fraction(1)

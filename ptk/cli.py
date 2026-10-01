@@ -100,7 +100,7 @@ def cmd_legal(a: argparse.Namespace) -> int:
     else:
         d = legal_tx.parse(a.text, county=a.county)
         out = {"state": "TX", **{k: v for k, v in asdict(d).items() if k != "text"},
-               "abstract_key": d.abstract_key(), "survey_key": d.survey_key()}
+               "abstract_key": d.abstract_key(), "survey_keys": d.survey_keys()}
     print(json.dumps(out, indent=2))
     return 0
 

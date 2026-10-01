@@ -21,7 +21,7 @@ Python 3.10 or later. The core has no dependencies.
 ```bash
 pip install -e .            # or: pip install .
 pip install -e ".[ai]"      # adds the Anthropic SDK for ptk extract / ptk batch
-python -m pytest            # 42 tests; python -m unittest discover -s tests -t . also works
+python -m pytest            # 66 tests; python -m unittest discover -s tests -t . also works
 ```
 
 ## Try it on the fictional example
@@ -44,16 +44,16 @@ ptk calc --acres 640 --owned 1/16 --royalty 1/4 --unit 4800/9600
 
 | Column | Meaning |
 |---|---|
-| `recorded` | ISO date. Events replay in (recorded, seq) order |
+| `recorded` | 1948-05-10, 5/10/1948 or May 10, 1948. Two-digit years are refused. Events replay in (recorded, seq) order |
 | `tract`, `depth` | Tract ID, and `ALL` or a named depth interval (declare intervals in a depths JSON) |
-| `estate` | `MI` (mineral fraction of the whole) or `NPRI` |
+| `estate` | `MI` (mineral fraction of the whole), `NPRI`, or `ALL` (everything the grantor holds: use it for probates, heirship distributions and "all right, title and interest" deeds) |
 | `kind` | `root` (patent, or a base opinion's owners), `convey`, or `reserve` (NPRI) |
 | `grantees`, `shares` | `;`-separated. Shares default to equal and must add to 1 |
 | `interest` | `1/4` = of the whole estate; `all` or `1/2 of grantor` = relative to what the grantor holds then |
 | `warranty` | `Y` turns an over-conveyance into a Duhig candidate |
 | `npri_kind`, `npri_value` | `fixed` (of production) or `floating` (of royalty) |
 
-Mineral reservations are modeled by conveying less: a grantor who deeds 1/2 and keeps 1/2 conveys `1/2`. A probate or heirship distribution is one row with every heir as a grantee.
+Mineral reservations are modeled by conveying less: a grantor who deeds 1/2 and keeps 1/2 conveys `1/2` (an `MI` `reserve` row is flagged and moves nothing). A probate or heirship distribution is one `ALL` row with every heir as a grantee, so the decedent's NPRIs pass along with the minerals. Owner names match regardless of case, spacing and periods, and each such match is listed as `NAME_VARIANT`.
 
 **Project JSON** (`examples/project.json`): the takeoff path, leases (lessors, royalty, lessee WI shares, ORRIs), participation weights (acres in the unit or completed lateral feet per tract), the producing depth, state, and which NPRI owners have ratified pooling.
 
@@ -85,6 +85,17 @@ ptk batch collect <batch-id> --jobs jobs.json --out results.json
 - **Review tiers:** anything that changes ownership (fractions and their basis, reservations, parties and capacity on old instruments, every flag) gets a person. Header fields that pass every check can be spot-checked.
 - **Privacy:** redact SSNs, birth dates and account numbers before sending pages, and use API terms that don't retain or train on your data.
 - **Before production:** the request shape follows the current Anthropic SDK and was tested against a mocked client. Run it on a gold set of 300–500 instruments you've already abstracted (stratified by county, era and instrument type) and measure field accuracy before you rely on it. The first live call also confirms that the API accepts the schema.
+
+## Known limits
+
+These aren't handled yet. Check for them by hand until they are.
+
+- **NPRI scope.** The deck assumes every NPRI burdens the whole tract. One reserved out of only part of the mineral estate (for example, reserved from a conveyance of a 1/2 interest) needs a burdened-share field that doesn't exist yet. Until then, set those decimals by hand.
+- **Merger.** An owner who holds both minerals and an NPRI under the same tract is shown with both. Whether they merge is a question for the examiner.
+- **Texas descriptions naming two surveys** keep only the first survey. Metes-and-bounds calls are captured as text, not plotted.
+- **No OCR step.** `ptk extract` reads OCR text you produce elsewhere (Textract, Document AI, Azure Read or Tesseract) and works without it, but then there are no line IDs to check quotes against.
+- **The AI extraction hasn't been run against the live API.** It was built from the current SDK documentation and tested with a stand-in client. The schema is large (56 nullable fields), so the first live call is also the check that the API accepts it.
+- **Exports are CSV and JSON only.** Spreadsheet runsheets, GIS layers and a review screen are not built.
 
 ## County data
 

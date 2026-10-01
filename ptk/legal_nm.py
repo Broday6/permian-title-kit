@@ -23,7 +23,7 @@ HALVES = {"N": ("NE", "NW"), "S": ("SE", "SW"), "E": ("NE", "SE"), "W": ("NW", "
 
 _TWP = re.compile(r"\b(?:T(?:ownship|wp|\.)?)\s*-?\s*(\d+)\s*-?\s*(N|S)(?:orth|outh)?\b\.?", re.I)
 _RNG = re.compile(r"\b(?:R(?:ange|ng|\.)?)\s*-?\s*(\d+)\s*-?\s*(E|W)(?:ast|est)?\b\.?", re.I)
-_SEC = re.compile(r"\b(?:sec(?:tion)?s?)\.?\s*(\d+)\b", re.I)
+_SEC = re.compile(r"\b(?:sec(?:tion)?s?)\.?\s*(\d+(?:\s*(?:,|and|&)\s*\d+\b(?!\s*/))*)", re.I)
 _PART = re.compile(r"(NE|NW|SE|SW|N|S|E|W)(?:\s*/\s*[24]|\s*1/[24]|[24½¼])?", re.I)
 _ALIQUOT_ONLY = re.compile(r"^(?:(?:NE|NW|SE|SW|N|S|E|W)(?:\s*/\s*[24]|\s*1/[24]|[24½¼])?\s*)+$", re.I)
 _WORDS = [
@@ -168,23 +168,23 @@ def parse(text: str) -> PlssDescription:
     if not markers:
         d.issues.append("no section number")
         return d
-    of_style = re.search(r"\bof\s+(?:the\s+)?sec(?:tion)?\b", body, re.I)
+    of_style = re.search(r"\bof\s+(?:the\s+)?sec(?:tion)?s?\b", body, re.I)
     for i, m in enumerate(markers):
-        part = SectionPart(int(m.group(1)))
         if of_style:
             start = markers[i - 1].end() if i else 0
             segment = body[start:m.start()]
-            segment = re.sub(r"\bof\s+(?:the\s+)?sec(?:tion)?\.?\s*$", " ", segment.strip(), flags=re.I)
-            segment = re.sub(r"\bof\s+(?:the\s+)?$", " ", segment.strip(), flags=re.I)
+            segment = re.sub(r"\bof(?:\s+the)?\s*$", " ", segment.strip(), flags=re.I)
         else:
             end = markers[i + 1].start() if i + 1 < len(markers) else len(body)
             segment = body[m.end():end]
         segment = re.sub(r"^[\s,;:]+|[\s,;:]+$", "", segment)
-        if segment:
-            _apply(part, segment)
-        else:
-            part.whole = True
-        if part.unread:
-            d.issues.append(f"section {part.section}: couldn't read {part.unread}")
-        d.sections.append(part)
+        for number in re.findall(r"\d+", m.group(1)):
+            part = SectionPart(int(number))
+            if segment:
+                _apply(part, segment)
+            else:
+                part.whole = True
+            if part.unread:
+                d.issues.append(f"section {part.section}: couldn't read {part.unread}")
+            d.sections.append(part)
     return d

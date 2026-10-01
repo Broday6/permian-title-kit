@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 
 from .fracs import fmt, parse_fraction, to_decimal
-from .ledger import ALL_DEPTHS, Flag, Position, Replay
+from .ledger import ALL_DEPTHS, Flag, Position, Replay, name_key
 
 REVENUE_TYPES = ("RI", "NPRI", "ORRI", "NRI", "UMI")
 
@@ -145,16 +145,18 @@ def _tract_deck(pos: Position, leases: list[Lease], state: str, pooled: bool,
     flags: list[Flag] = []
     t, d = pos.tract, pos.depth
 
+    owner_by_key = {name_key(o): o for o in pos.minerals}
     lease_of: dict[str, Lease] = {}
     for lease in leases:
-        for lessor in lease.lessors:
+        for lessor_raw in lease.lessors:
+            lessor = owner_by_key.get(name_key(lessor_raw))
+            if lessor is None:
+                flags.append(Flag("LESSOR_NOT_OWNER", t, d, lease.lease_id,
+                                  f"{lessor_raw} owns no minerals here per the ledger"))
+                continue
             if lessor in lease_of:
                 flags.append(Flag("DOUBLE_LEASE", t, d, lease.lease_id,
                                   f"{lessor} is also lessor in {lease_of[lessor].lease_id}; using the first"))
-                continue
-            if lessor not in pos.minerals:
-                flags.append(Flag("LESSOR_NOT_OWNER", t, d, lease.lease_id,
-                                  f"{lessor} owns no minerals here per the ledger"))
                 continue
             lease_of[lessor] = lease
 
@@ -204,7 +206,7 @@ def _tract_deck(pos: Position, leases: list[Lease], state: str, pooled: bool,
                             f"floating {fmt(n.value)} of royalty"))
     if pooled and state == "TX":
         for n in pos.npris:
-            if not npri_ratified.get(n.owner, False):
+            if not any(name_key(k) == name_key(n.owner) and v for k, v in npri_ratified.items()):
                 flags.append(Flag("NPRI_NOT_RATIFIED", t, d, n.source,
                                   f"{n.owner} hasn't ratified pooling; paid on tract production, not the unit formula"))
 

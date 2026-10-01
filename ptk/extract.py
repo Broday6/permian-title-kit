@@ -32,6 +32,10 @@ DEFAULT_MODEL = "claude-opus-5-5"
 # Server-side refusal fallback is supported on these models (not on Batches).
 FALLBACK_MODELS = {"claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"}
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
+# These models reject output_config.effort; leave it off for them.
+NO_EFFORT_PREFIXES = ("claude-haiku-4-5", "claude-sonnet-4-5")
+MAX_REQUEST_BYTES = 30 * 1024 * 1024  # stay under the API's 32 MB request limit
+MAX_EDGE = 2576  # current models read up to 2576 px on the long edge; larger images are downscaled anyway
 MEDIA_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif",
                ".webp": "image/webp", ".pdf": "application/pdf"}
 
@@ -90,15 +94,43 @@ def line_table(pages: list[Page]) -> dict[str, str]:
     return table
 
 
+def _page_bytes(path: Path, media: str) -> tuple[bytes, str]:
+    """Image bytes, downscaled to MAX_EDGE when Pillow is installed (pip install pillow)."""
+    raw = path.read_bytes()
+    if media == "application/pdf":
+        return raw, media
+    try:
+        from io import BytesIO
+
+        from PIL import Image
+    except ImportError:
+        return raw, media
+    with Image.open(BytesIO(raw)) as img:
+        if max(img.size) <= MAX_EDGE:
+            return raw, media
+        img.thumbnail((MAX_EDGE, MAX_EDGE))
+        out = BytesIO()
+        img.save(out, format="PNG", optimize=True)
+        return out.getvalue(), "image/png"
+
+
 def build_params(pages: list[Page], *, doc_id: str, county: str, state: str,
                  model: str = DEFAULT_MODEL, effort: str = "high", max_tokens: int = 16000) -> dict[str, Any]:
     """Messages API parameters for one instrument. The system prompt is the cached prefix."""
     content: list[dict[str, Any]] = []
+    total = 0
     for idx, page in enumerate(pages, start=1):
         media = MEDIA_TYPES.get(page.path.suffix.lower())
         if media is None:
             raise ValueError(f"{page.path}: use PNG, JPEG, GIF, WebP or PDF")
-        data = base64.standard_b64encode(page.path.read_bytes()).decode("utf-8")
+        page_bytes, media = _page_bytes(page.path, media)
+        data = base64.standard_b64encode(page_bytes).decode("utf-8")
+        total += len(data)
+        if total > MAX_REQUEST_BYTES:
+            raise ValueError(
+                f"{doc_id}: pages add up to more than 30 MB. Install Pillow to downscale scans, "
+                "or split the instrument into several requests."
+            )
         content.append({"type": "text", "text": f"Page {idx} ({page.path.name}):"})
         block_type = "document" if media == "application/pdf" else "image"
         content.append({"type": block_type, "source": {"type": "base64", "media_type": media, "data": data}})
@@ -117,7 +149,10 @@ def build_params(pages: list[Page], *, doc_id: str, county: str, state: str,
         "max_tokens": max_tokens,
         "system": [{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}}],
         "messages": [{"role": "user", "content": content}],
-        "output_config": {"effort": effort, "format": {"type": "json_schema", "schema": load_schema()}},
+        "output_config": {
+            **({} if model.startswith(NO_EFFORT_PREFIXES) else {"effort": effort}),
+            "format": {"type": "json_schema", "schema": load_schema()},
+        },
     }
 
 
@@ -141,7 +176,11 @@ def verify(extraction: dict[str, Any], lines: dict[str, str], threshold: float =
     for path, node in _walk(extraction):
         for ev in node.get("evidence", []) if isinstance(node.get("evidence"), list) else []:
             quote, ids = ev.get("quote") or "", ev.get("line_ids") or []
-            if not lines or not ids:
+            if not lines:
+                continue
+            if not ids:
+                problems.append({"path": path, "code": "EVIDENCE_NOT_CITED",
+                                 "detail": f"quote {quote[:80]!r} cites no OCR lines, so it can't be checked"})
                 continue
             missing = [i for i in ids if i not in lines]
             if missing:
@@ -189,7 +228,11 @@ def _result(doc_id: str, message: Any, lines: dict[str, str]) -> dict[str, Any]:
     if text is None:
         out["error"] = "no text block in the response"
         return out
-    extraction = json.loads(text)
+    try:
+        extraction = json.loads(text)
+    except json.JSONDecodeError as e:
+        out["error"] = f"response wasn't valid JSON ({e}); rerun this instrument"
+        return out
     out["extraction"] = extraction
     out["checks"] = verify(extraction, lines)
     return out
