@@ -1,0 +1,27 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: OCR and PDF tools
+        # The OCR and smoke tests run real Tesseract on a rendered sample deed.
+        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr poppler-utils
+      - name: Install
+        run: pip install -e ".[test,ai,xlsx]" jsonschema pyshp
+      - name: Tests
+        run: python -m pytest -q
+      - name: Example deck adds to exactly 1
+        run: ptk deck examples/project.json

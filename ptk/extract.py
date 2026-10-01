@@ -105,13 +105,18 @@ def _page_bytes(path: Path, media: str) -> tuple[bytes, str]:
         from PIL import Image
     except ImportError:
         return raw, media
-    with Image.open(BytesIO(raw)) as img:
-        if max(img.size) <= MAX_EDGE:
-            return raw, media
-        img.thumbnail((MAX_EDGE, MAX_EDGE))
-        out = BytesIO()
-        img.save(out, format="PNG", optimize=True)
-        return out.getvalue(), "image/png"
+    from PIL import UnidentifiedImageError
+
+    try:
+        with Image.open(BytesIO(raw)) as img:
+            if max(img.size) <= MAX_EDGE:
+                return raw, media
+            img.thumbnail((MAX_EDGE, MAX_EDGE))
+            out = BytesIO()
+            img.save(out, format="PNG", optimize=True)
+            return out.getvalue(), "image/png"
+    except UnidentifiedImageError as e:
+        raise ValueError(f"{path}: not a readable image file") from e
 
 
 def build_params(pages: list[Page], *, doc_id: str, county: str, state: str,
@@ -234,8 +239,19 @@ def _result(doc_id: str, message: Any, lines: dict[str, str]) -> dict[str, Any]:
         out["error"] = f"response wasn't valid JSON ({e}); rerun this instrument"
         return out
     out["extraction"] = extraction
+    out["schema_errors"] = schema_errors(extraction)
     out["checks"] = verify(extraction, lines)
     return out
+
+
+def schema_errors(extraction: dict[str, Any]) -> list[str]:
+    """Validate locally as well (needs ``jsonschema``; skipped without it)."""
+    try:
+        import jsonschema
+    except ImportError:
+        return []
+    validator = jsonschema.Draft202012Validator(load_schema())
+    return [f"{'/'.join(map(str, e.absolute_path)) or '$'}: {e.message}" for e in validator.iter_errors(extraction)][:20]
 
 
 def extract(client: Any, pages: list[Page], *, doc_id: str, county: str, state: str,

@@ -11,8 +11,11 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-ai = ["anthropic>=1.0", "pillow>=10"]
-test = ["pytest>=8"]
+ai = ["anthropic>=1.0", "pillow>=10", "jsonschema>=4"]
+xlsx = ["openpyxl>=3.1"]
+ocr = ["pillow>=10", "boto3>=1.34", "rapidocr-onnxruntime>=1.3"]
+gis = ["pyshp>=2.3"]
+test = ["pytest>=8", "openpyxl>=3.1", "pillow>=10", "jsonschema>=4", "pyshp>=2.3"]
 
 [project.scripts]
 ptk = "ptk.cli:main"

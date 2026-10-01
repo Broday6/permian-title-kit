@@ -1,0 +1,1 @@
+{"type": "FeatureCollection", "name": "FICTIONAL EXAMPLE GEOMETRY - not real survey lines", "features": [{"type": "Feature", "properties": {"PLSSID": "NM230230S0310E0", "FRSTDIVNO": "15"}, "geometry": {"type": "Polygon", "coordinates": [[[-103.75, 32.3], [-103.7328759, 32.3], [-103.7328759, 32.3144732], [-103.75, 32.3144732], [-103.75, 32.3]]]}}]}

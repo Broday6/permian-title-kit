@@ -11,6 +11,9 @@ from ptk.doi import Lease, build_deck
 from ptk.fracs import parse_fraction
 from ptk.ledger import Event, load_events, replay
 
+import base64 as _b64
+
+TINY_PNG = _b64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==")
 HEADER = "seq,instrument,recorded,tract,depth,estate,kind,grantor,grantees,shares,interest,warranty,npri_kind,npri_value,notes\n"
 
 
@@ -94,6 +97,73 @@ class LedgerRegressions(unittest.TestCase):
         self.assertNotIn("LESSOR_NOT_OWNER", [f.code for f in deck.flags])
 
 
+class NpriBurdenTests(unittest.TestCase):
+    """An NPRI reserved out of part of the minerals burdens only that part, and the burden follows it."""
+
+    def events(self, burdens):
+        return [
+            Event(1, "P", "1900-01-01", "T", "ALL", "MI", "root", None, ["A"], [F(1)], "all"),
+            Event(2, "D1", "1940-01-01", "T", "ALL", "MI", "convey", "A", ["B"], [F(1)], "1/2"),
+            Event(3, "D1", "1940-01-01", "T", "ALL", "NPRI", "reserve", "A", ["N"], [F(1)], "",
+                  npri_kind="fixed", npri_value=F(1, 16), npri_burdens=burdens),
+            Event(4, "D2", "1960-01-01", "T", "ALL", "MI", "convey", "B", ["C", "D"], [F(1, 2), F(1, 2)], "all"),
+        ]
+
+    def deck(self, burdens, royalty=F(1, 4)):
+        r = replay(self.events(burdens))
+        leases = [Lease("L", "T", ["A", "C", "D"], royalty, {"Op": F(1)})]
+        return r, build_deck(r, leases, {"T": F(1)}, pooled=False)
+
+    def test_conveyed_half_only(self):
+        r, deck = self.deck("conveyed")
+        pos = r.positions[("T", "ALL")]
+        self.assertEqual(pos.burdened_share("D1#3"), F(1, 2))  # followed B's half on to C and D
+        rows = {(x.owner, x.type): x.tract_decimal for x in deck.rows}
+        self.assertEqual(rows[("A", "RI")], F(1, 2) * F(1, 4))  # A's retained half is unburdened
+        self.assertEqual(rows[("C", "RI")], F(1, 4) * (F(1, 4) - F(1, 16)))
+        self.assertEqual(rows[("N", "NPRI")], F(1, 16) * F(1, 2))
+        self.assertEqual(deck.revenue_total(), 1)
+
+    def test_all_minerals_is_the_old_behavior(self):
+        _, deck = self.deck("all")
+        rows = {(x.owner, x.type): x.tract_decimal for x in deck.rows}
+        self.assertEqual(rows[("N", "NPRI")], F(1, 16))
+        self.assertEqual(rows[("A", "RI")], F(1, 2) * (F(1, 4) - F(1, 16)))
+        self.assertEqual(deck.revenue_total(), 1)
+
+    def test_retained_and_named_owners(self):
+        r, deck = self.deck("retained")
+        self.assertEqual(r.positions[("T", "ALL")].burdened_share("D1#3"), F(1, 2))
+        self.assertEqual({(x.owner, x.type): x.tract_decimal for x in deck.rows}[("C", "RI")], F(1, 4) * F(1, 4))
+        r, _ = self.deck("owners:B")
+        self.assertEqual(r.positions[("T", "ALL")].burdened_share("D1#3"), F(1, 2))
+
+    def test_floating_npri_on_conveyed_half(self):
+        events = self.events("conveyed")
+        events[2] = Event(3, "D1", "1940-01-01", "T", "ALL", "NPRI", "reserve", "A", ["N"], [F(1)], "",
+                          npri_kind="floating", npri_value=F(1, 2), npri_burdens="conveyed")
+        r = replay(events)
+        deck = build_deck(r, [Lease("L", "T", ["A", "C", "D"], F(1, 4), {"Op": F(1)})], {"T": F(1)}, pooled=False)
+        rows = {(x.owner, x.type): x.tract_decimal for x in deck.rows}
+        self.assertEqual(rows[("N", "NPRI")], F(1, 2) * F(1, 2) * F(1, 4))
+        self.assertEqual(deck.revenue_total(), 1)
+
+    def test_unreadable_or_empty_burden_is_flagged(self):
+        codes = {f.code for f in replay(self.events("half of it")).flags}
+        self.assertIn("NPRI_BURDENS_UNREADABLE", codes)
+        events = self.events("conveyed")
+        events[2] = Event(0, "D9", "1940-01-01", "T", "ALL", "NPRI", "reserve", "A", ["N"], [F(1)], "",
+                          npri_kind="fixed", npri_value=F(1, 16), npri_burdens="conveyed")
+        self.assertIn("NPRI_BURDENS_NOTHING", {f.code for f in replay(events).flags})
+
+    def test_merger_review_when_owner_holds_burdened_minerals_and_the_npri(self):
+        events = self.events("conveyed")
+        events.append(Event(5, "D3", "1970-01-01", "T", "ALL", "MI", "convey", "C", ["N"], [F(1)], "all"))
+        flags = [f for f in replay(events).flags if f.code == "MERGER_REVIEW"]
+        self.assertEqual(len(flags), 1)
+        self.assertIn("1/4", flags[0].detail)
+
+
 class NameRegressions(unittest.TestCase):
     def test_trailing_suffix_after_comma(self):
         self.assertEqual(names.search_variants("John W. Smith, Jr.")["searches"][0], "SMITH JOHN W")
@@ -153,10 +223,32 @@ class LegalRegressions(unittest.TestCase):
         self.assertEqual([s.regular_area() for s in d.sections], [F(1, 2), F(1, 2)])
 
 
+class CountyChecklistTests(unittest.TestCase):
+    def test_checklist_round_trip_overrides_years(self):
+        import csv as _csv
+        from ptk import counties
+        path = Path(tempfile.mkdtemp()) / "check.csv"
+        counties.write_checklist(path)
+        rows = list(_csv.DictReader(open(path)))
+        irion = next(r for r in rows if r["county"] == "Irion")
+        self.assertEqual(irion["texasfile_url"], "https://www.texasfile.com/texas-land-records-coverage/irion-county-clerk/")
+        self.assertEqual(next(r for r in rows if r["county"] == "Lea")["courthousedirect_url"],
+                         "https://www.courthousedirect.com/PropertySearch/NewMexico/Lea")
+        irion["confirmed_texasfile_index_from"] = "1950"
+        with open(path, "w", newline="") as fh:
+            w = _csv.DictWriter(fh, fieldnames=rows[0].keys())
+            w.writeheader()
+            w.writerows(rows)
+        table = counties.load_overrides(path)
+        self.assertEqual(table["IRION"].texasfile_index_from, 1950)
+        self.assertIn("starts 1950", " ".join(counties.plan_search("Irion", 1905, table)))
+        self.assertIn("confirm on the vendor pages", " ".join(counties.plan_search("Irion", 1905)))
+
+
 class ExtractRegressions(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
-        (self.tmp / "p1.png").write_bytes(b"\x89PNG\r\n\x1a\nfake")
+        (self.tmp / "p1.png").write_bytes(TINY_PNG)
 
     def test_haiku_gets_no_effort(self):
         params = extract.build_params([extract.Page(self.tmp / "p1.png")], doc_id="D", county="Reeves",

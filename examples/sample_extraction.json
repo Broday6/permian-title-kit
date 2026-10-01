@@ -1,0 +1,242 @@
+{
+ "doc_id": "SAMPLE-REEVES-DR-0088-0077",
+ "instrument_type": "mineral_deed",
+ "instrument_title_verbatim": "MINERAL DEED",
+ "recording": {
+  "state": "TX",
+  "county": "Reeves",
+  "record_series": "Deed Records",
+  "volume": "88",
+  "page": "77",
+  "instrument_number": null,
+  "file_datetime": "1948-02-15",
+  "recorded_date": "1948-02-15",
+  "evidence": [
+   {
+    "page": 1,
+    "line_ids": [
+     "p1.l18",
+     "p1.l19"
+    ],
+    "quote": "Filed for record February 15, 1948, in Vol. 88, Page 77, Deed Records of Reeves County, Texas."
+   }
+  ]
+ },
+ "execution": {
+  "instrument_date": "1948-02-10",
+  "effective_date": null,
+  "acknowledgments": [],
+  "evidence": [
+   {
+    "page": 1,
+    "line_ids": [
+     "p1.l16"
+    ],
+    "quote": "EXECUTED this 10th day of February, 1948."
+   }
+  ]
+ },
+ "parties": [
+  {
+   "party_id": "P1",
+   "role": "grantor",
+   "name_verbatim": "ADAMS EXAMPLE",
+   "name_normalized": "Adams Example",
+   "entity_type": "individual",
+   "capacity": "individually",
+   "represented_entity": null,
+   "marital_descriptor": "a single man",
+   "spouse_name": null,
+   "residence": null,
+   "signed": true
+  },
+  {
+   "party_id": "P2",
+   "role": "grantee",
+   "name_verbatim": "BAKER EXAMPLE",
+   "name_normalized": "Baker Example",
+   "entity_type": "individual",
+   "capacity": "individually",
+   "represented_entity": null,
+   "marital_descriptor": null,
+   "spouse_name": null,
+   "residence": null,
+   "signed": null
+  }
+ ],
+ "conveyances": [
+  {
+   "from_party_refs": [
+    "P1"
+   ],
+   "to_party_refs": [
+    "P2"
+   ],
+   "estate": "mineral",
+   "interest": {
+    "text_verbatim": "an undivided one-half (1/2) interest",
+    "factors": [
+     {
+      "num": "1",
+      "den": "2"
+     }
+    ],
+    "basis": "of_whole_mineral_estate",
+    "all_of_grantors_interest": false,
+    "numeral_word_consistent": true,
+    "fixed_or_floating_signal": "not_applicable"
+   },
+   "legal_description_ids": [
+    "LD1"
+   ],
+   "depth": {
+    "limited": false,
+    "top": null,
+    "base": null,
+    "text_verbatim": null
+   },
+   "term": {
+    "is_term_interest": false,
+    "fixed_years": null,
+    "thereafter_condition": null,
+    "text_verbatim": null
+   },
+   "warranty": "general",
+   "evidence": [
+    {
+     "page": 1,
+     "line_ids": [
+      "p1.l7",
+      "p1.l8"
+     ],
+     "quote": "BAKER EXAMPLE an undivided one-half (1/2) interest in and to all of the oil, gas and other minerals"
+    }
+   ],
+   "confidence": "high"
+  }
+ ],
+ "reservations_exceptions": [
+  {
+   "kind": "reservation",
+   "reserved_by_party_refs": [
+    "P1"
+   ],
+   "estate": "royalty",
+   "interest": {
+    "text_verbatim": "one-half (1/2) of the one-eighth (1/8) royalty",
+    "factors": [
+     {
+      "num": "1",
+      "den": "2"
+     },
+     {
+      "num": "1",
+      "den": "8"
+     }
+    ],
+    "basis": "of_lease_royalty_as_reserved",
+    "all_of_grantors_interest": false,
+    "numeral_word_consistent": true,
+    "fixed_or_floating_signal": "ambiguous"
+   },
+   "executive_rights": "not_addressed",
+   "depth": {
+    "limited": false,
+    "top": null,
+    "base": null,
+    "text_verbatim": null
+   },
+   "term": {
+    "is_term_interest": true,
+    "fixed_years": "15",
+    "thereafter_condition": "as long thereafter as oil, gas or other minerals are produced from said land",
+    "text_verbatim": "for a term of fifteen (15) years and as long thereafter as oil, gas or other minerals are produced from said land"
+   },
+   "legal_description_ids": [
+    "LD1"
+   ],
+   "text_verbatim": "Grantor reserves unto himself one-half (1/2) of the one-eighth (1/8) royalty for a term of fifteen (15) years and as long thereafter as oil, gas or other minerals are produced from said land.",
+   "evidence": [
+    {
+     "page": 1,
+     "line_ids": [
+      "p1.l11",
+      "p1.l12",
+      "p1.l13"
+     ],
+     "quote": "Grantor reserves unto himself one-half (1/2) of the one-eighth (1/8) royalty for a term of fifteen (15) years"
+    }
+   ]
+  }
+ ],
+ "subject_to": [],
+ "legal_descriptions": [
+  {
+   "ld_id": "LD1",
+   "text_verbatim": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, A-123, Reeves County, Texas, containing 640 acres, more or less",
+   "county": "Reeves",
+   "system": "tx_abstract_survey",
+   "tx_survey": {
+    "abstract_no": "A-123",
+    "survey_name": "T&P RR Co.",
+    "survey_no": null,
+    "block": "33",
+    "township": "T-2-S",
+    "section": "12",
+    "certificate": null,
+    "aliquot_parts": []
+   },
+   "plss": null,
+   "metes_and_bounds": null,
+   "stated_acres": "640",
+   "more_or_less": true,
+   "save_and_except_text": [],
+   "evidence": [
+    {
+     "page": 1,
+     "line_ids": [
+      "p1.l8",
+      "p1.l9",
+      "p1.l10"
+     ],
+     "quote": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, A-123, Reeves County, Texas, containing 640 acres, more or less."
+    }
+   ]
+  }
+ ],
+ "lease_terms": null,
+ "references": [],
+ "flags": [
+  {
+   "code": "double_fraction",
+   "detail": "one-half (1/2) of the one-eighth (1/8) royalty",
+   "evidence": [
+    {
+     "page": 1,
+     "line_ids": [
+      "p1.l11"
+     ],
+     "quote": "one-half (1/2) of the one-eighth (1/8)"
+    }
+   ]
+  },
+  {
+   "code": "other",
+   "detail": "Term royalty: 15 years and as long thereafter as production continues",
+   "evidence": [
+    {
+     "page": 1,
+     "line_ids": [
+      "p1.l12"
+     ],
+     "quote": "for a term of fifteen (15) years"
+    }
+   ]
+  },
+  {
+   "code": "unacknowledged",
+   "detail": "No acknowledgment appears on this page",
+   "evidence": []
+  }
+ ]
+}

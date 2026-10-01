@@ -7,6 +7,9 @@ from types import SimpleNamespace
 from ptk import counties, extract, legal_nm, legal_tx, names, runsheet
 from ptk.cli import main
 
+import base64 as _b64
+
+TINY_PNG = _b64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==")
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
 
@@ -141,7 +144,7 @@ class ExtractTests(unittest.TestCase):
     def setUp(self):
         import tempfile
         self.tmp = Path(tempfile.mkdtemp())
-        (self.tmp / "p1.png").write_bytes(b"\x89PNG\r\n\x1a\nfake")
+        (self.tmp / "p1.png").write_bytes(TINY_PNG)
         (self.tmp / "p1.txt").write_text("MINERAL DEED\nan undivided one-half (1/4) interest\nSection 12, Block 33\n")
 
     def _payload(self, quote):

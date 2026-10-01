@@ -16,6 +16,19 @@ Estates:
     ALL   everything the grantor holds in the tract (minerals and NPRIs), for
           probates, heirship distributions and "all right, title and interest" deeds
 
+An NPRI burdens specific mineral interests, and the burden follows those
+minerals through later conveyances. The takeoff's ``npri_burdens`` column says
+what an NPRI was carved from:
+
+    all         every mineral interest in the tract (the default)
+    conveyed    the minerals conveyed by the same instrument
+    retained    the minerals the reserving grantor kept
+    owners:A;B  the minerals held by the named owners at that date
+
+``npri_value`` is a fraction of the production (fixed) or royalty (floating)
+attributable to the burdened minerals. Which reading a deed supports is the
+examiner's call; the ledger only carries it.
+
 Owner names match regardless of case, spacing and periods ("Baker Example" and
 "BAKER EXAMPLE" are one owner); each such match is reported as NAME_VARIANT.
 """
@@ -52,6 +65,7 @@ class Event:
     npri_kind: str | None = None  # fixed | floating
     npri_value: Fraction | None = None
     notes: str = ""
+    npri_burdens: str = "all"
 
 
 @dataclass
@@ -70,8 +84,19 @@ class Flag:
 class Npri:
     owner: str
     kind: str  # fixed | floating
-    value: Fraction  # of production (fixed) or of royalty (floating)
+    value: Fraction  # of production (fixed) or of royalty (floating) from the burdened minerals
     source: str
+    group: str = ""  # burden group: the reservation this holding descends from
+
+
+@dataclass
+class Lot:
+    """A piece of one owner's minerals, carrying the NPRI groups that burden it."""
+
+    owner: str
+    fraction: Fraction
+    burdens: frozenset[str] = frozenset()
+    source: str = ""  # instrument that created this piece
 
 
 @dataclass
@@ -80,12 +105,26 @@ class Position:
 
     tract: str
     depth: str
-    minerals: dict[str, Fraction] = field(default_factory=dict)
+    lots: list[Lot] = field(default_factory=list)
     npris: list[Npri] = field(default_factory=list)
 
     @property
+    def minerals(self) -> dict[str, Fraction]:
+        out: dict[str, Fraction] = {}
+        for lot in self.lots:
+            out[lot.owner] = out.get(lot.owner, Fraction(0)) + lot.fraction
+        return {k: v for k, v in out.items() if v != 0}
+
+    @property
     def mineral_total(self) -> Fraction:
-        return sum(self.minerals.values(), Fraction(0))
+        return sum((lot.fraction for lot in self.lots), Fraction(0))
+
+    def balance(self, owner: str) -> Fraction:
+        return sum((lot.fraction for lot in self.lots if lot.owner == owner), Fraction(0))
+
+    def burdened_share(self, group: str) -> Fraction:
+        """Share of the whole mineral estate an NPRI group burdens."""
+        return sum((lot.fraction for lot in self.lots if group in lot.burdens), Fraction(0))
 
 
 @dataclass
@@ -111,7 +150,7 @@ def load_events(path: str | Path) -> list[Event]:
     """Read a takeoff CSV. Columns:
 
     seq, instrument, recorded, tract, depth, estate, kind, grantor, grantees,
-    shares, interest, warranty, npri_kind, npri_value, notes
+    shares, interest, warranty, npri_kind, npri_value, notes, npri_burdens
 
     ``grantees`` and ``shares`` are ``;``-separated. Shares default to equal.
     """
@@ -150,6 +189,7 @@ def load_events(path: str | Path) -> list[Event]:
                     npri_kind=(row.get("npri_kind") or "").strip().lower() or None,
                     npri_value=parse_fraction(npri_value) if npri_value.strip() else None,
                     notes=(row.get("notes") or "").strip(),
+                    npri_burdens=(row.get("npri_burdens") or "all").strip() or "all",
                 )
             )
     return events
@@ -226,7 +266,7 @@ def replay(
                     flags.append(Flag("ALL_NEEDS_RELATIVE_INTEREST", pos.tract, pos.depth, ev.instrument,
                                       f"estate ALL needs 'all' or 'x of grantor', not {ev.interest!r}; nothing moved"))
                 elif ev.estate == "ALL":
-                    has_mi = pos.minerals.get(ev.grantor or "", Fraction(0)) > 0
+                    has_mi = pos.balance(ev.grantor or "") > 0
                     has_npri = any(n.owner == ev.grantor for n in pos.npris)
                     if not (has_mi or has_npri):
                         flags.append(Flag("CHAIN_GAP", pos.tract, pos.depth, ev.instrument,
@@ -241,7 +281,12 @@ def replay(
                 flags.append(Flag("UNREADABLE_FRACTION", ev.tract, depth, ev.instrument, str(e)))
 
     for (tract, depth), pos in positions.items():
-        pos.minerals = {k: v for k, v in pos.minerals.items() if v != 0}
+        _consolidate(pos)
+        for n in pos.npris:
+            own = sum((lot.fraction for lot in pos.lots if lot.owner == n.owner and n.group in lot.burdens), Fraction(0))
+            if own:
+                flags.append(Flag("MERGER_REVIEW", tract, depth, n.source,
+                                  f"{n.owner} holds {fmt(own)} of the minerals its own NPRI burdens; the examiner decides merger"))
         total = pos.mineral_total
         if total != 1:
             flags.append(
@@ -251,22 +296,26 @@ def replay(
     return Replay(positions, flags)
 
 
-def _credit(pos: Position, grantees: list[str], shares: list[Fraction], amount: Fraction) -> None:
-    for g, s in zip(grantees, shares):
-        pos.minerals[g] = pos.minerals.get(g, Fraction(0)) + amount * s
+def _consolidate(pos: Position) -> None:
+    merged: dict[tuple[str, frozenset[str]], Fraction] = {}
+    for lot in pos.lots:
+        key = (lot.owner, lot.burdens)
+        merged[key] = merged.get(key, Fraction(0)) + lot.fraction
+    pos.lots = [Lot(o, f, b) for (o, b), f in merged.items() if f != 0]
 
 
 def _apply_mineral(ev: Event, pos: Position, flags: list[Flag]) -> None:
     if ev.kind == "root":
         amount = parse_fraction(ev.interest) if ev.interest and ev.interest.lower() != "all" else Fraction(1)
-        _credit(pos, ev.grantees, ev.shares, amount)
+        for g, s in zip(ev.grantees, ev.shares):
+            pos.lots.append(Lot(g, amount * s, frozenset(), ev.instrument))
         return
     if ev.kind == "reserve":
         flags.append(Flag("MI_RESERVE_IGNORED", pos.tract, pos.depth, ev.instrument,
                           "mineral reservations are modeled by conveying less; this row moved nothing"))
         return
     grantor = ev.grantor or ""
-    balance = pos.minerals.get(grantor, Fraction(0))
+    balance = pos.balance(grantor)
     if balance == 0:
         flags.append(Flag("CHAIN_GAP", pos.tract, pos.depth, ev.instrument,
                           f"{grantor or 'blank grantor'} holds no minerals here on this date; nothing moved"))
@@ -277,8 +326,14 @@ def _apply_mineral(ev: Event, pos: Position, flags: list[Flag]) -> None:
         flags.append(Flag(code, pos.tract, pos.depth, ev.instrument,
                           f"{grantor} conveyed {fmt(amount)} but held {fmt(balance)}; moved {fmt(balance)}"))
         amount = balance
-    pos.minerals[grantor] = balance - amount
-    _credit(pos, ev.grantees, ev.shares, amount)
+    # Take the conveyed amount pro rata from each of the grantor's pieces, so
+    # every NPRI burden on those pieces travels with the minerals.
+    for lot in [x for x in pos.lots if x.owner == grantor]:
+        take = amount * lot.fraction / balance
+        lot.fraction -= take
+        for g, s in zip(ev.grantees, ev.shares):
+            pos.lots.append(Lot(g, take * s, lot.burdens, ev.instrument))
+    pos.lots = [x for x in pos.lots if x.fraction != 0]
 
 
 def _apply_npri(ev: Event, pos: Position, flags: list[Flag]) -> None:
@@ -287,12 +342,26 @@ def _apply_npri(ev: Event, pos: Position, flags: list[Flag]) -> None:
             flags.append(Flag("NPRI_INCOMPLETE", pos.tract, pos.depth, ev.instrument,
                               "an NPRI needs npri_kind (fixed|floating) and npri_value"))
             return
+        group = f"{ev.instrument}#{ev.seq}"
+        burdened = _burdened_lots(ev, pos)
+        if burdened is None:
+            flags.append(Flag("NPRI_BURDENS_UNREADABLE", pos.tract, pos.depth, ev.instrument,
+                              f"npri_burdens {ev.npri_burdens!r}: use all, conveyed, retained or owners:A;B"))
+            return
+        if not burdened:
+            flags.append(Flag("NPRI_BURDENS_NOTHING", pos.tract, pos.depth, ev.instrument,
+                              f"npri_burdens {ev.npri_burdens!r} matched no minerals on this date"))
+            return
+        for lot in burdened:
+            lot.burdens = lot.burdens | {group}
         owners = ev.grantees or ([ev.grantor] if ev.grantor else [])
         shares = ev.shares or [Fraction(1)]
         for g, s in zip(owners, shares):
-            pos.npris.append(Npri(g, ev.npri_kind, ev.npri_value * s, ev.instrument))
+            pos.npris.append(Npri(g, ev.npri_kind, ev.npri_value * s, ev.instrument, group))
+        share = sum((lot.fraction for lot in burdened), Fraction(0))
         flags.append(Flag("NPRI_REVIEW", pos.tract, pos.depth, ev.instrument,
-                          f"{ev.npri_kind} NPRI of {fmt(ev.npri_value)}: confirm fixed vs floating with the examiner"))
+                          f"{ev.npri_kind} NPRI of {fmt(ev.npri_value)} burdening {fmt(share)} of the minerals "
+                          f"({ev.npri_burdens}): confirm fixed vs floating and what it burdens with the examiner"))
         return
     # convey: move part of the grantor's NPRI holdings, kind by kind
     held = [n for n in pos.npris if n.owner == ev.grantor]
@@ -314,8 +383,23 @@ def _apply_npri(ev: Event, pos: Position, flags: list[Flag]) -> None:
                 part = n.value
         n.value -= part
         for g, s in zip(ev.grantees, ev.shares):
-            pos.npris.append(Npri(g, n.kind, part * s, ev.instrument))
+            pos.npris.append(Npri(g, n.kind, part * s, ev.instrument, n.group))
     pos.npris = [n for n in pos.npris if n.value != 0]
+
+
+def _burdened_lots(ev: Event, pos: Position) -> list[Lot] | None:
+    how = (ev.npri_burdens or "all").strip()
+    low = how.lower()
+    if low in ("", "all"):
+        return [lot for lot in pos.lots if lot.fraction]
+    if low == "conveyed":
+        return [lot for lot in pos.lots if lot.source == ev.instrument and lot.owner != ev.grantor and lot.fraction]
+    if low == "retained":
+        return [lot for lot in pos.lots if lot.owner == ev.grantor and lot.fraction]
+    if low.startswith("owners:"):
+        wanted = {name_key(x) for x in how.split(":", 1)[1].split(";") if x.strip()}
+        return [lot for lot in pos.lots if name_key(lot.owner) in wanted and lot.fraction]
+    return None
 
 
 def ownership_table(result: Replay) -> list[dict[str, str]]:
@@ -323,10 +407,10 @@ def ownership_table(result: Replay) -> list[dict[str, str]]:
     for (tract, depth), pos in sorted(result.positions.items()):
         for owner, frac in sorted(pos.minerals.items()):
             rows.append({"tract": tract, "depth": depth, "owner": owner, "estate": "MI",
-                         "fraction": fmt(frac), "kind": ""})
+                         "fraction": fmt(frac), "kind": "", "burdens": ""})
         for n in pos.npris:
             rows.append({"tract": tract, "depth": depth, "owner": n.owner, "estate": "NPRI",
-                         "fraction": fmt(n.value), "kind": n.kind})
+                         "fraction": fmt(n.value), "kind": n.kind, "burdens": fmt(pos.burdened_share(n.group))})
     return rows
 
 

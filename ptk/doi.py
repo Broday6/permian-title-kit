@@ -6,10 +6,12 @@ the revenue deck in exact fractions.
 
 Conventions (each one is a business rule the examiner should confirm):
 
-* A fixed NPRI is a fraction of production from the tract. It burdens every
-  leased mineral owner in proportion to their mineral fraction and comes out
-  of their royalty (Wenske v. Ealy, Tex. 2017, is the Texas default).
-* A floating NPRI is a fraction of each burdened owner's royalty.
+* An NPRI burdens only the mineral interests the ledger says it burdens (see
+  ``npri_burdens`` in ledger.py), and comes out of those owners' royalty in
+  proportion to their burdened minerals (Wenske v. Ealy, Tex. 2017, is the
+  Texas default when the burden is spread across the estate).
+* A fixed NPRI is a fraction of the production attributable to the burdened
+  minerals. A floating NPRI is a fraction of each burdened owner's royalty.
 * An ORRI is a fraction of 8/8 of the lease, proportionately reduced to the
   share of the minerals the lease covers, and burdens the lessees.
 * An unleased mineral owner in Texas is a cost-bearing cotenant, paid a share
@@ -160,17 +162,18 @@ def _tract_deck(pos: Position, leases: list[Lease], state: str, pooled: bool,
                 continue
             lease_of[lessor] = lease
 
-    fixed = [n for n in pos.npris if n.kind == "fixed"]
-    floating = [n for n in pos.npris if n.kind == "floating"]
-    fixed_total = sum((n.value for n in fixed), Fraction(0))
-    float_total = sum((n.value for n in floating), Fraction(0))
+    groups: dict[str, dict] = {}
     for n in pos.npris:
         if n.kind not in ("fixed", "floating"):
             flags.append(Flag("NPRI_KIND", t, d, n.source, f"{n.owner}: kind {n.kind!r} must be fixed or floating"))
+            continue
+        g = groups.setdefault(n.group, {"kind": n.kind, "total": Fraction(0), "base": Fraction(0)})
+        g["total"] += n.value
 
     covered: dict[str, Fraction] = {}
-    fixed_base = Fraction(0)  # leased minerals carrying the fixed NPRI burden
-    float_base = Fraction(0)  # sum of m x r over leased owners
+    lots_by_owner: dict[str, list] = {}
+    for lot in pos.lots:
+        lots_by_owner.setdefault(lot.owner, []).append(lot)
     for owner, m in sorted(pos.minerals.items()):
         lease = lease_of.get(owner)
         if lease is None:
@@ -183,27 +186,36 @@ def _tract_deck(pos: Position, leases: list[Lease], state: str, pooled: bool,
                                     "Texas cotenant: share of net proceeds after costs, not a royalty"))
                 rows.append(DeckRow(owner, "WI", t, d, m, Fraction(0), "unleased", "cost-bearing"))
             flags.append(Flag("UNLEASED", t, d, "-", f"{owner} holds {fmt(m)} unleased"))
-            if pos.npris:
+            burdened = sum((lot.fraction for lot in lots_by_owner.get(owner, []) if lot.burdens & groups.keys()), Fraction(0))
+            if burdened:
                 flags.append(Flag("NPRI_ON_UNLEASED", t, d, "-",
-                                  f"NPRIs burden {owner}'s unleased {fmt(m)}; the deck doesn't carve them out of it"))
+                                  f"NPRIs burden {fmt(burdened)} of {owner}'s unleased minerals; the deck doesn't carve them out"))
             continue
         r = lease.royalty
-        net = m * r - m * fixed_total - m * r * float_total
+        burden = Fraction(0)
+        for lot in lots_by_owner.get(owner, []):
+            for gid in lot.burdens:
+                g = groups.get(gid)
+                if g is None:
+                    continue
+                share = lot.fraction if g["kind"] == "fixed" else lot.fraction * r
+                g["base"] += share
+                burden += share * g["total"]
+        net = m * r - burden
         if net < 0:
             flags.append(Flag("NPRI_EXCEEDS_ROYALTY", t, d, lease.lease_id,
                               f"{owner}'s royalty {fmt(m * r)} can't carry the NPRI burden; check the reservation language"))
         rows.append(DeckRow(owner, "RI", t, d, net, Fraction(0), lease.lease_id,
                             f"{fmt(m)} minerals × {fmt(r)} royalty, less NPRI burden"))
-        fixed_base += m
-        float_base += m * r
         covered[lease.lease_id] = covered.get(lease.lease_id, Fraction(0)) + m
 
-    for n in fixed:
-        rows.append(DeckRow(n.owner, "NPRI", t, d, n.value * fixed_base, Fraction(0), n.source,
-                            f"fixed {fmt(n.value)} of production on leased minerals"))
-    for n in floating:
-        rows.append(DeckRow(n.owner, "NPRI", t, d, n.value * float_base, Fraction(0), n.source,
-                            f"floating {fmt(n.value)} of royalty"))
+    for n in pos.npris:
+        g = groups.get(n.group)
+        if g is None:
+            continue
+        basis = "of production" if g["kind"] == "fixed" else "of royalty"
+        rows.append(DeckRow(n.owner, "NPRI", t, d, n.value * g["base"], Fraction(0), n.source,
+                            f"{g['kind']} {fmt(n.value)} {basis} from the leased minerals it burdens"))
     if pooled and state == "TX":
         for n in pos.npris:
             if not any(name_key(k) == name_key(n.owner) and v for k, v in npri_ratified.items()):

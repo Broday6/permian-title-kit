@@ -1,10 +1,10 @@
-seq,instrument,recorded,tract,depth,estate,kind,grantor,grantees,shares,interest,warranty,npri_kind,npri_value,notes
-1,Patent Vol 12 Pg 301,1909-04-02,SEC12,ALL,MI,root,,Example Patentee,,all,,,,"FICTIONAL EXAMPLE. Patent from the State, no mineral reservation"
-2,DR Vol 40 Pg 118,1931-06-10,SEC12,ALL,MI,convey,Example Patentee,Adams Example,,all,Y,,,Warranty deed of the whole
-3,DR Vol 88 Pg 77,1948-02-15,SEC12,ALL,MI,convey,Adams Example,Baker Example,,1/2,Y,,,Mineral deed conveying an undivided 1/2
-4,DR Vol 88 Pg 77,1948-02-15,SEC12,ALL,NPRI,reserve,Adams Example,,,,,fixed,1/16,"Adams reserves 1/16 royalty (examiner to confirm fixed vs floating)"
-5,Probate No. 1650 County Court,1962-09-01,SEC12,ALL,ALL,convey,Adams Example,Adams Heir One;Adams Heir Two;Adams Heir Three,,all,,,,Will admitted as muniment of title; three children take everything Adams held (minerals and the NPRI) equally
-6,DR Vol 140 Pg 22,1971-05-20,SEC12,ALL,MI,convey,Adams Heir One,Carter Example,,1/4,Y,,,Warranty deed of 1/4 of the minerals; Heir One held only 1/6
-7,DR Vol 141 Pg 9,1971-08-02,SEC12,ALL,MI,convey,Doe Stranger,Evans Example,,1/8,,,,Wild deed: grantor never in the chain
-10,Base: DOTO certified to 2015-01-01,2015-01-01,SEC13,ALL,MI,root,,Fox Example;Gray Example,1/2;1/2,all,,,,Ownership per prior drilling title opinion
-11,OPR 2018-004512,2018-03-14,SEC13,ALL,MI,convey,Gray Example,Hill Minerals LLC,,all,Y,,,Mineral and royalty deed
+seq,instrument,recorded,tract,depth,estate,kind,grantor,grantees,shares,interest,warranty,npri_kind,npri_value,notes,npri_burdens
+1,Patent Vol 12 Pg 301,1909-04-02,SEC12,ALL,MI,root,,Example Patentee,,all,,,,"FICTIONAL EXAMPLE. Patent from the State, no mineral reservation",
+2,DR Vol 40 Pg 118,1931-06-10,SEC12,ALL,MI,convey,Example Patentee,Adams Example,,all,Y,,,Warranty deed of the whole,
+3,DR Vol 88 Pg 77,1948-02-15,SEC12,ALL,MI,convey,Adams Example,Baker Example,,1/2,Y,,,Mineral deed conveying an undivided 1/2,
+4,DR Vol 88 Pg 77,1948-02-15,SEC12,ALL,NPRI,reserve,Adams Example,,,,,fixed,1/16,Adams reserves 1/16 royalty out of the half he conveyed (examiner to confirm fixed vs floating and what it burdens),conveyed
+5,Probate No. 1650 County Court,1962-09-01,SEC12,ALL,ALL,convey,Adams Example,Adams Heir One;Adams Heir Two;Adams Heir Three,,all,,,,Will admitted as muniment of title; three children take everything Adams held (minerals and the NPRI) equally,
+6,DR Vol 140 Pg 22,1971-05-20,SEC12,ALL,MI,convey,Adams Heir One,Carter Example,,1/4,Y,,,Warranty deed of 1/4 of the minerals; Heir One held only 1/6,
+7,DR Vol 141 Pg 9,1971-08-02,SEC12,ALL,MI,convey,Doe Stranger,Evans Example,,1/8,,,,Wild deed: grantor never in the chain,
+10,Base: DOTO certified to 2015-01-01,2015-01-01,SEC13,ALL,MI,root,,Fox Example;Gray Example,1/2;1/2,all,,,,Ownership per prior drilling title opinion,
+11,OPR 2018-004512,2018-03-14,SEC13,ALL,MI,convey,Gray Example,Hill Minerals LLC,,all,Y,,,Mineral and royalty deed,

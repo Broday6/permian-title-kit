@@ -10,7 +10,14 @@ relying on them.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import csv
+from dataclasses import dataclass, field, replace
+from pathlib import Path
+
+# When the coverage years below were collected, and how. Re-check with
+# `ptk counties --checklist` and feed confirmed years back with --overrides.
+COLLECTED_ON = "2026-10-01"
+COLLECTED_FROM = "TexasFile and CourthouseDirect county coverage pages, read through search-engine summaries"
 
 
 @dataclass(frozen=True)
@@ -88,16 +95,69 @@ COUNTIES: dict[str, County] = {c.name.upper(): c for c in [
 ]}
 
 
-def lookup(name: str) -> County:
+def verification_urls(c: County) -> dict[str, str]:
+    slug = c.name.lower().replace(" ", "-")
+    state_path = "Texas" if c.state == "TX" else "NewMexico"
+    urls = {"courthousedirect": f"https://www.courthousedirect.com/PropertySearch/{state_path}/{c.name.replace(' ', '')}"}
+    if c.state == "TX":
+        urls["texasfile"] = f"https://www.texasfile.com/texas-land-records-coverage/{slug}-county-clerk/"
+    return urls
+
+
+CHECKLIST_FIELDS = ["county", "state", "texasfile_index_from", "chd_images_from", "chd_historical_from",
+                    "texasfile_url", "courthousedirect_url", "portal",
+                    "confirmed_texasfile_index_from", "confirmed_chd_images_from", "confirmed_chd_historical_from",
+                    "checked_by", "checked_on", "notes"]
+
+
+def write_checklist(path: str | Path) -> Path:
+    """A worksheet for re-verifying coverage years by hand. Fill the confirmed_* columns."""
+    path = Path(path)
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=CHECKLIST_FIELDS)
+        w.writeheader()
+        for c in COUNTIES.values():
+            urls = verification_urls(c)
+            w.writerow({"county": c.name, "state": c.state,
+                        "texasfile_index_from": c.texasfile_index_from or "",
+                        "chd_images_from": c.chd_images_from or "",
+                        "chd_historical_from": c.chd_historical_from or "",
+                        "texasfile_url": urls.get("texasfile", ""), "courthousedirect_url": urls["courthousedirect"],
+                        "portal": c.portal})
+    return path
+
+
+def load_overrides(path: str | Path) -> dict[str, County]:
+    """Apply confirmed years from a filled-in checklist; blank cells keep the shipped value."""
+    table = dict(COUNTIES)
+    with open(path, newline="", encoding="utf-8-sig") as fh:
+        for row in csv.DictReader(fh):
+            key = (row.get("county") or "").strip().upper()
+            if key not in table:
+                continue
+            changes = {}
+            for col, attr in (("confirmed_texasfile_index_from", "texasfile_index_from"),
+                              ("confirmed_chd_images_from", "chd_images_from"),
+                              ("confirmed_chd_historical_from", "chd_historical_from")):
+                value = (row.get(col) or "").strip()
+                if value:
+                    changes[attr] = int(value)
+            if changes:
+                table[key] = replace(table[key], **changes)
+    return table
+
+
+def lookup(name: str, table: dict[str, County] | None = None) -> County:
+    table = table or COUNTIES
     key = name.strip().upper().removesuffix(" COUNTY")
-    if key not in COUNTIES:
-        raise KeyError(f"{name!r} isn't in the county table: {', '.join(sorted(c.title() for c in COUNTIES))}")
-    return COUNTIES[key]
+    if key not in table:
+        raise KeyError(f"{name!r} isn't in the county table: {', '.join(sorted(c.title() for c in table))}")
+    return table[key]
 
 
-def plan_search(county: str, start_year: int) -> list[str]:
+def plan_search(county: str, start_year: int, table: dict[str, County] | None = None) -> list[str]:
     """Plain-language search plan for a window starting in ``start_year``."""
-    c = lookup(county)
+    c = lookup(county, table)
     steps: list[str] = []
     if c.texasfile_index_from:
         if start_year < c.texasfile_index_from:
@@ -124,4 +184,6 @@ def plan_search(county: str, start_year: int) -> list[str]:
         steps.append(c.notes)
     if c.state == "NM":
         steps.append("New Mexico: no county mineral appraisal roll. Pull BLM MLRS and NMSLO status for every section.")
+    if table is None or table.get(c.name.upper()) is COUNTIES.get(c.name.upper()):
+        steps.append(f"Coverage years as collected {COLLECTED_ON}; confirm on the vendor pages before you promise a date.")
     return steps
