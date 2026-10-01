@@ -1,0 +1,1160 @@
+{
+ "title": "ExtractedInstrument",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "doc_id",
+  "instrument_type",
+  "instrument_title_verbatim",
+  "recording",
+  "execution",
+  "parties",
+  "conveyances",
+  "reservations_exceptions",
+  "subject_to",
+  "legal_descriptions",
+  "lease_terms",
+  "references",
+  "flags"
+ ],
+ "properties": {
+  "doc_id": {
+   "type": "string"
+  },
+  "instrument_type": {
+   "type": "string",
+   "enum": [
+    "warranty_deed",
+    "special_warranty_deed",
+    "quitclaim_deed",
+    "mineral_deed",
+    "royalty_deed",
+    "npri_deed",
+    "term_royalty_deed",
+    "oil_gas_lease",
+    "memorandum_of_lease",
+    "lease_amendment_or_extension",
+    "ratification",
+    "release_of_lease",
+    "partial_release",
+    "assignment_of_lease",
+    "assignment_or_conveyance_of_orri",
+    "pooling_unit_designation",
+    "unit_agreement",
+    "production_sharing_agreement",
+    "division_order",
+    "stipulation_of_interest",
+    "affidavit_of_heirship",
+    "affidavit_of_non_production",
+    "affidavit_of_identity",
+    "will_or_probate_order",
+    "letters_testamentary",
+    "power_of_attorney",
+    "correction_instrument",
+    "deed_of_trust",
+    "release_of_lien",
+    "judgment_or_lis_pendens",
+    "patent",
+    "easement_or_row",
+    "other"
+   ]
+  },
+  "instrument_title_verbatim": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "recording": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "state",
+    "county",
+    "record_series",
+    "volume",
+    "page",
+    "instrument_number",
+    "file_datetime",
+    "recorded_date",
+    "evidence"
+   ],
+   "properties": {
+    "state": {
+     "type": "string",
+     "enum": [
+      "TX",
+      "NM"
+     ]
+    },
+    "county": {
+     "type": "string"
+    },
+    "record_series": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Deed Records, Oil & Gas Records, Official Public Records, Misc., Probate"
+    },
+    "volume": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "page": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "instrument_number": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "file_datetime": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "ISO 8601; partial allowed"
+    },
+    "recorded_date": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "evidence": {
+     "$ref": "#/$defs/evidence"
+    }
+   }
+  },
+  "execution": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "instrument_date",
+    "effective_date",
+    "acknowledgments",
+    "evidence"
+   ],
+   "properties": {
+    "instrument_date": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "effective_date": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "acknowledgments": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "party_ref",
+       "date",
+       "county",
+       "state",
+       "notary_name"
+      ],
+      "properties": {
+       "party_ref": {
+        "type": "string"
+       },
+       "date": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "county": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "state": {
+        "type": [
+         "string",
+         "null"
+        ]
+       },
+       "notary_name": {
+        "type": [
+         "string",
+         "null"
+        ]
+       }
+      }
+     }
+    },
+    "evidence": {
+     "$ref": "#/$defs/evidence"
+    }
+   }
+  },
+  "parties": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/party"
+   }
+  },
+  "conveyances": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "from_party_refs",
+     "to_party_refs",
+     "estate",
+     "interest",
+     "legal_description_ids",
+     "depth",
+     "term",
+     "warranty",
+     "evidence",
+     "confidence"
+    ],
+    "properties": {
+     "from_party_refs": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "to_party_refs": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "estate": {
+      "type": "string",
+      "enum": [
+       "fee_simple_all",
+       "surface_only",
+       "mineral",
+       "royalty",
+       "npri",
+       "orri",
+       "leasehold_wi",
+       "executive_right",
+       "bonus_rentals",
+       "unknown"
+      ]
+     },
+     "interest": {
+      "$ref": "#/$defs/fraction"
+     },
+     "legal_description_ids": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "depth": {
+      "$ref": "#/$defs/depth"
+     },
+     "term": {
+      "$ref": "#/$defs/term"
+     },
+     "warranty": {
+      "type": "string",
+      "enum": [
+       "general",
+       "special",
+       "none_quitclaim",
+       "unknown"
+      ]
+     },
+     "evidence": {
+      "$ref": "#/$defs/evidence"
+     },
+     "confidence": {
+      "type": "string",
+      "enum": [
+       "high",
+       "medium",
+       "low"
+      ]
+     }
+    }
+   }
+  },
+  "reservations_exceptions": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "kind",
+     "reserved_by_party_refs",
+     "estate",
+     "interest",
+     "executive_rights",
+     "depth",
+     "term",
+     "legal_description_ids",
+     "text_verbatim",
+     "evidence"
+    ],
+    "properties": {
+     "kind": {
+      "type": "string",
+      "enum": [
+       "reservation",
+       "exception_prior_reservation",
+       "exception_prior_conveyance",
+       "save_and_except_tract",
+       "exception_existing_lease"
+      ]
+     },
+     "reserved_by_party_refs": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "estate": {
+      "type": "string",
+      "enum": [
+       "mineral",
+       "royalty",
+       "npri",
+       "orri",
+       "executive_right",
+       "bonus_rentals",
+       "surface",
+       "other"
+      ]
+     },
+     "interest": {
+      "$ref": "#/$defs/fraction"
+     },
+     "executive_rights": {
+      "type": "string",
+      "enum": [
+       "retained",
+       "conveyed",
+       "waived",
+       "not_addressed"
+      ]
+     },
+     "depth": {
+      "$ref": "#/$defs/depth"
+     },
+     "term": {
+      "$ref": "#/$defs/term"
+     },
+     "legal_description_ids": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "text_verbatim": {
+      "type": "string"
+     },
+     "evidence": {
+      "$ref": "#/$defs/evidence"
+     }
+    }
+   }
+  },
+  "subject_to": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "text_verbatim",
+     "referenced_instrument",
+     "category",
+     "evidence"
+    ],
+    "properties": {
+     "text_verbatim": {
+      "type": "string"
+     },
+     "referenced_instrument": {
+      "$ref": "#/$defs/instrument_ref"
+     },
+     "category": {
+      "type": "string",
+      "enum": [
+       "existing_oil_gas_lease",
+       "prior_mineral_or_royalty_reservation",
+       "easements",
+       "liens",
+       "general_boilerplate",
+       "other"
+      ]
+     },
+     "evidence": {
+      "$ref": "#/$defs/evidence"
+     }
+    }
+   }
+  },
+  "legal_descriptions": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/legal_description"
+   }
+  },
+  "lease_terms": {
+   "anyOf": [
+    {
+     "type": "null"
+    },
+    {
+     "$ref": "#/$defs/lease_terms"
+    }
+   ]
+  },
+  "references": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/instrument_ref"
+   }
+  },
+  "flags": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "code",
+     "detail",
+     "evidence"
+    ],
+    "properties": {
+     "code": {
+      "type": "string",
+      "enum": [
+       "illegible",
+       "interlineation_or_correction",
+       "missing_pages",
+       "unsigned",
+       "unacknowledged",
+       "marginal_notation",
+       "numeral_word_mismatch",
+       "double_fraction",
+       "possible_over_conveyance",
+       "capacity_unclear",
+       "spouse_not_joined",
+       "possible_duplicate",
+       "correction_or_rerecording",
+       "other"
+      ]
+     },
+     "detail": {
+      "type": "string"
+     },
+     "evidence": {
+      "$ref": "#/$defs/evidence"
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "evidence": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "page",
+     "line_ids",
+     "quote"
+    ],
+    "properties": {
+     "page": {
+      "type": "integer"
+     },
+     "line_ids": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "quote": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "fraction": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "text_verbatim",
+    "factors",
+    "basis",
+    "all_of_grantors_interest",
+    "numeral_word_consistent",
+    "fixed_or_floating_signal"
+   ],
+   "properties": {
+    "text_verbatim": {
+     "type": "string"
+    },
+    "factors": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+       "num",
+       "den"
+      ],
+      "properties": {
+       "num": {
+        "type": "string"
+       },
+       "den": {
+        "type": "string"
+       }
+      }
+     },
+     "description": "Product of factors, e.g. 1/2 of 1/8 -> [{1,2},{1,8}]"
+    },
+    "basis": {
+     "type": "string",
+     "enum": [
+      "of_whole_mineral_estate",
+      "of_grantors_interest",
+      "of_royalty",
+      "of_production_8_8",
+      "of_leasehold_8_8",
+      "of_working_interest",
+      "of_lease_royalty_as_reserved",
+      "unstated"
+     ]
+    },
+    "all_of_grantors_interest": {
+     "type": "boolean"
+    },
+    "numeral_word_consistent": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    },
+    "fixed_or_floating_signal": {
+     "type": "string",
+     "enum": [
+      "fixed_language",
+      "floating_language",
+      "ambiguous",
+      "not_applicable"
+     ],
+     "description": "Textual signal only; legal characterization reserved for attorney"
+    }
+   }
+  },
+  "depth": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "limited",
+    "top",
+    "base",
+    "text_verbatim"
+   ],
+   "properties": {
+    "limited": {
+     "type": "boolean"
+    },
+    "top": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "e.g. 'surface', '7,500 ft', 'top of Wolfcamp'"
+    },
+    "base": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "text_verbatim": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "term": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "is_term_interest",
+    "fixed_years",
+    "thereafter_condition",
+    "text_verbatim"
+   ],
+   "properties": {
+    "is_term_interest": {
+     "type": "boolean"
+    },
+    "fixed_years": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "thereafter_condition": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "text_verbatim": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "party": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "party_id",
+    "role",
+    "name_verbatim",
+    "name_normalized",
+    "entity_type",
+    "capacity",
+    "represented_entity",
+    "marital_descriptor",
+    "spouse_name",
+    "residence",
+    "signed"
+   ],
+   "properties": {
+    "party_id": {
+     "type": "string"
+    },
+    "role": {
+     "type": "string",
+     "enum": [
+      "grantor",
+      "grantee",
+      "lessor",
+      "lessee",
+      "assignor",
+      "assignee",
+      "releasor",
+      "affiant",
+      "decedent",
+      "heir",
+      "trustee",
+      "executor",
+      "attorney_in_fact",
+      "other"
+     ]
+    },
+    "name_verbatim": {
+     "type": "string"
+    },
+    "name_normalized": {
+     "type": "string"
+    },
+    "entity_type": {
+     "type": "string",
+     "enum": [
+      "individual",
+      "married_couple",
+      "corporation",
+      "llc",
+      "partnership",
+      "trust",
+      "estate",
+      "government",
+      "unknown"
+     ]
+    },
+    "capacity": {
+     "type": "string",
+     "enum": [
+      "individually",
+      "trustee",
+      "executor_administrator",
+      "attorney_in_fact",
+      "officer_agent",
+      "guardian",
+      "heir",
+      "unknown"
+     ]
+    },
+    "represented_entity": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "marital_descriptor": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "feme sole, et ux, et vir, a single man, joined pro forma..."
+    },
+    "spouse_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "residence": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "signed": {
+     "type": [
+      "boolean",
+      "null"
+     ]
+    }
+   }
+  },
+  "instrument_ref": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "volume",
+    "page",
+    "instrument_number",
+    "record_series",
+    "text_verbatim"
+   ],
+   "properties": {
+    "volume": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "page": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "instrument_number": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "record_series": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "text_verbatim": {
+     "type": "string"
+    }
+   }
+  },
+  "legal_description": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "ld_id",
+    "text_verbatim",
+    "county",
+    "system",
+    "tx_survey",
+    "plss",
+    "metes_and_bounds",
+    "stated_acres",
+    "more_or_less",
+    "save_and_except_text",
+    "evidence"
+   ],
+   "properties": {
+    "ld_id": {
+     "type": "string"
+    },
+    "text_verbatim": {
+     "type": "string"
+    },
+    "county": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "system": {
+     "type": "string",
+     "enum": [
+      "tx_abstract_survey",
+      "nm_plss",
+      "metes_and_bounds",
+      "subdivision_lot_block",
+      "by_reference_only",
+      "mixed"
+     ]
+    },
+    "tx_survey": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "abstract_no",
+        "survey_name",
+        "survey_no",
+        "block",
+        "township",
+        "section",
+        "certificate",
+        "aliquot_parts"
+       ],
+       "properties": {
+        "abstract_no": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "survey_name": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "survey_no": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "block": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "township": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "section": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "certificate": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "aliquot_parts": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     ]
+    },
+    "plss": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "meridian",
+        "township",
+        "range",
+        "section",
+        "aliquots",
+        "lots"
+       ],
+       "properties": {
+        "meridian": {
+         "type": [
+          "string",
+          "null"
+         ]
+        },
+        "township": {
+         "type": "string"
+        },
+        "range": {
+         "type": "string"
+        },
+        "section": {
+         "type": "string"
+        },
+        "aliquots": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        },
+        "lots": {
+         "type": "array",
+         "items": {
+          "type": "string"
+         }
+        }
+       }
+      }
+     ]
+    },
+    "metes_and_bounds": {
+     "anyOf": [
+      {
+       "type": "null"
+      },
+      {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "pob_text",
+        "calls"
+       ],
+       "properties": {
+        "pob_text": {
+         "type": "string"
+        },
+        "calls": {
+         "type": "array",
+         "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+           "bearing_text",
+           "distance",
+           "unit",
+           "monument_text"
+          ],
+          "properties": {
+           "bearing_text": {
+            "type": "string"
+           },
+           "distance": {
+            "type": "string"
+           },
+           "unit": {
+            "type": "string",
+            "enum": [
+             "varas",
+             "feet",
+             "chains",
+             "rods_poles",
+             "links",
+             "meters",
+             "unknown"
+            ]
+           },
+           "monument_text": {
+            "type": [
+             "string",
+             "null"
+            ]
+           }
+          }
+         }
+        }
+       }
+      }
+     ]
+    },
+    "stated_acres": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "more_or_less": {
+     "type": "boolean"
+    },
+    "save_and_except_text": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "evidence": {
+     "$ref": "#/$defs/evidence"
+    }
+   }
+  },
+  "lease_terms": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "form_name",
+    "lease_type",
+    "primary_term",
+    "option_to_extend",
+    "royalty_oil",
+    "royalty_gas",
+    "royalty_valuation",
+    "cost_free_language",
+    "bonus_recital",
+    "delay_rental",
+    "shut_in",
+    "cessation_days",
+    "continuous_development",
+    "pugh_clause",
+    "depth_limitation",
+    "retained_acreage",
+    "pooling",
+    "gross_acres",
+    "evidence"
+   ],
+   "properties": {
+    "form_name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "lease_type": {
+     "type": "string",
+     "enum": [
+      "paid_up",
+      "unless",
+      "or",
+      "unknown"
+     ]
+    },
+    "primary_term": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "verbatim + normalized, e.g. '3 years'"
+    },
+    "option_to_extend": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "royalty_oil": {
+     "$ref": "#/$defs/fraction"
+    },
+    "royalty_gas": {
+     "$ref": "#/$defs/fraction"
+    },
+    "royalty_valuation": {
+     "type": "string",
+     "enum": [
+      "market_value",
+      "amount_realized_proceeds",
+      "mixed",
+      "unstated"
+     ]
+    },
+    "cost_free_language": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "bonus_recital": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "delay_rental": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "shut_in": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "cessation_days": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "continuous_development": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "pugh_clause": {
+     "type": "string",
+     "enum": [
+      "none",
+      "vertical",
+      "horizontal",
+      "both",
+      "unclear"
+     ]
+    },
+    "depth_limitation": {
+     "$ref": "#/$defs/depth"
+    },
+    "retained_acreage": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "pooling": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "authority + size limits verbatim"
+    },
+    "gross_acres": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "evidence": {
+     "$ref": "#/$defs/evidence"
+    }
+   }
+  }
+ }
+}

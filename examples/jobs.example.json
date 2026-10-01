@@ -1,0 +1,8 @@
+{
+  "_note": "Format reference for `ptk batch submit`. Paths are relative to this file.",
+  "jobs": [
+    {"doc_id": "TX-REEVES-DR-0088-0077", "county": "Reeves", "state": "TX",
+     "pages": ["images/TX-REEVES-DR-0088-0077-p1.png", "images/TX-REEVES-DR-0088-0077-p2.png"],
+     "ocr_dir": "ocr", "model": "claude-opus-5-5", "effort": "high"}
+  ]
+}

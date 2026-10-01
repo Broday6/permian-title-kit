@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "permian-title-kit"
+version = "0.1.0"
+description = "Runsheet checks, exact-fraction ownership, legal-description parsing and AI first-pass abstracting for Permian Basin mineral title"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+ai = ["anthropic>=1.0"]
+test = ["pytest>=8"]
+
+[project.scripts]
+ptk = "ptk.cli:main"
+
+[tool.setuptools]
+packages = ["ptk"]
+
+[tool.setuptools.package-data]
+ptk = ["schema/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
