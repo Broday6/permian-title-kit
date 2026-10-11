@@ -305,3 +305,40 @@ def collect_batch(client: Any, batch_id: str, lines_by_id: dict[str, dict[str, s
         else:
             results[item.custom_id] = {"doc_id": item.custom_id, "error": f"{kind}: resubmit"}
     return {"status": "ended", "results": results}
+
+
+# ---- abstracting in a chat session (no API key) --------------------------------------------
+# The same instructions and the same checks as the API path, for an abstract written by a person
+# or by Claude in a Claude Code session that reads the page images directly.
+
+def chat_prompt(pages: list[Page], *, doc_id: str, county: str, state: str) -> str:
+    """The exact instructions the API request carries, as text to work from in a chat session."""
+    lines = line_table(pages)
+    parts = [SYSTEM_PROMPT.strip(), "",
+             f"Instrument: doc_id {doc_id}, recorded in {county} County, {state}.",
+             "Page images (open each one and read it):"]
+    parts += [f"  Page {i}: {p.path}" for i, p in enumerate(pages, start=1)]
+    if lines:
+        parts += ["", "OCR text with line IDs (cite these in every evidence block):"]
+        parts += [f"{lid}: {text}" for lid, text in lines.items()]
+    else:
+        parts += ["", "No OCR text is available: leave evidence line_ids empty and quote the image."]
+    parts += ["", f"Return ONE JSON object that matches {SCHEMA_PATH} exactly: every property present, null or [] when "
+              "absent, no extra keys. Save it as a .json file, then run: ptk abstract-check <file> --pages <the pages> "
+              "[--ocr-dir <dir>] and fix everything it reports."]
+    return "\n".join(parts)
+
+
+def check_answer(extraction: Any, pages: list[Page], doc_id: str, source: str = "chat") -> dict[str, Any]:
+    """Run every check the API path runs on an abstract produced elsewhere. Same result shape as ``extract``."""
+    out: dict[str, Any] = {"doc_id": doc_id, "model": source, "stop_reason": None, "usage": None}
+    if not isinstance(extraction, dict):
+        out["error"] = "the answer must be one JSON object"
+        return out
+    if extraction.get("doc_id") not in (None, doc_id):
+        out["error"] = f"the answer's doc_id {extraction.get('doc_id')!r} isn't {doc_id!r}"
+        return out
+    out["extraction"] = extraction
+    out["schema_errors"] = schema_errors(extraction)
+    out["checks"] = verify(extraction, line_table(pages))
+    return out

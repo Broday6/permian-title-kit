@@ -21,8 +21,8 @@ from fractions import Fraction
 QUARTERS = ("NE", "NW", "SW", "SE")
 HALVES = {"N": ("NE", "NW"), "S": ("SE", "SW"), "E": ("NE", "SE"), "W": ("NW", "SW")}
 
-_TWP = re.compile(r"\b(?:T(?:ownship|wp|\.)?)\s*-?\s*(\d+)\s*-?\s*(N|S)(?:orth|outh)?\b\.?", re.I)
-_RNG = re.compile(r"\b(?:R(?:ange|ng|\.)?)\s*-?\s*(\d+)\s*-?\s*(E|W)(?:ast|est)?\b\.?", re.I)
+_TWP = re.compile(r"\b(?:T(?:ownship|wp|sp)?\.?)\s*-?\s*(\d+)\s*-?\s*(N|S)(?:orth|outh)?\b\.?", re.I)
+_RNG = re.compile(r"\b(?:R(?:ange|ng|ge)?\.?)\s*-?\s*(\d+)\s*-?\s*(E|W)(?:ast|est)?\b\.?", re.I)
 _SEC = re.compile(r"\b(?:sec(?:tion)?s?)\.?\s*(\d+(?:\s*(?:,|and|&)\s*\d+\b(?!\s*/))*)", re.I)
 _PART = re.compile(r"(NE|NW|SE|SW|N|S|E|W)(?:\s*/\s*[24]|\s*1/[24]|[24½¼])?", re.I)
 _ALIQUOT_ONLY = re.compile(r"^(?:(?:NE|NW|SE|SW|N|S|E|W)(?:\s*/\s*[24]|\s*1/[24]|[24½¼])?\s*)+$", re.I)
@@ -145,9 +145,19 @@ def _apply(part: SectionPart, text: str) -> None:
         part.aliquot_text.append(phrase)
 
 
+_COMPACT = re.compile(r"\b(\d{1,2})-(\d{1,3})\s*([NS])-(\d{1,3})\s*([EW])\b", re.I)  # 10-18S-34E
+_NUMBER_WORDS = ("one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|"
+                 "seventeen|eighteen|nineteen|twenty")
+_WORD_NUMERAL = re.compile(rf"\b(?:{_NUMBER_WORDS})\s*\((\d+)\)", re.I)  # Lots One (1) -> Lots 1
+_PAREN_ALIQUOT = re.compile(r"\(\s*(?:(?:NE|NW|SE|SW|N|S|E|W)\s*(?:/\s*[24]|1/[24]|[24½¼])?[\s,]*)+\)", re.I)  # (NE/4 SE/4)
+
+
 def parse(text: str) -> PlssDescription:
     d = PlssDescription(text=text)
     clean = re.sub(r"\s+", " ", text)
+    clean = _COMPACT.sub(lambda m: f"Section {m.group(1)}, T{m.group(2)}{m.group(3).upper()}, R{m.group(4)}{m.group(5).upper()}", clean)
+    clean = _WORD_NUMERAL.sub(r"\1", clean)
+    clean = _PAREN_ALIQUOT.sub(" ", clean)  # the words beside them say the same thing
     t = _TWP.search(clean)
     r = _RNG.search(clean)
     d.township = f"{int(t.group(1))}{t.group(2).upper()}" if t else None
@@ -156,6 +166,11 @@ def parse(text: str) -> PlssDescription:
         d.issues.append("no township")
     if not d.range:
         d.issues.append("no range")
+    townships = sorted({f"{int(a)}{b.upper()}" for a, b in _TWP.findall(clean)})
+    ranges = sorted({f"{int(a)}{b.upper()}" for a, b in _RNG.findall(clean)})
+    if len(townships) > 1 or len(ranges) > 1:
+        d.issues.append(f"more than one township or range ({', '.join(townships + ranges)}): every section is keyed to "
+                        f"{d.township} {d.range}; split the description by township and range")
     if re.search(r"\bN\.?\s*M\.?\s*P\.?\s*M\b|New Mexico Principal Meridian", clean, re.I) is None:
         d.issues.append("meridian not stated; assumed NMPM")
 
@@ -168,15 +183,23 @@ def parse(text: str) -> PlssDescription:
     if not markers:
         d.issues.append("no section number")
         return d
-    of_style = re.search(r"\bof\s+(?:the\s+)?sec(?:tion)?s?\b", body, re.I)
+    # Each section takes the aliquots written before it ("NE/4 of Section 6", "E/2 NE/4, Section 33",
+    # "Lots 1 thru 4, Section 1"); when nothing comes before it, the text after it up to the next ";"
+    # ("Section 15: NE/4, N/2 SE/4"). Styles can mix within one description.
+    boundary = 0
     for i, m in enumerate(markers):
-        if of_style:
-            start = markers[i - 1].end() if i else 0
-            segment = body[start:m.start()]
-            segment = re.sub(r"\bof(?:\s+the)?\s*$", " ", segment.strip(), flags=re.I)
+        next_start = markers[i + 1].start() if i + 1 < len(markers) else len(body)
+        before = re.sub(r"\bof(?:\s+the)?\s*$", " ", body[boundary:m.start()].strip(), flags=re.I)
+        before = re.sub(r"^[\s,;:]+|[\s,;:]+$", "", before)
+        before = re.sub(r"^(?:and|&)\s+", "", before, flags=re.I)
+        if before:
+            segment = before
+            boundary = m.end()
         else:
-            end = markers[i + 1].start() if i + 1 < len(markers) else len(body)
-            segment = body[m.end():end]
+            after = body[m.end():next_start]
+            cut = after.find(";")
+            segment = after if cut < 0 else after[:cut]
+            boundary = m.end() + (len(after) if cut < 0 else cut + 1)
         segment = re.sub(r"^[\s,;:]+|[\s,;:]+$", "", segment)
         for number in re.findall(r"\d+", m.group(1)):
             part = SectionPart(int(number))

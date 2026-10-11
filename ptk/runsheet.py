@@ -74,32 +74,38 @@ _FRACTION_PAREN = re.compile(
 )
 RULES: list[tuple[str, str, re.Pattern[str], str]] = [
     ("DOUBLE_FRACTION", "review",
-     re.compile(r"\d+\s*/\s*\d+\s*(?:th)?\s+of\s+(?:the\s+)?(?:usual\s+)?(?:an?\s+)?\d+\s*/\s*\d+|"
-                r"\b(?:one|two|three)[-\s]\w+\s+of\s+(?:the\s+)?(?:usual\s+)?one[-\s]eighth", re.I),
-     "Double fraction. Under Van Dyke (Tex. 2023) a 1/8 double fraction is presumed to mean the whole estate. Send to the examiner."),
+     re.compile(r"\d+\s*/\s*\d+\s*(?:th)?\s+(?:interest\s+)?(?:of|in\s+and\s+to)\s+(?:the\s+)?(?:usual\s+)?(?:an?\s+)?"
+                r"(?!(\d+)\s*/\s*\1\b)\d+\s*/\s*\d+|"
+                r"\b(?:one|two|three)[-\s]\w+\s+(?:interest\s+)?(?:of|in\s+and\s+to)\s+(?:the\s+)?(?:usual\s+)?one[-\s]eighth", re.I),
+     "Double fraction. Under Van Dyke (Tex. 2023) a 1/8 double fraction in an older instrument is presumed to mean the whole estate; "
+     "the rest of the instrument can rebut it (Clifton v. Johnson, Tex. 2026). Send to the examiner."),
     ("TERM_INTEREST", "review",
      re.compile(r"for\s+a\s+(?:period|term)\s+of\s+[\w\s()-]{1,30}?years|"
                 r"\byears?\b[^.;]{0,100}?\b(?:as|so)\s+long\s+(?:thereafter|as)\b", re.I),
      "Term interest. Pull production for the whole term window to decide whether it expired."),
     ("BLANKET_CONVEYANCE", "review",
-     re.compile(r"all\s+(?:of\s+)?(?:my|our|its|grantors?'?s?|the\s+grantors?'?)\b.{0,80}?\b(?:interest|lands?|minerals?)\b.{0,100}?\bin\s+[\w\s]{2,30}?count(?:y|ies)", re.I | re.S),
+     re.compile(r"all\s+(?:of\s+)?(?:my|our|its|grantors?'?s?|the\s+grantors?'?)\b.{0,80}?\b(?:interest|lands?|minerals?)\b.{0,100}?\bin\s+[\w\s]{2,30}?count(?:y|ies)|"
+                r"\b(?:owned|held|claimed)\s+by\s+(?:the\s+)?grantors?\b.{0,60}?\bin\s+[\w\s]{2,30}?count(?:y|ies)|"
+                r"whether\s+or\s+not\s+(?:\w+\s+)?described", re.I | re.S),
      "Conveys all of the grantor's interest in a county. Apply it to every tract the grantor owned there."),
     ("MOTHER_HUBBARD", "info",
      re.compile(r"strips?\s+(?:and|or)\s+gores?|any\s+and\s+all\s+other\s+lands?|adjacent\s+or\s+contiguous", re.I),
      "Mother Hubbard or strip-and-gore language. It usually reaches only small overlooked strips."),
     ("NPRI_LANGUAGE", "review",
-     re.compile(r"non[-\s]?participating|without\s+the\s+(?:right|power)\s+to\s+(?:lease|execute)|executive\s+right|"
+     re.compile(r"non[-\s]?participating|\bN\.?P\.?R\.?I\b|non[-\s]?executive|without\s+the\s+(?:right|power)\s+to\s+(?:lease|execute)|executive\s+right|"
                 r"bonus(?:es)?\s+(?:and|or)\s+(?:delay\s+)?rentals?", re.I),
-     "NPRI or executive-right language. Record which mineral attributes each party holds."),
+     "NPRI, non-executive or executive-right language. Record which mineral attributes each party holds."),
     ("POWER_OF_ATTORNEY", "review",
      re.compile(r"attorney[-\s]in[-\s]fact|by\s+power\s+of\s+attorney", re.I),
      "Signed under a power of attorney. Confirm it's recorded and covers this act (a Relinquishment Act lease needs express authority)."),
     ("FIDUCIARY_CAPACITY", "review",
-     re.compile(r"\b(?:independent\s+)?(?:executor|executrix|administrator|administratrix|trustee|guardian|receiver)\b", re.I),
+     re.compile(r"\b(?:independent\s+)?(?:executor|executrix|administrator|administratrix|trustee|guardian|receiver|conservator|"
+                r"personal\s+representative|admx|admr|adm'?x|exrx|extx|exr)\b", re.I),
      "Signed in a fiduciary capacity. Confirm the letters, trust or court order, and the authority to convey minerals."),
     ("RELINQUISHMENT_ACT", "review",
      re.compile(r"relinquishment\s+act|mineral\s+classified", re.I),
-     "Relinquishment Act land. Run the GLO checklist: approved form, certified copy filed, assignments within 90 days, State's half paid."),
+     "Relinquishment Act land (Tex. Nat. Res. Code §§52.171-.190). Run the GLO checklist: approved form, certified copy filed, "
+     "assignments within 90 days, State's half paid. The examiner confirms."),
     ("CORRECTION", "info",
      re.compile(r"\bcorrect(?:ion|ive)\b|re-?recorded", re.I),
      "Correction or re-recorded instrument. Tie it to the instrument it corrects."),
@@ -108,9 +114,35 @@ RULES: list[tuple[str, str, re.Pattern[str], str]] = [
      "Top lease or a lease subject to an existing lease. Determine when the base lease ended before relying on it."),
     ("DEPTH_LIMITED", "info",
      re.compile(r"\b(?:depths?|feet|ft\.?)\s+(?:below|above)|base\s+of\s+the\s+\w+|stratigraphic\s+equivalent|"
-                r"from\s+the\s+surface\s+(?:of\s+the\s+earth\s+)?(?:down\s+)?to", re.I),
+                r"from\s+the\s+surface\s+(?:of\s+the\s+earth\s+)?(?:down\s+)?to|"
+                r"\b(?:below|above|beneath|deeper\s+than|shallower\s+than)\s+(?:a\s+(?:depth|point)\s+of\s+)?\d[\d,]*\s*(?:feet|ft\b\.?|')|"
+                r"\bformations?\b|\b(?:zone|horizon|interval)\s+only\b", re.I),
      "Depth limitation. Carry it as its own depth interval in the ledger."),
 ]
+# A match that sits in a recital of something else isn't the instrument's own term: the lease's
+# primary term or a recited lease ("subject to that certain lease ... for a term of five years"),
+# the trustee named in a deed of trust, or a specific tract that happens to name its county.
+_RECITAL = {
+    "TERM_INTEREST": re.compile(r"\b(?:lease|primary\s+term)\b[^;]{0,150}$", re.I),
+    "FIDUCIARY_CAPACITY": re.compile(r"\b(?:deed\s+of\s+trust|mortgage|lien)\b[^;]{0,60}$", re.I),
+}
+_SPECIFIC_TRACT = re.compile(r"\b(?:section|sec\.|survey|abstract|block|lot|tract)\b|\b(?:[NS][EW]?|[EW])\s*/\s*[24]\b", re.I)
+_TOP_LEASE_RECITAL = re.compile(r"subject\s+to\s+(?:that\s+certain|the|an?|any)\s+(?:[\w,&-]+\s+){0,6}?lease\b", re.I)
+_LEASE_TYPE = re.compile(r"\blease\b", re.I)
+_NOT_A_LEASE = re.compile(r"release|assign|ratif|memorand|amend|extension", re.I)
+
+
+def _hit(code: str, pattern: re.Pattern[str], text: str) -> bool:
+    for m in pattern.finditer(text):
+        recital = _RECITAL.get(code)
+        if recital and recital.search(text[max(0, m.start() - 200):m.start()]):
+            continue
+        if code == "BLANKET_CONVEYANCE" and not m.group(0).lower().startswith("whether") and _SPECIFIC_TRACT.search(m.group(0)):
+            continue
+        return True
+    return False
+
+
 LIEN_TYPES = re.compile(r"deed\s+of\s+trust|mortgage|vendor'?s\s+lien|judgment|abstract\s+of\s+judgment|"
                         r"tax\s+lien|lis\s+pendens|mechanic|ucc|financing\s+statement", re.I)
 
@@ -149,32 +181,45 @@ def check_row(row: dict[str, str], images_dir: Path | None = None) -> list[RowFl
 
     # Deeds write "one-half (1/2) of the one-eighth (1/8)": match with and without the numerals.
     plain = re.sub(r"\s*\([^)]*\d[^)]*\)", "", text)
+    is_lease = bool(_LEASE_TYPE.search(itype)) and not _NOT_A_LEASE.search(itype)
     for code, sev, pattern, message in RULES:
-        if pattern.search(text) or pattern.search(plain) or (
-            code == "FIDUCIARY_CAPACITY" and pattern.search(row.get("grantor") or "")
-        ):
+        if code == "TERM_INTEREST" and is_lease:
+            continue  # a lease's primary term and habendum aren't a term interest
+        hit = _hit(code, pattern, text) or _hit(code, pattern, plain)
+        if code == "FIDUCIARY_CAPACITY":
+            hit = hit or bool(pattern.search(row.get("grantor") or ""))
+        elif code in ("TOP_LEASE", "CORRECTION"):
+            hit = hit or bool(pattern.search(itype))
+        if code == "TOP_LEASE" and is_lease:
+            hit = hit or bool(_TOP_LEASE_RECITAL.search(text))  # a new lease made subject to a prior one
+        if hit:
             add(code, sev, message)
 
     if re.search(r"quit\s*claim", itype + " " + text, re.I):
-        add("QUITCLAIM", "info", "Quitclaim: no warranty, so Duhig doesn't apply, and the grantee generally can't be a bona fide purchaser.")
-    if LIEN_TYPES.search(itype) and not re.match(r"\s*(?:partial\s+)?release", itype, re.I):
+        add("QUITCLAIM", "info", "Quitclaim: no warranty, so Duhig doesn't apply."
+            + (" In Texas the grantee generally can't claim bona fide purchaser status." if state == "TX" else ""))
+    if LIEN_TYPES.search(itype) and not re.search(r"release|satisf|discharg|cancel|reconvey|withdraw", itype, re.I):
         add("LIEN_OR_LITIGATION", "review", "Lien, judgment or lis pendens. Search for the release or the outcome.")
     if (row.get("acknowledged") or "").strip().upper() in ("N", "NO"):
         add("UNACKNOWLEDGED", "review",
-            "No acknowledgment. It may not give constructive notice (TX: cured by limitations after 2 years under CPRC §16.033; NM: not 'of record' under §14-8-4).")
+            "No acknowledgment. It may not give constructive notice (TX: may be cured under CPRC §16.033(a)(8) and (c) once of record "
+            "2 years, the examiner confirms; NM: not 'of record' under §14-8-4).")
     if state == "NM" and (row.get("spouse_joined") or "").strip().upper() in ("N", "NO"):
-        add("SPOUSE_NOT_JOINED", "stop", "New Mexico: a conveyance of community real property without both spouses is void (NMSA 40-3-13).")
+        add("SPOUSE_NOT_JOINED", "stop", "New Mexico: if this is community real property, a conveyance without both spouses is void "
+            "(NMSA 40-3-13), unless a recorded power of attorney (§47-1-7) or the spouse's written ratification covers it.")
 
     if re.search(r"heirship", itype, re.I):
         if state == "TX" and filed:
             prima = _plus_years(filed, 5)
             status = "now prima facie evidence" if prima <= date.today() else f"prima facie evidence from {prima.isoformat()}"
-            add("AFFIDAVIT_OF_HEIRSHIP", "info", f"Texas affidavit of heirship: {status} (Est. Code §203.001). Record it in every county with minerals.")
+            add("AFFIDAVIT_OF_HEIRSHIP", "info", f"Texas affidavit of heirship: {status} (Est. Code §203.001); it's evidence, not a cure. "
+                "Record it in every county with minerals and in the decedent's domicile county.")
         elif state == "NM":
             add("AFFIDAVIT_OF_HEIRSHIP", "review", "New Mexico examiners generally want probate. Treat the affidavit as supporting evidence only.")
     if re.search(r"small\s+estate", itype, re.I):
         add("SMALL_ESTATE_AFFIDAVIT", "stop",
-            "A small estate affidavit doesn't pass non-homestead minerals (TX) or real property (NM). Get probate or a heirship judgment.")
+            "A small estate affidavit passes only homestead real property in Texas (Est. Code §205.006) and personal property or a residence "
+            "in New Mexico (§§45-3-1201, 45-3-1205), not these minerals. Get probate or a heirship judgment.")
     if re.search(r"\blease\b", itype, re.I) and not re.search(r"release|assign|ratif|memorand", itype, re.I):
         if not (row.get("lease_royalty") or "").strip():
             add("LEASE_ROYALTY_MISSING", "review", "Lease with no royalty abstracted.")

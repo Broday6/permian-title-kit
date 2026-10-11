@@ -22,6 +22,7 @@ import re
 from dataclasses import dataclass, field
 
 from .counties import COUNTIES
+from .fracs import FractionError, parse_fraction, to_decimal
 
 # Canonical survey codes: (pattern, code, name). Order matters: longer codes first.
 SURVEYS: list[tuple[re.Pattern[str], str, str]] = [
@@ -43,22 +44,27 @@ SURVEYS: list[tuple[re.Pattern[str], str, str]] = [
 ]
 
 _SECTION = re.compile(
-    r"\bsec(?:tion|t)?s?\.?\s*(?:nos?\.?\s*)?(\d+[A-Z]?(?:\s*1/2|½)?(?:\s*(?:,|and|&)\s*\d+[A-Z]?(?![\d/]))*)",
+    r"\bsec(?:tion|t)?s?\.?\s*(?:nos?\.?\s*)?(\d+[A-Z]?(?:\s*1/2|½)?(?:\s*(?:,\s*(?:and|&)|,|and|&)\s*\d+[A-Z]?(?![\d/]))*)",
     re.I,
 )
 _SURVEY_NO = re.compile(r"\bsurvey\s+(?:no\.?\s*)?(\d+[A-Z]?)\b", re.I)
 _BLOCK = re.compile(r"\b(?:block|blk)\.?\s*(?:no\.?\s*)?(?!(?:of|in|no|on|or|at)\b)([A-Z]{0,2}-?\d+(?:-[A-Z0-9]+)?|[A-Z]{1,2})\b", re.I)
 _TOWNSHIP = re.compile(r"\b(?:t(?:wp|sp|ownship)?)\.?\s*-?\s*(\d+)\s*-?\s*(n(?:orth)?|s(?:outh)?)\b", re.I)
-_ABSTRACT_WORD = re.compile(r"\b(?:abstract|abst|abs)\.?\s*(?:no\.?\s*)?-?\s*(\d+[A-Z]?)\b", re.I)
+# "T-7" or "Tsp. 7" with no North/South: the township number alone, reported as an issue
+_TOWNSHIP_BARE = re.compile(r"\b(?:T(?:wp|sp|ownship)?\.?\s*-\s*|T(?:wp|sp|ownship)\.?\s+)(\d+)\b(?!\s*-?\s*(?:n|s)(?:orth|outh)?\b)", re.I)
+_ABSTRACT_WORD = re.compile(r"\b(?:abstract|abst|abs)\.?\s*(?:no\.?\s*|#\s*)?-?\s*(\d+[A-Z]?)\b", re.I)
 _ABSTRACT_A = re.compile(r"\bA-\s?(\d+[A-Z]?)\b")  # case-sensitive: "a 160 acre tract" must not match
-_COUNTY = re.compile(r"\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s+County\b")
-_ACRES = re.compile(r"(\d[\d,]*(?:\.\d+)?)[\s-]*(?:gross\s+)?acres?\b", re.I)
-_SAVE = re.compile(r"\b(?:save|less)\s*(?:and|&)\s*except(?:ing)?\b[:,]?\s*(.+?)(?=;|\bsave\s*(?:and|&)\s*except|$)", re.I | re.S)
+_COUNTY = re.compile(r"\b([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)\s+(?:County|Co\.)(?!\s+School)|\bCounty\s+of\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)")
+_ACRES = re.compile(r"(\d+\s*/\s*\d+|\d[\d,]*(?:\.\d+)?(?:\s+\d+/\d+)?)[\s-]*(?:gross\s+)?(?:acres?\b|ac\.(?!\w)|ac\b)", re.I)
+_SAVE = re.compile(r"(?:\b(?:save|less)\s*(?:and|&)\s*except(?:ing)?\b|(?<!more or )\bless\b(?=\s+(?:\d|a\b|an\b|the\b|that\b)))[:,]?\s*(.+?)(?=;|\bsave\s*(?:and|&)\s*except|$)", re.I | re.S)
 _ALIQUOT = re.compile(
-    r"\b(NE|NW|SE|SW|N|S|E|W)\s*(?:/\s*([24])|1/([24])|([½¼]))"
-    r"|\b(north|south|east|west|northeast|northwest|southeast|southwest)\s+one[-\s](half|quarter|fourth)\b",
+    r"\b(NE|NW|SE|SW|N|S|E|W)\.?\s*(?:/\s*([24])|1/([24])|([½¼]))"
+    r"|\b(north|south|east|west|northeast|northwest|southeast|southwest)\s+(?:one[-\s])?(half|quarter|fourth)\b"
+    r"|\b(NE|NW|SE|SW|N|S|E|W)([24])(?=\s+of\b)",
     re.I,
 )
+_OCR_FIXES = [(re.compile(r"\bSect[l1|]on", re.I), "Section"), (re.compile(r"\bB[1l|]ock\b", re.I), "Block"),
+              (re.compile(r"\bSurvey\s+(?=[A-Z][a-z]+\s+County\b)"), "Survey, ")]
 _WORD_DIR = {"north": "N", "south": "S", "east": "E", "west": "W",
              "northeast": "NE", "northwest": "NW", "southeast": "SE", "southwest": "SW"}
 
@@ -110,36 +116,69 @@ def _first(pattern: re.Pattern[str], text: str) -> str | None:
     return next((g for g in m.groups() if g), None) if m else None
 
 
+def _pick_county(clean: str) -> tuple[str | None, list[str]]:
+    """The land's county: the Permian county named nearest after the first section or survey mention.
+
+    A recital ("recorded in the Deed Records of Reeves County ... covering Section 5 ... Ward County")
+    can name another county first; a county school land grant names a different county too.
+    """
+    found = []
+    for m in _COUNTY.finditer(clean):
+        name = (m.group(1) or m.group(2)).title()
+        words = name.split()
+        if name.upper() not in COUNTIES and len(words) > 1 and words[-1].upper() in COUNTIES:
+            name = words[-1]  # "Survey Midland County" -> Midland
+        found.append((m.start(), name))
+    if not found:
+        return None, []
+    names = list(dict.fromkeys(n for _, n in found))
+    anchor = _SECTION.search(clean) or re.search(r"(?:survey|league|labor)", clean, re.I)
+    known = [(pos, n) for pos, n in found if n.upper() in COUNTIES] or found
+    after = [(pos, n) for pos, n in known if anchor and pos >= anchor.start()]
+    return (after[0][1] if after else known[0][1]), names
+
+
 def parse(text: str, county: str | None = None) -> TxDescription:
     """Parse one Texas description. ``county`` fills in when the text omits it."""
     d = TxDescription(text=text)
     clean = re.sub(r"\s+", " ", text)
+    for pattern, repl in _OCR_FIXES:
+        clean = pattern.sub(repl, clean)
 
-    found = _COUNTY.search(clean)
-    if found and found.group(1).upper() in COUNTIES:
-        d.county = found.group(1).title()
-    elif found:
-        d.county = found.group(1).title()
+    picked, named = _pick_county(clean)
+    if picked and picked.upper() in COUNTIES:
+        d.county = picked
+    elif picked:
+        d.county = picked
         d.issues.append(f"county {d.county!r} isn't in the Permian county table")
     elif county:
         d.county = county.title()
+    if len(named) > 1:
+        d.issues.append(f"names more than one county ({', '.join(named)}); used {d.county}: confirm")
 
-    d.abstract = _first(_ABSTRACT_WORD, clean) or _first(_ABSTRACT_A, clean)
+    word = _ABSTRACT_WORD.search(clean)
+    lettered = [m for m in _ABSTRACT_A.finditer(clean)
+                if not re.search(r"\b(?:block|blk)\.?\s*$", clean[:m.start()], re.I)]  # "Block A-38" is a PSL block
+    d.abstract = next((g for g in word.groups() if g), None) if word else (lettered[0].group(1) if lettered else None)
+    abstracts = {m.group(1) for m in lettered} | {m.group(1) for m in _ABSTRACT_WORD.finditer(clean)}
 
-    for pattern, code, name in SURVEYS:
-        if pattern.search(clean):
-            d.survey_code, d.survey_name = code, name
-            break
-    if not d.survey_code:
-        named = re.search(r"([A-Z][\w.&' -]{1,60}?)\s+(?:Survey|Sur\.)", clean)
-        if named:
-            d.survey_name = named.group(1).strip(" ,")
+    hits = [(m.start(), code, name) for pattern, code, name in SURVEYS for m in [pattern.search(clean)] if m]
+    if hits:
+        _, d.survey_code, d.survey_name = min(hits)  # the survey named first is the one being described
+    else:
+        named_survey = re.search(r"([A-Z][\w.&' -]{1,60}?)\s+(?:Survey|Sur\.)", clean)
+        if named_survey:
+            d.survey_name = named_survey.group(1).strip(" ,")
 
-    sec = _SECTION.search(clean)
-    if sec:
-        d.sections = [x.replace(" ", "").replace("1/2", "½")
-                      for x in re.split(r"\s*(?:,|and|&)\s*", sec.group(1)) if x.strip()]
-        d.section = d.sections[0]
+    # A metes-and-bounds call ("BEGINNING at the NW corner of Section 39 ...") describes neighbours, not the tract.
+    calls = re.search(r"\b(?:BEGINNING|COMMENCING)\b", clean, re.I)
+    described = clean[:calls.start()] if calls else clean
+    sections: list[str] = []
+    for sec in _SECTION.finditer(described):
+        sections += [x.replace(" ", "").replace("1/2", "½")
+                     for x in re.split(r"\s*(?:,|and|&)\s*", sec.group(1)) if x.strip()]
+    d.sections = list(dict.fromkeys(sections))
+    d.section = d.sections[0] if d.sections else None
     if not d.section:
         d.survey_no = _first(_SURVEY_NO, clean)
     blk = _BLOCK.search(clean)
@@ -147,19 +186,37 @@ def parse(text: str, county: str | None = None) -> TxDescription:
     twp = _TOWNSHIP.search(clean)
     if twp:
         d.township = f"{twp.group(1)}{twp.group(2)[0].upper()}"
+    else:
+        bare = _TOWNSHIP_BARE.search(clean)
+        if bare:
+            d.township = bare.group(1)
+            d.issues.append(f"township T-{bare.group(1)} has no North/South: confirm it against the T&P block map")
+    if len(abstracts) > 1 or len({code for _, code, _ in hits}) > 1 and len(_SECTION.findall(clean)) > 1:
+        d.issues.append("names more than one survey or abstract: keyed to the first; split the description per survey")
 
     # Aliquots are only the part before "Section"/"of"; save-and-except text is excluded.
-    head = _SAVE.split(clean)[0] if _SAVE.search(clean) else clean
-    for m in _ALIQUOT.finditer(head):
+    head = _SAVE.split(described)[0] if _SAVE.search(described) else described
+    # "the Northeast One-Quarter (NE/4)": the numerals in parentheses repeat the words
+    scan = re.sub(r"\(\s*(?:(?:NE|NW|SE|SW|N|S|E|W)\s*(?:/\s*[24]|1/[24]|[24½¼])?[\s,]*)+\)", " ", head, flags=re.I)
+    for m in _ALIQUOT.finditer(scan):
         if m.group(1):
             denom = m.group(2) or m.group(3) or ("2" if m.group(4) == "½" else "4")
-            d.aliquots.append(f"{m.group(1).upper()}{denom}")
-        else:
+            label = f"{m.group(1).upper()}{denom}"
+        elif m.group(5):
             denom = "2" if m.group(6).lower() == "half" else "4"
-            d.aliquots.append(f"{_WORD_DIR[m.group(5).lower()]}{denom}")
+            label = f"{_WORD_DIR[m.group(5).lower()]}{denom}"
+        else:
+            label = f"{m.group(7).upper()}{m.group(8)}"
+        d.aliquots.append(label)  # repeats are meaningful: NW/4 NW/4 is the NW/4 of the NW/4
 
     acres = _ACRES.search(head)
-    d.acres = acres.group(1).replace(",", "") if acres else None
+    if acres:
+        raw = acres.group(1).replace(",", "")
+        try:
+            value = parse_fraction(raw)
+            d.acres = str(value.numerator) if value.denominator == 1 else to_decimal(value, 4).rstrip("0").rstrip(".")
+        except FractionError:
+            d.acres = raw
     d.save_and_except = [m.group(1).strip(" .,") for m in _SAVE.finditer(clean)]
 
     if not d.county:

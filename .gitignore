@@ -3,3 +3,14 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+
+# Desk data: real owner and deal records stay on the computer that runs the desk, never in git
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+outbox/
+crm-files/
+/deals/
+land-crm-data-export*.json
+.venv/

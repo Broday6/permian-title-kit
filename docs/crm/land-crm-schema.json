@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Landowner CRM — record schemas",
+  "description": "Field shapes for every record type in the CRM. Note: numeric-looking fields (value, asking, acres, pct) are stored as STRINGS as entered; the UI parses them when needed. Dates are local 'YYYY-MM-DD' strings.",
+  "definitions": {
+    "Customer": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {"type": "string", "description": "Stable unique id. One backend row/document per customer, keyed by this."},
+        "name": {"type": "string", "description": "Owner / interest holder. The only required field."},
+        "phone": {"type": "string"},
+        "email": {"type": "string", "description": "Used as the recipient for follow-up emails; often empty for owners sourced from courthouse/pooling data."},
+        "mailing": {"type": "string", "description": "Mailing address."},
+        "apn": {"type": "string", "description": "Parcel / APN number."},
+        "acres": {"type": "string"},
+        "county": {"type": "string"},
+        "location": {"type": "string", "description": "Land location or legal description."},
+        "value": {"type": "string", "description": "Estimated value in dollars, digits only (e.g. \"240000\")."},
+        "asking": {"type": "string", "description": "Asking price in dollars, digits only."},
+        "forsale": {"type": "string", "enum": ["Yes", "No", "Maybe"]},
+        "ownership": {"type": "string", "enum": ["Owned outright", "Mortgaged", "Inherited", "Multiple owners", "Unknown"]},
+        "status": {"type": "string", "enum": ["New", "Contacted", "Interested", "Negotiating", "Under Contract", "Closed", "Dead"], "description": "Lead pipeline stage."},
+        "tags": {"type": "array", "items": {"type": "string"}, "description": "Free-form labels. Buy signals import as '🔥 <signal>'."},
+        "notes": {"type": "string"},
+        "created": {"type": "string", "description": "YYYY-MM-DD."},
+        "followUp": {"type": "string", "description": "YYYY-MM-DD; next follow-up/callback date. Empty = none. Drives the Call Queue."},
+        "interests": {"type": "array", "items": {"$ref": "#/definitions/Interest"}, "description": "Mineral/working-interest holdings (an owner can hold several)."},
+        "calls": {"type": "array", "items": {"$ref": "#/definitions/Call"}},
+        "emails": {"type": "array", "items": {"$ref": "#/definitions/Email"}, "description": "Sent/logged follow-up emails."},
+        "documents": {"type": "array", "items": {"$ref": "#/definitions/Document"}, "description": "Pointers to attached files (the files themselves live in object/blob storage)."},
+        "valuable": {"type": "boolean", "description": "Marked valuable -> an email follow-up sequence is active."},
+        "seqStart": {"type": "string", "description": "YYYY-MM-DD the sequence started."},
+        "seqStep": {"type": "integer", "description": "Index of the next email step to send."},
+        "seqDone": {"type": "boolean", "description": "Sequence completed/stopped."}
+      }
+    },
+    "Interest": {
+      "type": "object",
+      "description": "One mineral/royalty/working-interest holding. Maps 1:1 to a row of source data (Case ID / Well / Interest Type / % Ownership / Buy Signal / Source PDF / exhibit).",
+      "properties": {
+        "caseId": {"type": "string"},
+        "well": {"type": "string", "description": "Unit / well name."},
+        "type": {"type": "string", "description": "Interest type (Royalty, ORRI, Working Interest, ...)."},
+        "pct": {"type": "string", "description": "% ownership, as entered (e.g. \"1.25%\")."},
+        "status": {"type": "string", "description": "Case/well status (Producing, Permitted, ...)."},
+        "buySignal": {"type": "string", "description": "e.g. High / Medium / Low."},
+        "sourcePDF": {"type": "string"},
+        "foundIn": {"type": "string", "description": "Exhibit the owner was found in."}
+      }
+    },
+    "Call": {
+      "type": "object",
+      "properties": {
+        "date": {"type": "string", "description": "YYYY-MM-DD."},
+        "outcome": {"type": "string", "enum": ["Reached", "Voicemail", "No Answer", "Callback Requested", "Not Interested", "Wrong Number"]},
+        "success": {"type": "string", "enum": ["Yes", "No"]},
+        "by": {"type": "string", "description": "Who made the call."},
+        "notes": {"type": "string"},
+        "follow": {"type": "string", "description": "YYYY-MM-DD follow-up set by this call (mirrors customer.followUp)."}
+      }
+    },
+    "Email": {
+      "type": "object",
+      "description": "One sent/logged follow-up email.",
+      "properties": {
+        "step": {"type": "integer", "description": "1-based step number in the cadence."},
+        "date": {"type": "string", "description": "YYYY-MM-DD."},
+        "to": {"type": "string"},
+        "subject": {"type": "string"},
+        "body": {"type": "string"},
+        "status": {"type": "string", "enum": ["sent", "skipped"]},
+        "via": {"type": "string", "enum": ["auto", "manual"], "description": "auto = sent via webhook; manual = drafted/copied."}
+      }
+    },
+    "Document": {
+      "type": "object",
+      "description": "Pointer to an attached file. The bytes live in blob/object storage; this record just references them.",
+      "properties": {
+        "id": {"type": "string", "description": "Storage key/asset id. In the shipped app the file serves at '/_blob/' + id."},
+        "name": {"type": "string", "description": "Original filename."},
+        "type": {"type": "string", "description": "MIME type (application/pdf, image/png, ...)."},
+        "size": {"type": "integer", "description": "Bytes."},
+        "date": {"type": "string", "description": "YYYY-MM-DD uploaded."}
+      }
+    },
+    "Settings": {
+      "type": "object",
+      "description": "App-wide settings. In cloud mode stored as the single document 'meta/app'.",
+      "properties": {
+        "lastBy": {"type": "string"},
+        "knownTags": {"type": "array", "items": {"type": "string"}, "description": "Tags created but not yet on any customer."},
+        "tagColors": {"type": "object", "description": "Map of tag name -> color index 0..8.", "additionalProperties": {"type": "integer"}},
+        "email": {
+          "type": "object",
+          "properties": {
+            "from": {"type": "string"},
+            "sig": {"type": "string"},
+            "webhook": {"type": "string", "description": "If set, each due email is POSTed here as JSON {to, from, subject, body, name, customerId, step}."},
+            "steps": {
+              "type": "array",
+              "description": "The cadence. Merge fields in subject/body: {{name}} {{firstName}} {{county}} {{well}} {{from}} {{sig}}.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "day": {"type": "integer", "description": "Days after the customer is marked valuable (0 = immediately)."},
+                  "subject": {"type": "string"},
+                  "body": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

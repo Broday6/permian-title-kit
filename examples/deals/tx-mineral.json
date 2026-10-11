@@ -1,0 +1,40 @@
+{
+  "_note": "FICTIONAL EXAMPLE for testing the kit. Not real ownership, people, wells or companies. Built on examples/takeoff.csv: Baker Example sells all her minerals (title supports it); Carter Example sells 1/4 but title shows 1/6 (a shortfall).",
+  "deal_id": "D-2026-001",
+  "name": "Baker and Carter Example mineral purchase, Section 12",
+  "buyer": "Example Minerals Fund LP",
+  "buyer_address": "100 Example Plaza, Midland, Texas 79701 (FICTIONAL)",
+  "effective_date": "2026-09-01",
+  "signed_date": "2026-09-15",
+  "price": "432000.00",
+  "acquisition_contact": "Example Acquisitions Rep",
+  "project": "Example Unit 12-13",
+  "sellers": [
+    {"id": "S1", "name": "Baker Example", "marital_status": "married", "spouse": "Dana Example",
+     "email": "baker.example@example.com", "address": "1 Example Road, Pecos, Texas 79772 (FICTIONAL)"},
+    {"id": "S2", "name": "Carter Example", "marital_status": "single",
+     "email": "carter.example@example.com", "address": "2 Example Road, Pecos, Texas 79772 (FICTIONAL)"}
+  ],
+  "assets": [
+    {"id": "A1", "kind": "mineral", "state": "TX", "county": "Reeves", "tract": "SEC12",
+     "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, A-123, Reeves County, Texas",
+     "gross_acres": "640", "interest": "1/2", "nma": "320", "price": "288000.00", "seller": "S1",
+     "title": {"takeoff": "../takeoff.csv", "runsheet": "../runsheet.csv"},
+     "wells": [{"api": "42-389-00001", "name": "Example Unit 12-13 1H", "operator": "Example Operating LLC",
+                "payor": "Example Operating LLC", "project": "../project.json"}]},
+    {"id": "A2", "kind": "mineral", "state": "TX", "county": "Reeves", "tract": "SEC12",
+     "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, A-123, Reeves County, Texas",
+     "gross_acres": "640", "interest": "1/4", "nma": "160", "price": "144000.00", "seller": "S2",
+     "title": {"takeoff": "../takeoff.csv"},
+     "wells": [{"api": "42-389-00001", "name": "Example Unit 12-13 1H", "operator": "Example Operating LLC",
+                "payor": "Example Operating LLC", "project": "../project.json"}]}
+  ],
+  "contacts": [
+    {"name": "Example Operating LLC", "role": "operator", "email": "owner.relations@example.com",
+     "address": "500 Example Tower, Midland, Texas 79701 (FICTIONAL)"},
+    {"name": "Adams Heir Three", "role": "third_party", "address": "3 Example Lane, Odessa, Texas 79761 (FICTIONAL)"}
+  ],
+  "documents": [
+    {"type": "purchase_agreement", "file": "psa-D-2026-001.pdf", "received": "2026-09-15"}
+  ]
+}

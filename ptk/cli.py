@@ -215,8 +215,33 @@ def _has_credentials() -> bool:
 
 def cmd_smoke(a: argparse.Namespace) -> int:
     from .smoke import run_smoke
+    if a.answer:
+        from .extract import Page, check_answer, ocr_lines_for
+        from .sample import render_sample_page
+        from .smoke import grade_answer
+        work = Path(a.work_dir)
+        page = work / "sample-deed.png"
+        if not page.exists():
+            render_sample_page(page)
+        ocr_dir = work / "ocr" if (work / "ocr").exists() else None
+        result = check_answer(json.loads(Path(a.answer).read_text(encoding="utf-8")),
+                              [Page(page, ocr_lines_for(page, ocr_dir))], "SAMPLE-REEVES-DR-0088-0077")
+        if "error" in result:
+            print(f"error: {result['error']}")
+            return 1
+        ok, report = grade_answer(result["extraction"], result["schema_errors"], result["checks"])
+        print("\n".join(report))
+        print("\nSmoke test (chat answer) passed." if ok else "\nSmoke test (chat answer) FAILED.")
+        return 0 if ok else 1
+    if a.render_only:
+        from .sample import render_sample_page
+        print(f"Wrote {render_sample_page(Path(a.work_dir) / 'sample-deed.png')}. Abstract it in a chat session, then: "
+              f"ptk smoke-test --answer answer.json --work-dir {a.work_dir}")
+        return 0
     if not _has_credentials():
-        print("No Claude API credentials found. Set ANTHROPIC_API_KEY (or run `ant auth login`), then rerun.")
+        print("No Claude API credentials found. Set ANTHROPIC_API_KEY (or run `ant auth login`), then rerun.\n"
+              "Or test without a key: ptk smoke-test --render-only, abstract the page in a Claude Code chat, "
+              "then ptk smoke-test --answer answer.json")
         return 2
     ok, report = run_smoke(_client(), Path(a.work_dir), a.model, a.effort)
     print("\n".join(report))
@@ -242,6 +267,39 @@ def cmd_extract(a: argparse.Namespace) -> int:
     if result.get("checks"):
         print(f"{len(result['checks'])} check(s) failed: review before use", file=sys.stderr)
     return 0
+
+
+def cmd_abstract_prompt(a: argparse.Namespace) -> int:
+    from .extract import Page, chat_prompt, ocr_lines_for
+    ocr_dir = Path(a.ocr_dir) if a.ocr_dir else None
+    pages = [Page(Path(p).resolve(), ocr_lines_for(Path(p), ocr_dir)) for p in a.pages]
+    text = chat_prompt(pages, doc_id=a.doc_id, county=a.county, state=a.state.upper())
+    if a.out:
+        Path(a.out).write_text(text, encoding="utf-8")
+        print(f"Wrote {a.out}")
+    else:
+        print(text)
+    return 0
+
+
+def cmd_abstract_check(a: argparse.Namespace) -> int:
+    from .extract import Page, check_answer, ocr_lines_for
+    ocr_dir = Path(a.ocr_dir) if a.ocr_dir else None
+    answer = json.loads(Path(a.answer).read_text(encoding="utf-8"))
+    pages = [Page(Path(p), ocr_lines_for(Path(p), ocr_dir)) for p in a.pages]
+    doc_id = a.doc_id or (answer.get("doc_id") if isinstance(answer, dict) else None) or Path(a.answer).stem
+    result = check_answer(answer, pages, doc_id)
+    if a.out:
+        Path(a.out).write_text(json.dumps(result, indent=2), encoding="utf-8")
+    if "error" in result:
+        print(f"error: {result['error']}")
+        return 1
+    problems = result["schema_errors"] + [f"{c['code']} at {c['path']}: {c['detail']}" for c in result["checks"]]
+    for p in problems:
+        print(f"  {p}")
+    print(f"{doc_id}: {len(result['schema_errors'])} schema error(s), {len(result['checks'])} check problem(s)."
+          + (" Clean." if not problems else " Fix them and rerun."))
+    return 1 if result["schema_errors"] else 0
 
 
 def _load_jobs(path: str) -> list[dict]:
@@ -375,10 +433,29 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--out")
     s.set_defaults(fn=cmd_extract)
 
+    s = sub.add_parser("abstract-prompt", help="the abstracting instructions + OCR lines, to abstract an instrument in a chat session (no API key)")
+    s.add_argument("pages", nargs="+")
+    s.add_argument("--doc-id", required=True)
+    s.add_argument("--county", required=True)
+    s.add_argument("--state", required=True, choices=["TX", "NM", "tx", "nm"])
+    s.add_argument("--ocr-dir")
+    s.add_argument("--out")
+    s.set_defaults(fn=cmd_abstract_prompt)
+
+    s = sub.add_parser("abstract-check", help="run the extraction checks on an abstract written in chat or by hand (exit 1 on schema errors)")
+    s.add_argument("answer", help="the abstract JSON")
+    s.add_argument("--pages", nargs="+", required=True)
+    s.add_argument("--ocr-dir")
+    s.add_argument("--doc-id")
+    s.add_argument("--out", help="write the checked result (same shape as ptk extract)")
+    s.set_defaults(fn=cmd_abstract_check)
+
     s = sub.add_parser("smoke-test", help="one real API call on the fictional sample deed, checked against known facts")
     s.add_argument("--model", default="claude-opus-5-5")
     s.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
     s.add_argument("--work-dir", default="ptk-smoke", help="where the sample page, OCR and answer go")
+    s.add_argument("--render-only", action="store_true", help="just write the sample page, to abstract it in a chat session")
+    s.add_argument("--answer", help="grade an abstract of the sample page written in a chat session (no API call)")
     s.set_defaults(fn=cmd_smoke)
 
     s = sub.add_parser("batch", help="submit or collect a Message Batch of extractions (half price)")
@@ -388,9 +465,17 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--out")
     s.set_defaults(fn=cmd_batch)
 
+    from .deal.cli import add_audit_parser, add_crm_parser, add_desk_parser
+    from .deal.cli import add_parser as add_deal_parser
+    from .deal.cli import run as run_deal
+    add_deal_parser(sub)
+    add_crm_parser(sub)
+    add_audit_parser(sub)
+    add_desk_parser(sub)
+
     a = ap.parse_args(argv)
     try:
-        return a.fn(a)
+        return run_deal(a) if a.cmd in ("deal", "crm", "audit", "desk") else a.fn(a)
     except (FractionError, ValueError, KeyError, RuntimeError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 1

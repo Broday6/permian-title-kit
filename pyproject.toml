@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "permian-title-kit"
-version = "0.1.0"
+version = "0.2.0"
 description = "Runsheet checks, exact-fraction ownership, legal-description parsing and AI first-pass abstracting for Permian Basin mineral title"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -21,10 +21,11 @@ test = ["pytest>=8", "openpyxl>=3.1", "pillow>=10", "jsonschema>=4", "pyshp>=2.3
 ptk = "ptk.cli:main"
 
 [tool.setuptools]
-packages = ["ptk"]
+packages = ["ptk", "ptk.deal"]
 
 [tool.setuptools.package-data]
 ptk = ["schema/*.json"]
+"ptk.deal" = ["rules.json", "templates/*.md", "web/*.html"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

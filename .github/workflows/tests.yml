@@ -25,3 +25,9 @@ jobs:
         run: python -m pytest -q
       - name: Example deck adds to exactly 1
         run: ptk deck examples/project.json
+      - name: Example deal runs intake and verification
+        # verify exits 1 on purpose: the fictional deal has a seller shortfall.
+        run: |
+          ptk deal intake examples/deals/tx-mineral.json --db "$RUNNER_TEMP/deals.db" --by CI
+          ptk deal verify D-2026-001 --db "$RUNNER_TEMP/deals.db" --by CI || test $? -eq 1
+          ptk deal verify-log --db "$RUNNER_TEMP/deals.db"

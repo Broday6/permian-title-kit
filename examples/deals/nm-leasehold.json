@@ -1,0 +1,35 @@
+{
+  "_note": "FICTIONAL EXAMPLE for testing the kit. A New Mexico lease buy plus a horizontal well that crosses a fee lease and a federal lease. Title supports the lease; the well's NRI comes up short of what the seller represented, and the seller assigned part of the federal lease after the effective date.",
+  "deal_id": "D-2026-002",
+  "name": "Example Permian Energy leases and Federal 15-22 1H wellbore",
+  "buyer": "Example Minerals Fund LP",
+  "buyer_address": "100 Example Plaza, Midland, Texas 79701 (FICTIONAL)",
+  "effective_date": "2026-08-01",
+  "signed_date": "2026-08-20",
+  "price": "1250000.00",
+  "sellers": [
+    {"id": "S1", "name": "Example Permian Energy LLC", "email": "land@example-permian.example.com",
+     "address": "10 Example Street, Artesia, New Mexico 88210 (FICTIONAL)"}
+  ],
+  "assets": [
+    {"id": "A1", "kind": "leasehold", "state": "NM", "county": "Eddy", "land_status": "fee",
+     "legal_description": "NW/4 of Section 10, T23S, R31E, NMPM", "gross_acres": "160",
+     "lease": {"id": "NM-FEE-10", "lessor": "Example Fee Owner (FICTIONAL)", "date": "2020-05-01", "recording": "Eddy OR Bk 1200 Pg 77"},
+     "wi": "1", "nri": "3/4", "price": "250000.00",
+     "title": {"lease_chain": "lease_chain.csv"}},
+    {"id": "A2", "kind": "wellbore", "state": "NM", "county": "Eddy", "land_status": "federal",
+     "legal_description": "NE/4 of Section 15 and Section 22, T23S, R31E, NMPM (wellbore only)",
+     "wi": "3/4", "nri": "0.60", "price": "1000000.00",
+     "title": {"lease_chain": "lease_chain.csv"},
+     "wells": [{"api": "30-015-00001", "name": "Example Federal 15-22 1H", "operator": "Example Operating LLC",
+                "payor": "Example Purchasing LLC",
+                "participation": {"NM-FEE-15": 5000, "NMNM-000001": 5000}}]}
+  ],
+  "contacts": [
+    {"name": "Example Operating LLC", "role": "operator", "email": "owner.relations@example.com"},
+    {"name": "Example Purchasing LLC", "role": "payor", "email": "revenue@example-purchasing.example.com"}
+  ],
+  "documents": [
+    {"type": "purchase_agreement", "file": "psa-D-2026-002.pdf", "received": "2026-08-20"}
+  ]
+}

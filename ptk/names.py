@@ -53,6 +53,14 @@ _CAPACITY = re.compile(
     re.I,
 )
 _ET = re.compile(r"\bet\s*(ux|vir|al|ux\.?|vir\.?|al\.?)\b\.?", re.I)
+# How a grantor is described ("a widow", "a single man", "Deceased", "dealing herein with her sole and
+# separate property"): not part of the name, but it decides who had to sign, so it's kept as a note.
+_STATUS = re.compile(
+    r",?\s*\b(?:an?\s+)?(widow(?:er)?|single\s+(?:man|woman|person)|unmarried\s+(?:man|woman|person)|"
+    r"married\s+(?:man|woman|person)|feme\s+sole|deceased|husband\s+and\s+wife|a\s+minor|"
+    r"dealing\s+(?:herein\s+)?(?:in|with)\s+(?:his|her|their)\s+(?:sole\s+and\s+)?separate\s+(?:property|estate))\b[^,]*",
+    re.I)
+_PARTICLES = {"DE", "LA", "DEL", "DELA", "VAN", "VON", "DER", "DI", "DA", "DOS", "DU", "LE", "ST", "MAC"}
 
 
 @dataclass
@@ -95,17 +103,22 @@ def parse_name(raw: str) -> ParsedName:
     et = _ET.search(text)
     et_kind = et.group(1).lower().strip(".") if et else ""
     text = _ET.sub(" ", text)
+    statuses = [m.group(1).lower() for m in _STATUS.finditer(text)]
+    text = _STATUS.sub("", text).strip(" ,")
     cap = _CAPACITY.search(text)
     capacity = cap.group(1).lower() if cap else ""
     acting_for = ""
     if cap:
-        after = re.search(r"\bof\s+(?:the\s+)?(.+)$", cap.group(0)[len(cap.group(1)) :].strip(" ,"), re.I)
+        after = re.search(r"\b(?:of|for)\s+(?:the\s+)?(.+)$", cap.group(0)[len(cap.group(1)) :].strip(" ,"), re.I)
         acting_for = after.group(1).strip(" ,.") if after else ""
     text = _CAPACITY.sub("", text).strip(" ,")
 
     if re.search(r"\btrust\b", text, re.I):
         core = re.sub(r"^THE\s+", "", ascii_upper(re.sub(r"[.,]", " ", text)))
-        return ParsedName(raw, "trust", org_core=core, capacity=capacity, et=et_kind)
+        p = ParsedName(raw, "trust", org_core=core, capacity=capacity, et=et_kind)
+        if acting_for:
+            p.notes.append(f"signed for {acting_for}: search that party too")
+        return p
     heirs = re.match(r"^(?:the\s+)?(?:unknown\s+)?heirs(?:\s+at\s+law)?\s+of\s+(.+)$", text, re.I)
     if heirs:
         inner = parse_name(heirs.group(1))
@@ -119,7 +132,7 @@ def parse_name(raw: str) -> ParsedName:
         inner.notes.append("estate: search the decedent's probate in the county of domicile too")
         return inner
     if _ORG_WORDS.search(text):
-        full = ascii_upper(re.sub(r"[,&]", " ", text.replace(".", "")))
+        full = ascii_upper(re.sub(r",", " ", text.replace(".", "")))
         words = full.split()
         if words and words[0] == "THE":
             words = words[1:]
@@ -127,6 +140,8 @@ def parse_name(raw: str) -> ParsedName:
             words.pop()
         p = ParsedName(raw, "organization", org_core=" ".join(words), capacity=capacity, et=et_kind)
         p.notes.append(f"full name as written: {full}")
+        if acting_for:
+            p.notes.append(f"signed for {acting_for}: search that party too")
         return p
 
     # Person. Accept "Smith, John W." or "John W. Smith" (and "Mrs. John W. Smith").
@@ -137,7 +152,12 @@ def parse_name(raw: str) -> ParsedName:
     trailing_suffix = ""
     if len(parts) > 1 and parts[-1].lower() in _SUFFIXES:
         trailing_suffix = parts.pop()
-    if len(parts) > 1:  # "Smith, John W" (index order)
+    words_upper = parts[0].split() if len(parts) == 1 else []
+    index_order = (len(parts) == 1 and raw.strip() == raw.strip().upper() and len(words_upper) > 1
+                   and len(words_upper[0]) > 1 and all(len(w) == 1 for w in words_upper[1:]))  # "SMITH J W"
+    if index_order:
+        surname, tokens = words_upper[0], words_upper[1:]
+    elif len(parts) > 1:  # "Smith, John W" (index order)
         surname = parts[0]
         tokens = " ".join(parts[1:]).split() + ([trailing_suffix] if trailing_suffix else [])
     else:  # "John W Smith" or "John W Smith, Jr"
@@ -146,6 +166,8 @@ def parse_name(raw: str) -> ParsedName:
         if surname.lower() in _SUFFIXES and tokens:
             tokens.append(surname)
             surname = tokens.pop(-2)
+        while len(tokens) > 1 and tokens[-1] in _PARTICLES:  # "Juan de la Cruz" -> DE LA CRUZ
+            surname = f"{tokens.pop()} {surname}"
         if trailing_suffix:
             tokens.append(trailing_suffix)
     suffix = next((x for x in tokens if x.lower() in _SUFFIXES), "")
@@ -153,6 +175,8 @@ def parse_name(raw: str) -> ParsedName:
     p = ParsedName(raw, "person", surname=surname, given=given, suffix=suffix, capacity=capacity, et=et_kind)
     if acting_for:
         p.notes.append(f"signed for {acting_for}: search that party too")
+    for status in statuses:
+        p.notes.append(f"described as {status}: check what it means for who had to sign (spouse, heirs, guardian)")
     if mrs:
         p.notes.append("'Mrs.' with a husband's given name: search the wife's own given name too")
     if suffix:
@@ -227,7 +251,10 @@ def _variants_one(raw: str) -> dict[str, object]:
         core = p.org_core
         full = next((n.split(": ", 1)[1] for n in p.notes if n.startswith("full name as written")), "")
         if full:
-            searches.append(full)
+            # Indexes differ on "&": dropped, kept, or spelled out. Dropped first (the most common).
+            searches.append(" ".join(full.replace("&", " ").split()))
+            if "&" in full:
+                searches += [full, " ".join(full.replace("&", " AND ").split())]
         multiword = len(core.split()) > 1
         if multiword or p.kind == "trust":
             searches.append(core)
@@ -244,6 +271,8 @@ def _variants_one(raw: str) -> dict[str, object]:
         p.notes.append(f"signed as {p.capacity}: confirm authority (letters, trust, recorded power of attorney)")
     if p.et == "ux":
         p.notes.append("et ux: the wife joined; search her name and check community property")
+    elif p.et == "vir":
+        p.notes.append("et vir: the husband joined; search his name and check community property")
     elif p.et == "al":
         p.notes.append("et al: other grantors aren't named here; read the instrument for every party")
     dedup = list(dict.fromkeys(s for s in searches if s))

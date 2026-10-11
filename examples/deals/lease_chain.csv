@@ -1,0 +1,8 @@
+seq,instrument,recorded,lease,depth,kind,assignor,assignees,shares,interest,warranty,orri_value,orri_burdens,royalty,notes
+1,Eddy OR Bk 900 Pg 10,2014-03-01,NM-FEE-15,ALL,root,,Example Original Lessee LLC,,all,,,,1/5,"FICTIONAL EXAMPLE. Fee lease of the NE/4 of Section 15, T23S, R31E; 1/5 royalty"
+2,Eddy OR Bk 1100 Pg 220,2018-06-15,NM-FEE-15,ALL,assign,Example Original Lessee LLC,Example Permian Energy LLC,,all,Y,,,,Assignment of all of the working interest
+3,Eddy OR Bk 1100 Pg 220,2018-06-15,NM-FEE-15,ALL,orri,Example Original Lessee LLC,,,,,1/20,conveyed,,"Assignor reserves a 1/20 ORRI, proportionately reduced"
+4,BLM serial register NMNM 000001 (FICTIONAL),2016-01-01,NMNM-000001,ALL,root,,Example Federal Lessee Inc,,all,,,,1/8,"FICTIONAL EXAMPLE. Federal lease of Section 22, T23S, R31E; 12.5% royalty"
+5,BLM-approved assignment (FICTIONAL),2019-02-01,NMNM-000001,ALL,assign,Example Federal Lessee Inc,Example Permian Energy LLC;Example Partner LP,1/2;1/2,all,,,,,Record title assignment 50/50
+6,Eddy OR Bk 1300 Pg 5,2026-10-01,NMNM-000001,ALL,assign,Example Permian Energy LLC,Example Third Party LLC,,1/4,,,,,Assignment recorded AFTER the deal's effective date: a possible double sale
+7,Eddy OR Bk 1200 Pg 77,2020-05-01,NM-FEE-10,ALL,root,,Example Permian Energy LLC,,all,,,,1/4,"FICTIONAL EXAMPLE. Fee lease of the NW/4 of Section 10, T23S, R31E; 1/4 royalty"

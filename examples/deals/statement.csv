@@ -1,0 +1,4 @@
+payor,well,owner,decimal,type,amount,check_date,period,status
+Example Operating LLC,Example Unit 12-13 1H,"EXAMPLE MINERALS FUND, L.P.",0.06000000,RI,1234.56,2027-02-25,2026-12,paid
+Example Operating LLC,Example Unit 12-13 1H,Fox Example,0.05200000,RI,1070.00,2027-02-25,2026-12,paid
+Example Operating LLC,Example Unit 12-13 1H,Adams Heir Two,0.00500000,NPRI,102.88,2027-02-25,2026-12,paid

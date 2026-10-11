@@ -1,0 +1,5050 @@
+{
+ "_note": "FICTIONAL test strings in the forms Permian records use; expected answers hand-labelled by a landman reading (independent parser audit, Oct 2026). Used by ptk audit and tests/test_parser_corpus.py.",
+ "meta": {
+  "purpose": "Hand-labelled accuracy corpus for permian-title-kit text parsers (regression seed).",
+  "built": "2026-10-11",
+  "expected_values": "written by hand from how a Permian landman reads the text; not parser output",
+  "freq": "auditor judgment of how often the form appears in TX/NM Permian records",
+  "runsheet_expect": "flags = the exact set of flag codes check_row should raise for the row (base row raises none)"
+ },
+ "cases": [
+  {
+   "id": "frac-001",
+   "parser": "fracs.parse_fraction",
+   "input": "an undivided one-half (1/2)",
+   "expect": {
+    "value": "1/2"
+   },
+   "freq": "high",
+   "form": "words+numerals"
+  },
+  {
+   "id": "frac-002",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 of 1/8",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "product"
+  },
+  {
+   "id": "frac-003",
+   "parser": "fracs.parse_fraction",
+   "input": "12½%",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "med",
+   "form": "glyph percent"
+  },
+  {
+   "id": "frac-004",
+   "parser": "fracs.parse_fraction",
+   "input": "12 1/2%",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "high",
+   "form": "mixed percent"
+  },
+  {
+   "id": "frac-005",
+   "parser": "fracs.parse_fraction",
+   "input": "three-sixteenths",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "words"
+  },
+  {
+   "id": "frac-006",
+   "parser": "fracs.parse_fraction",
+   "input": "one sixty-fourth",
+   "expect": {
+    "value": "1/64"
+   },
+   "freq": "med",
+   "form": "words"
+  },
+  {
+   "id": "frac-007",
+   "parser": "fracs.parse_fraction",
+   "input": "0.1875",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "high",
+   "form": "decimal"
+  },
+  {
+   "id": "frac-008",
+   "parser": "fracs.parse_fraction",
+   "input": "18.75%",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "percent"
+  },
+  {
+   "id": "frac-009",
+   "parser": "fracs.parse_fraction",
+   "input": "18.75 percent",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "low",
+   "form": "percent word"
+  },
+  {
+   "id": "frac-010",
+   "parser": "fracs.parse_fraction",
+   "input": "one-fourth (1/8)",
+   "expect": {
+    "error": true
+   },
+   "freq": "med",
+   "form": "mismatch must refuse"
+  },
+  {
+   "id": "frac-011",
+   "parser": "fracs.parse_fraction",
+   "input": "3/16ths",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "ths suffix"
+  },
+  {
+   "id": "frac-012",
+   "parser": "fracs.parse_fraction",
+   "input": "3/16 royalty",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "high",
+   "form": "trailing noun"
+  },
+  {
+   "id": "frac-013",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 x 1/8",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "med",
+   "form": "product x"
+  },
+  {
+   "id": "frac-014",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 × 1/8",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "low",
+   "form": "product times sign"
+  },
+  {
+   "id": "frac-015",
+   "parser": "fracs.parse_fraction",
+   "input": "one hundred twenty-eighth",
+   "expect": {
+    "value": "1/128"
+   },
+   "freq": "low",
+   "form": "words large denominator"
+  },
+  {
+   "id": "frac-016",
+   "parser": "fracs.parse_fraction",
+   "input": "three thirty-seconds",
+   "expect": {
+    "value": "3/32"
+   },
+   "freq": "med",
+   "form": "words"
+  },
+  {
+   "id": "frac-017",
+   "parser": "fracs.parse_fraction",
+   "input": "an undivided one-sixteenth (1/16th) interest",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "words+numerals+noun"
+  },
+  {
+   "id": "frac-018",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half (1/2) of the one-eighth (1/8)",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "product with 'the'"
+  },
+  {
+   "id": "frac-019",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 of the 1/8",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "product with 'the'"
+  },
+  {
+   "id": "frac-020",
+   "parser": "fracs.parse_fraction",
+   "input": "an undivided 1/4 interest",
+   "expect": {
+    "value": "1/4"
+   },
+   "freq": "high",
+   "form": "'undivided' + numerals"
+  },
+  {
+   "id": "frac-021",
+   "parser": "fracs.parse_fraction",
+   "input": "1/4th",
+   "expect": {
+    "value": "1/4"
+   },
+   "freq": "med",
+   "form": "th suffix"
+  },
+  {
+   "id": "frac-022",
+   "parser": "fracs.parse_fraction",
+   "input": "seven-eighths (7/8)",
+   "expect": {
+    "value": "7/8"
+   },
+   "freq": "high",
+   "form": "words+numerals"
+  },
+  {
+   "id": "frac-023",
+   "parser": "fracs.parse_fraction",
+   "input": "1/8 royalty interest",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "high",
+   "form": "trailing noun"
+  },
+  {
+   "id": "frac-024",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half of one-eighth",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "product words"
+  },
+  {
+   "id": "frac-025",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 of 7/8",
+   "expect": {
+    "value": "7/16"
+   },
+   "freq": "med",
+   "form": "product"
+  },
+  {
+   "id": "frac-026",
+   "parser": "fracs.parse_fraction",
+   "input": "3/4 of 1/8 of 1/2",
+   "expect": {
+    "value": "3/64"
+   },
+   "freq": "med",
+   "form": "triple product"
+  },
+  {
+   "id": "frac-027",
+   "parser": "fracs.parse_fraction",
+   "input": "fifteen sixty-fourths",
+   "expect": {
+    "value": "15/64"
+   },
+   "freq": "low",
+   "form": "words"
+  },
+  {
+   "id": "frac-028",
+   "parser": "fracs.parse_fraction",
+   "input": "one-thirty-second",
+   "expect": {
+    "value": "1/32"
+   },
+   "freq": "med",
+   "form": "hyphenated words"
+  },
+  {
+   "id": "frac-029",
+   "parser": "fracs.parse_fraction",
+   "input": "twenty-five percent",
+   "expect": {
+    "value": "1/4"
+   },
+   "freq": "low",
+   "form": "percent in words"
+  },
+  {
+   "id": "frac-030",
+   "parser": "fracs.parse_fraction",
+   "input": "25%",
+   "expect": {
+    "value": "1/4"
+   },
+   "freq": "med",
+   "form": "percent"
+  },
+  {
+   "id": "frac-031",
+   "parser": "fracs.parse_fraction",
+   "input": ".125",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "med",
+   "form": "decimal without leading zero"
+  },
+  {
+   "id": "frac-032",
+   "parser": "fracs.parse_fraction",
+   "input": "0.00390625",
+   "expect": {
+    "value": "1/256"
+   },
+   "freq": "high",
+   "form": "decimal 8 places"
+  },
+  {
+   "id": "frac-033",
+   "parser": "fracs.parse_fraction",
+   "input": "1/16 NPRI",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "med",
+   "form": "trailing abbreviation"
+  },
+  {
+   "id": "frac-034",
+   "parser": "fracs.parse_fraction",
+   "input": "an undivided one-half (1/2) mineral interest",
+   "expect": {
+    "value": "1/2"
+   },
+   "freq": "high",
+   "form": "trailing 'mineral interest'"
+  },
+  {
+   "id": "frac-035",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half(1/2)",
+   "expect": {
+    "value": "1/2"
+   },
+   "freq": "med",
+   "form": "no space before paren"
+  },
+  {
+   "id": "frac-036",
+   "parser": "fracs.parse_fraction",
+   "input": "one-third (1/3)",
+   "expect": {
+    "value": "1/3"
+   },
+   "freq": "med",
+   "form": "words+numerals"
+  },
+  {
+   "id": "frac-037",
+   "parser": "fracs.parse_fraction",
+   "input": "1 /8",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "low",
+   "form": "OCR space"
+  },
+  {
+   "id": "frac-038",
+   "parser": "fracs.parse_fraction",
+   "input": "l/8",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "OCR letter l must refuse"
+  },
+  {
+   "id": "frac-039",
+   "parser": "fracs.parse_fraction",
+   "input": "the usual one-eighth royalty",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "med",
+   "form": "'the usual' prefix"
+  },
+  {
+   "id": "frac-040",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half (1/4)",
+   "expect": {
+    "error": true
+   },
+   "freq": "med",
+   "form": "mismatch must refuse"
+  },
+  {
+   "id": "frac-041",
+   "parser": "fracs.parse_fraction",
+   "input": "twenty-one sixty-fourths",
+   "expect": {
+    "value": "21/64"
+   },
+   "freq": "low",
+   "form": "compound numerator words"
+  },
+  {
+   "id": "frac-042",
+   "parser": "fracs.parse_fraction",
+   "input": "1-1/2%",
+   "expect": {
+    "value": "3/200"
+   },
+   "freq": "med",
+   "form": "hyphenated mixed number (ORRI)"
+  },
+  {
+   "id": "frac-043",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 of 1/8th",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "med",
+   "form": "product th"
+  },
+  {
+   "id": "frac-044",
+   "parser": "fracs.parse_fraction",
+   "input": "one-sixteenth (1/16) of 8/8",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "med",
+   "form": "product of 8/8"
+  },
+  {
+   "id": "frac-045",
+   "parser": "fracs.parse_fraction",
+   "input": "Three Sixteenths (3/16ths)",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "capitalised words"
+  },
+  {
+   "id": "frac-046",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half (1/2) of one-eighth (1/16)",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "mismatch inside product must refuse"
+  },
+  {
+   "id": "frac-047",
+   "parser": "fracs.parse_fraction",
+   "input": "1/8th of 8/8ths",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "med",
+   "form": "product ths"
+  },
+  {
+   "id": "frac-048",
+   "parser": "fracs.parse_fraction",
+   "input": "100%",
+   "expect": {
+    "value": "1"
+   },
+   "freq": "med",
+   "form": "percent whole"
+  },
+  {
+   "id": "frac-049",
+   "parser": "fracs.parse_fraction",
+   "input": "one-eighth of seven-eighths (7/8)",
+   "expect": {
+    "value": "7/64"
+   },
+   "freq": "med",
+   "form": "product mixed"
+  },
+  {
+   "id": "frac-050",
+   "parser": "fracs.parse_fraction",
+   "input": "an undivided 3/4ths",
+   "expect": {
+    "value": "3/4"
+   },
+   "freq": "med",
+   "form": "'undivided' + numerals"
+  },
+  {
+   "id": "frac-051",
+   "parser": "fracs.parse_fraction",
+   "input": "three-sixteenths (3/16ths) royalty",
+   "expect": {
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "words+numerals+noun"
+  },
+  {
+   "id": "frac-052",
+   "parser": "fracs.parse_fraction",
+   "input": "12.5%",
+   "expect": {
+    "value": "1/8"
+   },
+   "freq": "high",
+   "form": "percent"
+  },
+  {
+   "id": "frac-053",
+   "parser": "fracs.parse_fraction",
+   "input": "one-half (1/2) undivided interest",
+   "expect": {
+    "value": "1/2"
+   },
+   "freq": "med",
+   "form": "trailing 'undivided interest'"
+  },
+  {
+   "id": "frac-054",
+   "parser": "fracs.parse_fraction",
+   "input": "1/2 of 1/8 royalty",
+   "expect": {
+    "value": "1/16"
+   },
+   "freq": "high",
+   "form": "product + noun"
+  },
+  {
+   "id": "frac-055",
+   "parser": "fracs.parse_fraction",
+   "input": "seven-eighths (7/8ths) working interest",
+   "expect": {
+    "value": "7/8"
+   },
+   "freq": "med",
+   "form": "trailing 'working interest'"
+  },
+  {
+   "id": "fread-001",
+   "parser": "fracs.read_fraction_text",
+   "input": "one-fourth (1/8)",
+   "expect": {
+    "consistent": false,
+    "words": "1/4",
+    "numerals": "1/8"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "fread-002",
+   "parser": "fracs.read_fraction_text",
+   "input": "one-half (1/2)",
+   "expect": {
+    "consistent": true,
+    "value": "1/2"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "fread-003",
+   "parser": "fracs.read_fraction_text",
+   "input": "three-sixteenths (3/16)",
+   "expect": {
+    "consistent": true,
+    "value": "3/16"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "fread-004",
+   "parser": "fracs.read_fraction_text",
+   "input": "one-eighth (1/16)",
+   "expect": {
+    "consistent": false,
+    "words": "1/8",
+    "numerals": "1/16"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "fread-005",
+   "parser": "fracs.read_fraction_text",
+   "input": "an undivided one-sixty-fourth (1/64)",
+   "expect": {
+    "consistent": true,
+    "value": "1/64"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "fread-006",
+   "parser": "fracs.read_fraction_text",
+   "input": "1/16",
+   "expect": {
+    "consistent": null,
+    "value": "1/16"
+   },
+   "freq": "med",
+   "form": "words vs numerals check"
+  },
+  {
+   "id": "date-001",
+   "parser": "dates.iso",
+   "input": "1948-05-10",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "high",
+   "form": "ISO"
+  },
+  {
+   "id": "date-002",
+   "parser": "dates.iso",
+   "input": "5/10/1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "high",
+   "form": "m/d/yyyy"
+  },
+  {
+   "id": "date-003",
+   "parser": "dates.iso",
+   "input": "1948/05/10",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "low",
+   "form": "yyyy/mm/dd"
+  },
+  {
+   "id": "date-004",
+   "parser": "dates.iso",
+   "input": "May 10, 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "high",
+   "form": "Month d, yyyy"
+  },
+  {
+   "id": "date-005",
+   "parser": "dates.iso",
+   "input": "May 10th, 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "high",
+   "form": "ordinal day"
+  },
+  {
+   "id": "date-006",
+   "parser": "dates.iso",
+   "input": "10 May 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "low",
+   "form": "d Month yyyy"
+  },
+  {
+   "id": "date-007",
+   "parser": "dates.iso",
+   "input": "5/10/48",
+   "expect": {
+    "error": true
+   },
+   "freq": "high",
+   "form": "two-digit year must refuse"
+  },
+  {
+   "id": "date-008",
+   "parser": "dates.iso",
+   "input": "05-10-1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "med",
+   "form": "m-d-yyyy dashes"
+  },
+  {
+   "id": "date-009",
+   "parser": "dates.iso",
+   "input": "Sept. 3, 1952",
+   "expect": {
+    "iso": "1952-09-03"
+   },
+   "freq": "high",
+   "form": "'Sept.' abbreviation"
+  },
+  {
+   "id": "date-010",
+   "parser": "dates.iso",
+   "input": "Jan. 15, 1925",
+   "expect": {
+    "iso": "1925-01-15"
+   },
+   "freq": "high",
+   "form": "abbrev month"
+  },
+  {
+   "id": "date-011",
+   "parser": "dates.iso",
+   "input": "the 10th day of May, 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "high",
+   "form": "deed 'day of' form"
+  },
+  {
+   "id": "date-012",
+   "parser": "dates.iso",
+   "input": "May 10,1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "med",
+   "form": "OCR no space after comma"
+  },
+  {
+   "id": "date-013",
+   "parser": "dates.iso",
+   "input": "MAY 10, 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "med",
+   "form": "upper case"
+  },
+  {
+   "id": "date-014",
+   "parser": "dates.iso",
+   "input": "2/30/1950",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "impossible date must refuse"
+  },
+  {
+   "id": "date-015",
+   "parser": "dates.iso",
+   "input": "5/10/'48",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "two-digit year must refuse"
+  },
+  {
+   "id": "date-016",
+   "parser": "dates.iso",
+   "input": "December 1, 2019",
+   "expect": {
+    "iso": "2019-12-01"
+   },
+   "freq": "high",
+   "form": "Month d, yyyy"
+  },
+  {
+   "id": "date-017",
+   "parser": "dates.iso",
+   "input": "12/1/2019",
+   "expect": {
+    "iso": "2019-12-01"
+   },
+   "freq": "high",
+   "form": "m/d/yyyy"
+  },
+  {
+   "id": "date-018",
+   "parser": "dates.iso",
+   "input": "5-10-48",
+   "expect": {
+    "error": true
+   },
+   "freq": "med",
+   "form": "two-digit year must refuse"
+  },
+  {
+   "id": "date-019",
+   "parser": "dates.iso",
+   "input": "May 1948",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "no day must refuse"
+  },
+  {
+   "id": "date-020",
+   "parser": "dates.iso",
+   "input": "May 10 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "low",
+   "form": "no comma"
+  },
+  {
+   "id": "date-021",
+   "parser": "dates.iso",
+   "input": "10th May, 1948",
+   "expect": {
+    "iso": "1948-05-10"
+   },
+   "freq": "low",
+   "form": "d Month, yyyy"
+  },
+  {
+   "id": "date-022",
+   "parser": "dates.iso",
+   "input": "May 10, 48",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "two-digit year must refuse"
+  },
+  {
+   "id": "date-023",
+   "parser": "dates.iso",
+   "input": "48/5/10",
+   "expect": {
+    "error": true
+   },
+   "freq": "low",
+   "form": "two-digit year must refuse"
+  },
+  {
+   "id": "date-024",
+   "parser": "dates.iso",
+   "input": "Feb. 29, 1952",
+   "expect": {
+    "iso": "1952-02-29"
+   },
+   "freq": "low",
+   "form": "leap day"
+  },
+  {
+   "id": "date-025",
+   "parser": "dates.iso",
+   "input": "Sept 3, 1952",
+   "expect": {
+    "iso": "1952-09-03"
+   },
+   "freq": "med",
+   "form": "'Sept' no period"
+  },
+  {
+   "id": "date-026",
+   "parser": "dates.iso",
+   "input": "1st day of June, A.D. 1925",
+   "expect": {
+    "iso": "1925-06-01"
+   },
+   "freq": "med",
+   "form": "deed 'day of' + A.D."
+  },
+  {
+   "id": "date-027",
+   "parser": "dates.iso",
+   "input": "June 1, A.D. 1925",
+   "expect": {
+    "iso": "1925-06-01"
+   },
+   "freq": "med",
+   "form": "A.D."
+  },
+  {
+   "id": "date-028",
+   "parser": "dates.iso",
+   "input": "2019-1-5",
+   "expect": {
+    "iso": "2019-01-05"
+   },
+   "freq": "low",
+   "form": "ISO unpadded"
+  },
+  {
+   "id": "tx-001",
+   "parser": "legal_tx.parse",
+   "input": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, A-123, Midland County",
+   "expect": {
+    "county": "Midland",
+    "abstract": "123",
+    "survey_code": "T&P",
+    "block": "33",
+    "township": "2S",
+    "sections": [
+     "12"
+    ],
+    "aliquots": []
+   },
+   "freq": "high",
+   "form": "canonical"
+  },
+  {
+   "id": "tx-002",
+   "parser": "legal_tx.parse",
+   "input": "All of Sec. 12, Blk. 33, Tsp. 2 South, T. & P. Ry. Co. Sur., Abst. No. 123, Midland County, Texas",
+   "expect": {
+    "county": "Midland",
+    "abstract": "123",
+    "survey_code": "T&P",
+    "block": "33",
+    "township": "2S",
+    "sections": [
+     "12"
+    ],
+    "aliquots": []
+   },
+   "freq": "high",
+   "form": "abbreviated"
+  },
+  {
+   "id": "tx-003",
+   "parser": "legal_tx.parse",
+   "input": "N/2 of Section 5, Block C-21, PSL, Ward County, Texas",
+   "expect": {
+    "county": "Ward",
+    "abstract": null,
+    "survey_code": "PSL",
+    "block": "C-21",
+    "sections": [
+     "5"
+    ],
+    "aliquots": [
+     "N2"
+    ]
+   },
+   "freq": "high",
+   "form": "PSL lettered block"
+  },
+  {
+   "id": "tx-004",
+   "parser": "legal_tx.parse",
+   "input": "NE/4 of Section 14, Block 34, T-1-S, T&P Ry. Co. Survey, Martin County, Texas, containing 160 acres, more or less",
+   "expect": {
+    "county": "Martin",
+    "survey_code": "T&P",
+    "block": "34",
+    "township": "1S",
+    "sections": [
+     "14"
+    ],
+    "aliquots": [
+     "NE4"
+    ],
+    "acres": 160
+   },
+   "freq": "high",
+   "form": "aliquot + acres"
+  },
+  {
+   "id": "tx-005",
+   "parser": "legal_tx.parse",
+   "input": "Section 25, Block 55, T-7, T&P RR Co. Survey, Reeves County, Texas",
+   "expect": {
+    "county": "Reeves",
+    "survey_code": "T&P",
+    "block": "55",
+    "township": "7",
+    "sections": [
+     "25"
+    ]
+   },
+   "freq": "med",
+   "form": "T&P township without N/S",
+   "note": "Reeves/Loving T&P townships are commonly written T-1..T-8 with no direction (auditor judgment)"
+  },
+  {
+   "id": "tx-006",
+   "parser": "legal_tx.parse",
+   "input": "Section 18, Block 7, H&GN RR Co. Survey, A-1234, Reeves County",
+   "expect": {
+    "county": "Reeves",
+    "abstract": "1234",
+    "survey_code": "H&GN",
+    "block": "7",
+    "sections": [
+     "18"
+    ]
+   },
+   "freq": "high",
+   "form": "railroad H&GN"
+  },
+  {
+   "id": "tx-007",
+   "parser": "legal_tx.parse",
+   "input": "Sec. 2, Blk. 1, H.&T.C. Ry. Co. Survey, Abst. 456, Pecos County, Texas",
+   "expect": {
+    "county": "Pecos",
+    "abstract": "456",
+    "survey_code": "H&TC",
+    "block": "1",
+    "sections": [
+     "2"
+    ]
+   },
+   "freq": "high",
+   "form": "railroad H&TC dotted"
+  },
+  {
+   "id": "tx-008",
+   "parser": "legal_tx.parse",
+   "input": "Section 20, Block 2, G.C.&S.F. Ry. Co. Survey, Abstract No. 789, Reeves County",
+   "expect": {
+    "county": "Reeves",
+    "abstract": "789",
+    "survey_code": "GC&SF",
+    "block": "2",
+    "sections": [
+     "20"
+    ]
+   },
+   "freq": "high",
+   "form": "railroad GC&SF dotted"
+  },
+  {
+   "id": "tx-009",
+   "parser": "legal_tx.parse",
+   "input": "Section 3, Block 13, I&GN RR Co Survey, A-5, Upton County",
+   "expect": {
+    "county": "Upton",
+    "abstract": "5",
+    "survey_code": "I&GN",
+    "block": "13",
+    "sections": [
+     "3"
+    ]
+   },
+   "freq": "med",
+   "form": "railroad I&GN"
+  },
+  {
+   "id": "tx-010",
+   "parser": "legal_tx.parse",
+   "input": "Section 16, Block 45, Public School Land, Andrews County, Texas",
+   "expect": {
+    "county": "Andrews",
+    "survey_code": "PSL",
+    "block": "45",
+    "sections": [
+     "16"
+    ]
+   },
+   "freq": "high",
+   "form": "PSL spelled out"
+  },
+  {
+   "id": "tx-011",
+   "parser": "legal_tx.parse",
+   "input": "Section 4, Block A-38, PSL, Andrews County",
+   "expect": {
+    "county": "Andrews",
+    "abstract": null,
+    "survey_code": "PSL",
+    "block": "A-38",
+    "sections": [
+     "4"
+    ]
+   },
+   "freq": "high",
+   "form": "PSL lettered block 'A-'"
+  },
+  {
+   "id": "tx-012",
+   "parser": "legal_tx.parse",
+   "input": "Section 10, Block 9, University Lands, Andrews County",
+   "expect": {
+    "county": "Andrews",
+    "survey_code": "UL",
+    "block": "9",
+    "sections": [
+     "10"
+    ]
+   },
+   "freq": "high",
+   "form": "University Lands"
+  },
+  {
+   "id": "tx-013",
+   "parser": "legal_tx.parse",
+   "input": "League 268, Labor 12, Lamb County School Land, Gaines County, Texas",
+   "expect": {
+    "county": "Gaines",
+    "survey_code": "CSL"
+   },
+   "freq": "low",
+   "form": "county school land of another county",
+   "note": "the land is in Gaines; 'Lamb County' is the grantee county of the school-land grant"
+  },
+  {
+   "id": "tx-014",
+   "parser": "legal_tx.parse",
+   "input": "All of Section 12, Block 33, T-2-S, T&P RR Co. Survey, Midland County, Texas, SAVE AND EXCEPT the W/2 NW/4 thereof",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "aliquots": [],
+    "save_and_except_count": 1
+   },
+   "freq": "high",
+   "form": "save and except"
+  },
+  {
+   "id": "tx-015",
+   "parser": "legal_tx.parse",
+   "input": "Sections 12 and 13, Block 33, T-1-S, T&P RR Co. Survey, Midland County",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12",
+     "13"
+    ],
+    "block": "33",
+    "township": "1S"
+   },
+   "freq": "high",
+   "form": "two sections 'and'"
+  },
+  {
+   "id": "tx-016",
+   "parser": "legal_tx.parse",
+   "input": "Sections 1, 2, and 3, Block 34, T-1-N, T&P RR Co. Survey, Howard County",
+   "expect": {
+    "county": "Howard",
+    "sections": [
+     "1",
+     "2",
+     "3"
+    ],
+    "block": "34",
+    "township": "1N"
+   },
+   "freq": "med",
+   "form": "section list with Oxford comma"
+  },
+  {
+   "id": "tx-017",
+   "parser": "legal_tx.parse",
+   "input": "E/2 of Section 6 and W/2 of Section 7, Block 35, T-2-S, T&P RR Co. Survey, Midland County",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "6",
+     "7"
+    ],
+    "aliquots": [
+     "E2",
+     "W2"
+    ]
+   },
+   "freq": "high",
+   "form": "aliquot per section"
+  },
+  {
+   "id": "tx-018",
+   "parser": "legal_tx.parse",
+   "input": "S/2 N/2 of Section 9, Block 34, T-3-S, T&P RR Co. Survey, Glasscock County",
+   "expect": {
+    "county": "Glasscock",
+    "sections": [
+     "9"
+    ],
+    "aliquots": [
+     "S2",
+     "N2"
+    ],
+    "township": "3S"
+   },
+   "freq": "high",
+   "form": "two-level aliquot"
+  },
+  {
+   "id": "tx-019",
+   "parser": "legal_tx.parse",
+   "input": "N½ of Section 21, Block 6, H&GN RR Co. Survey, Ward County",
+   "expect": {
+    "county": "Ward",
+    "sections": [
+     "21"
+    ],
+    "aliquots": [
+     "N2"
+    ]
+   },
+   "freq": "med",
+   "form": "glyph aliquot"
+  },
+  {
+   "id": "tx-020",
+   "parser": "legal_tx.parse",
+   "input": "E 1/2 of Section 8, Block 27, H&TC Ry. Co. Survey, Reeves County",
+   "expect": {
+    "county": "Reeves",
+    "sections": [
+     "8"
+    ],
+    "aliquots": [
+     "E2"
+    ],
+    "survey_code": "H&TC"
+   },
+   "freq": "high",
+   "form": "spaced aliquot"
+  },
+  {
+   "id": "tx-021",
+   "parser": "legal_tx.parse",
+   "input": "the E. 1/2 of Section 8, Block 27, H&TC Ry. Co. Survey, Reeves County",
+   "expect": {
+    "county": "Reeves",
+    "sections": [
+     "8"
+    ],
+    "aliquots": [
+     "E2"
+    ]
+   },
+   "freq": "high",
+   "form": "dotted aliquot 'E. 1/2'"
+  },
+  {
+   "id": "tx-022",
+   "parser": "legal_tx.parse",
+   "input": "the Northeast One-Quarter (NE/4) of Section 30, Block 34, T-2-S, T&P RR Co. Survey, Midland County",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "30"
+    ],
+    "aliquots": [
+     "NE4"
+    ]
+   },
+   "freq": "med",
+   "form": "word + numeral aliquot"
+  },
+  {
+   "id": "tx-023",
+   "parser": "legal_tx.parse",
+   "input": "the South Half of Section 19, Block 33, T-3-S, T&P RR Co. Survey, Midland County, Texas",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "19"
+    ],
+    "aliquots": [
+     "S2"
+    ]
+   },
+   "freq": "high",
+   "form": "word aliquot without 'one'"
+  },
+  {
+   "id": "tx-024",
+   "parser": "legal_tx.parse",
+   "input": "the Northwest Quarter of Section 2, Block 7, H&GN RR Co. Survey, Ward County",
+   "expect": {
+    "county": "Ward",
+    "sections": [
+     "2"
+    ],
+    "aliquots": [
+     "NW4"
+    ]
+   },
+   "freq": "high",
+   "form": "word aliquot without 'one'"
+  },
+  {
+   "id": "tx-025",
+   "parser": "legal_tx.parse",
+   "input": "a 160 acre tract out of Section 5, Block 3, H&GN RR Co. Survey, Ward County, Texas",
+   "expect": {
+    "county": "Ward",
+    "abstract": null,
+    "acres": 160,
+    "sections": [
+     "5"
+    ]
+   },
+   "freq": "high",
+   "form": "FP: 'a 160 acre' not an abstract"
+  },
+  {
+   "id": "tx-026",
+   "parser": "legal_tx.parse",
+   "input": "Survey 15, Block 2, W&NW RR Co., A-301, Reeves County",
+   "expect": {
+    "county": "Reeves",
+    "survey_no": "15",
+    "survey_code": "W&NW",
+    "abstract": "301",
+    "block": "2"
+   },
+   "freq": "med",
+   "form": "survey number instead of section"
+  },
+  {
+   "id": "tx-027",
+   "parser": "legal_tx.parse",
+   "input": "Section 22, Block 36, T-3-S, T&P RR Co. Survey, Midland Co., Texas",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "22"
+    ],
+    "block": "36"
+   },
+   "freq": "med",
+   "form": "'Co.' for County"
+  },
+  {
+   "id": "tx-028",
+   "parser": "legal_tx.parse",
+   "input": "Section 12 Block 33 Township 2 South T&P RR Co Survey Midland County Texas",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "block": "33",
+    "township": "2S",
+    "survey_code": "T&P"
+   },
+   "freq": "med",
+   "form": "no commas"
+  },
+  {
+   "id": "tx-029",
+   "parser": "legal_tx.parse",
+   "input": "Sectlon 12, B1ock 33, T-2-S, T&P RR Co. Survey, Midland County",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "block": "33",
+    "township": "2S"
+   },
+   "freq": "low",
+   "form": "OCR noise"
+  },
+  {
+   "id": "tx-030",
+   "parser": "legal_tx.parse",
+   "input": "Sec. 12,, Blk. 33,, T-2-S,, T&P,, Midland County,, Texas",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "block": "33",
+    "township": "2S",
+    "survey_code": "T&P"
+   },
+   "freq": "med",
+   "form": "extra commas"
+  },
+  {
+   "id": "tx-031",
+   "parser": "legal_tx.parse",
+   "input": "Being 40 acres out of the NW/4 NW/4 of Section 3, Block C-23, PSL Survey, Abstract 4521, Winkler County, Texas",
+   "expect": {
+    "county": "Winkler",
+    "aliquots": [
+     "NW4",
+     "NW4"
+    ],
+    "acres": 40,
+    "block": "C-23",
+    "abstract": "4521",
+    "sections": [
+     "3"
+    ]
+   },
+   "freq": "high",
+   "form": "QQ + acres"
+  },
+  {
+   "id": "tx-032",
+   "parser": "legal_tx.parse",
+   "input": "Section 44, Block 1, C.C.S.D.&R.G.N.G. RR Co. Survey, Abstract 4, Pecos County",
+   "expect": {
+    "county": "Pecos",
+    "survey_code": "CCSD&RGNG",
+    "abstract": "4",
+    "sections": [
+     "44"
+    ]
+   },
+   "freq": "low",
+   "form": "railroad CCSD&RGNG"
+  },
+  {
+   "id": "tx-033",
+   "parser": "legal_tx.parse",
+   "input": "All that certain tract or parcel of land, being all of Section 25, Block 33, T-1-S, T. & P. Ry. Co. Survey, Abstract No. 2010, Martin County, Texas, containing 640 acres, more or less",
+   "expect": {
+    "county": "Martin",
+    "sections": [
+     "25"
+    ],
+    "abstract": "2010",
+    "township": "1S",
+    "acres": 640,
+    "survey_code": "T&P",
+    "aliquots": []
+   },
+   "freq": "high",
+   "form": "'all that certain tract' boilerplate"
+  },
+  {
+   "id": "tx-034",
+   "parser": "legal_tx.parse",
+   "input": "Section 40, Block 1, T&P RR Co. Survey, Reeves County, Texas, BEGINNING at the NW corner of Section 39, Block 4, H&GN RR Co. Survey",
+   "expect": {
+    "county": "Reeves",
+    "survey_code": "T&P",
+    "sections": [
+     "40"
+    ],
+    "block": "1"
+   },
+   "freq": "med",
+   "form": "adjoining survey named in metes and bounds"
+  },
+  {
+   "id": "tx-035",
+   "parser": "legal_tx.parse",
+   "input": "W/2 of Section 6, Block 35, T-1-S, T&P RR Co. Survey, Midland County, 320 ac.",
+   "expect": {
+    "county": "Midland",
+    "aliquots": [
+     "W2"
+    ],
+    "acres": 320,
+    "sections": [
+     "6"
+    ]
+   },
+   "freq": "med",
+   "form": "'ac.' for acres"
+  },
+  {
+   "id": "tx-036",
+   "parser": "legal_tx.parse",
+   "input": "N2 of Section 5, Block 3, H&GN RR Co. Survey, Ward County",
+   "expect": {
+    "county": "Ward",
+    "aliquots": [
+     "N2"
+    ],
+    "sections": [
+     "5"
+    ]
+   },
+   "freq": "med",
+   "form": "compact aliquot 'N2'"
+  },
+  {
+   "id": "tx-037",
+   "parser": "legal_tx.parse",
+   "input": "in the County of Midland, State of Texas, being Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "block": "33"
+   },
+   "freq": "med",
+   "form": "'County of X' form"
+  },
+  {
+   "id": "tx-038",
+   "parser": "legal_tx.parse",
+   "input": "Section 12, Block 33, T-2-S, T&P RR Co. Survey, Midland County, Texas, SAVE AND EXCEPT 10 acres in the NE corner; and LESS AND EXCEPT the 2 acre church tract",
+   "expect": {
+    "county": "Midland",
+    "sections": [
+     "12"
+    ],
+    "aliquots": [],
+    "acres": null,
+    "save_and_except_count": 2
+   },
+   "freq": "med",
+   "form": "two exceptions"
+  },
+  {
+   "id": "tx-039",
+   "parser": "legal_tx.parse",
+   "input": "Section 31, Block 34, T-1-S, T&P RR Co. Survey, Martin County, Texas, being 640 acres, LESS 1.5 acres conveyed to the State of Texas for highway right-of-way",
+   "expect": {
+    "county": "Martin",
+    "sections": [
+     "31"
+    ],
+    "acres": 640,
+    "save_and_except_count": 1
+   },
+   "freq": "med",
+   "form": "'LESS' exception without 'and except'"
+  },
+  {
+   "id": "tx-040",
+   "parser": "legal_tx.parse",
+   "input": "SE/4 SE/4 and the N/2 SW/4 of Section 2, Block 7, H&GN RR Co. Survey, Ward County, Texas",
+   "expect": {
+    "county": "Ward",
+    "sections": [
+     "2"
+    ],
+    "aliquots": [
+     "SE4",
+     "SE4",
+     "N2",
+     "SW4"
+    ]
+   },
+   "freq": "high",
+   "form": "several aliquots"
+  },
+  {
+   "id": "tx-041",
+   "parser": "legal_tx.parse",
+   "input": "Section 5, Block 3, H&GN RR Co. Survey, A-1101, and Section 6, Block 13, T&P RR Co. Survey, A-1205, Ward County, Texas",
+   "expect": {
+    "county": "Ward",
+    "sections": [
+     "5",
+     "6"
+    ]
+   },
+   "freq": "low",
+   "form": "two surveys (spec: Open)"
+  },
+  {
+   "id": "tx-042",
+   "parser": "legal_tx.parse",
+   "input": "being the same land described in deed recorded in Volume 50, Page 10, Deed Records of Reeves County, Texas, covering Section 5, Block 3, H&GN RR Co. Survey, Ward County",
+   "expect": {
+    "county": "Ward",
+    "sections": [
+     "5"
+    ]
+   },
+   "freq": "low",
+   "form": "recital names a second county first"
+  },
+  {
+   "id": "tx-043",
+   "parser": "legal_tx.parse",
+   "input": "Section 3, Block 13, H&TC RR Co. Survey, Abstract #1456, Pecos County",
+   "expect": {
+    "county": "Pecos",
+    "abstract": "1456",
+    "sections": [
+     "3"
+    ]
+   },
+   "freq": "med",
+   "form": "'Abstract #'"
+  },
+  {
+   "id": "tx-044",
+   "parser": "legal_tx.parse",
+   "input": "the J. M. Smith Survey No. 5, Abstract 210, Crockett County, Texas",
+   "expect": {
+    "county": "Crockett",
+    "survey_name": "J. M. Smith",
+    "survey_no": "5",
+    "abstract": "210"
+   },
+   "freq": "med",
+   "form": "named private survey"
+  },
+  {
+   "id": "tx-045",
+   "parser": "legal_tx.parse",
+   "input": "SW/4 of Sec. 14, Blk. 56, T-2, T&P RR Co. Sur., Abst. 1056, Reeves County, Texas, 160 acres",
+   "expect": {
+    "county": "Reeves",
+    "aliquots": [
+     "SW4"
+    ],
+    "block": "56",
+    "township": "2",
+    "abstract": "1056",
+    "acres": 160,
+    "sections": [
+     "14"
+    ]
+   },
+   "freq": "med",
+   "form": "T&P township without N/S"
+  },
+  {
+   "id": "tx-046",
+   "parser": "legal_tx.parse",
+   "input": "Section 7, Block A-12, PSL Survey, Gaines County, Texas",
+   "expect": {
+    "county": "Gaines",
+    "abstract": null,
+    "survey_code": "PSL",
+    "block": "A-12",
+    "sections": [
+     "7"
+    ]
+   },
+   "freq": "high",
+   "form": "PSL lettered block 'A-'"
+  },
+  {
+   "id": "tx-047",
+   "parser": "legal_tx.parse",
+   "input": "a 1/2 acre tract out of the NE/4 of Section 12, Block 33, T-2-S, T&P RR Co. Survey, Midland County, Texas",
+   "expect": {
+    "county": "Midland",
+    "acres": 0.5,
+    "aliquots": [
+     "NE4"
+    ],
+    "sections": [
+     "12"
+    ]
+   },
+   "freq": "med",
+   "form": "fractional acreage"
+  },
+  {
+   "id": "nm-001",
+   "parser": "legal_nm.parse",
+   "input": "Section 6, T23S, R31E, NMPM: Lots 1-7, S/2 NE/4, SE/4 NW/4, E/2 SW/4, SE/4",
+   "expect": {
+    "township": "23S",
+    "range": "31E",
+    "sections": {
+     "6": {
+      "qq": [
+       "NESE",
+       "NESW",
+       "NWSE",
+       "SENE",
+       "SENW",
+       "SESE",
+       "SESW",
+       "SWNE",
+       "SWSE"
+      ],
+      "lots": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "section-colon style with lots"
+  },
+  {
+   "id": "nm-002",
+   "parser": "legal_nm.parse",
+   "input": "N/2 SE/4 of Section 15, Township 23 South, Range 31 East, N.M.P.M., Eddy County, New Mexico",
+   "expect": {
+    "township": "23S",
+    "range": "31E",
+    "sections": {
+     "15": {
+      "qq": [
+       "NESE",
+       "NWSE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "'of Section' style"
+  },
+  {
+   "id": "nm-003",
+   "parser": "legal_nm.parse",
+   "input": "W/2 W/2 of Section 22, T-24-S, R-32-E, Lea County, New Mexico",
+   "expect": {
+    "township": "24S",
+    "range": "32E",
+    "sections": {
+     "22": {
+      "qq": [
+       "NWNW",
+       "NWSW",
+       "SWNW",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    },
+    "issues_contains": [
+     "meridian"
+    ]
+   },
+   "freq": "high",
+   "form": "W/2 W/2"
+  },
+  {
+   "id": "nm-004",
+   "parser": "legal_nm.parse",
+   "input": "All of Section 6, T19S, R33E, NMPM",
+   "expect": {
+    "township": "19S",
+    "range": "33E",
+    "sections": {
+     "6": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "All of Section"
+  },
+  {
+   "id": "nm-005",
+   "parser": "legal_nm.parse",
+   "input": "Sections 15 and 22, T23S, R31E, N.M.P.M.",
+   "expect": {
+    "township": "23S",
+    "range": "31E",
+    "sections": {
+     "15": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     },
+     "22": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "two whole sections"
+  },
+  {
+   "id": "nm-006",
+   "parser": "legal_nm.parse",
+   "input": "Sec. 22: All; Sec. 27: N2NE4, T. 19 S., R. 33 E., N.M.P.M.",
+   "expect": {
+    "township": "19S",
+    "range": "33E",
+    "sections": {
+     "22": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     },
+     "27": {
+      "qq": [
+       "NENE",
+       "NWNE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "lease-exhibit style"
+  },
+  {
+   "id": "nm-007",
+   "parser": "legal_nm.parse",
+   "input": "the Northeast Quarter of the Southeast Quarter (NE/4 SE/4) of Section 10, Township 18 South, Range 34 East, NMPM, Lea County, New Mexico",
+   "expect": {
+    "township": "18S",
+    "range": "34E",
+    "sections": {
+     "10": {
+      "qq": [
+       "NESE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "words + parenthetical numerals"
+  },
+  {
+   "id": "nm-008",
+   "parser": "legal_nm.parse",
+   "input": "Lots 1, 2, 3 and 4 and the S/2 N/2 of Section 3, T21S, R35E, NMPM",
+   "expect": {
+    "township": "21S",
+    "range": "35E",
+    "sections": {
+     "3": {
+      "qq": [
+       "SENE",
+       "SENW",
+       "SWNE",
+       "SWNW"
+      ],
+      "lots": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "lots + aliquot (N tier)"
+  },
+  {
+   "id": "nm-009",
+   "parser": "legal_nm.parse",
+   "input": "E/2 NE/4, NE/4 SE/4, Section 33, T17S, R32E, NMPM",
+   "expect": {
+    "township": "17S",
+    "range": "32E",
+    "sections": {
+     "33": {
+      "qq": [
+       "NENE",
+       "NESE",
+       "SENE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "aliquots before 'Section N' (comma style)"
+  },
+  {
+   "id": "nm-010",
+   "parser": "legal_nm.parse",
+   "input": "SE/4 of NW/4 and W/2 W/2 of Section 6, Township 24 South, Range 32 East",
+   "expect": {
+    "township": "24S",
+    "range": "32E",
+    "sections": {
+     "6": {
+      "qq": [
+       "NWNW",
+       "NWSW",
+       "SENW",
+       "SWNW",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "two aliquot phrases"
+  },
+  {
+   "id": "nm-011",
+   "parser": "legal_nm.parse",
+   "input": "NE/4 of Section 12 and NW/4 of Section 13, T20S, R34E, NMPM",
+   "expect": {
+    "township": "20S",
+    "range": "34E",
+    "sections": {
+     "12": {
+      "qq": [
+       "NENE",
+       "NWNE",
+       "SENE",
+       "SWNE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "13": {
+      "qq": [
+       "NENW",
+       "NWNW",
+       "SENW",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "aliquot per section"
+  },
+  {
+   "id": "nm-012",
+   "parser": "legal_nm.parse",
+   "input": "N½ of Section 8, T23S, R28E, NMPM",
+   "expect": {
+    "township": "23S",
+    "range": "28E",
+    "sections": {
+     "8": {
+      "qq": [
+       "NENE",
+       "NENW",
+       "NWNE",
+       "NWNW",
+       "SENE",
+       "SENW",
+       "SWNE",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "glyph aliquot"
+  },
+  {
+   "id": "nm-013",
+   "parser": "legal_nm.parse",
+   "input": "the North Half (N/2) of Section 14, T22S, R27E, NMPM",
+   "expect": {
+    "township": "22S",
+    "range": "27E",
+    "sections": {
+     "14": {
+      "qq": [
+       "NENE",
+       "NENW",
+       "NWNE",
+       "NWNW",
+       "SENE",
+       "SENW",
+       "SWNE",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "words + parenthetical numerals"
+  },
+  {
+   "id": "nm-014",
+   "parser": "legal_nm.parse",
+   "input": "S/2 S/2 of Section 34, T. 22 S., R. 32 E., N.M.P.M.",
+   "expect": {
+    "township": "22S",
+    "range": "32E",
+    "sections": {
+     "34": {
+      "qq": [
+       "SESE",
+       "SESW",
+       "SWSE",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "S/2 S/2"
+  },
+  {
+   "id": "nm-015",
+   "parser": "legal_nm.parse",
+   "input": "Section 5: NE/4 NE/4, T19S, R35E, NMPM",
+   "expect": {
+    "township": "19S",
+    "range": "35E",
+    "sections": {
+     "5": {
+      "qq": [
+       "NENE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "section-colon style"
+  },
+  {
+   "id": "nm-016",
+   "parser": "legal_nm.parse",
+   "input": "Lots 3 and 4, E/2 SW/4 and SE/4 of Section 31, T. 23 S., R. 34 E., N.M.P.M.",
+   "expect": {
+    "township": "23S",
+    "range": "34E",
+    "sections": {
+     "31": {
+      "qq": [
+       "NESE",
+       "NESW",
+       "NWSE",
+       "SESE",
+       "SESW",
+       "SWSE"
+      ],
+      "lots": [
+       3,
+       4
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "lots + aliquots (W tier)"
+  },
+  {
+   "id": "nm-017",
+   "parser": "legal_nm.parse",
+   "input": "Lots 1 thru 4, Section 1, T19S, R32E, NMPM",
+   "expect": {
+    "township": "19S",
+    "range": "32E",
+    "sections": {
+     "1": {
+      "qq": [],
+      "lots": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "lots before 'Section N' (comma style)"
+  },
+  {
+   "id": "nm-018",
+   "parser": "legal_nm.parse",
+   "input": "Township 18 South, Range 33 East, NMPM, Section 25: S/2; Section 36: All",
+   "expect": {
+    "township": "18S",
+    "range": "33E",
+    "sections": {
+     "25": {
+      "qq": [
+       "NESE",
+       "NESW",
+       "NWSE",
+       "NWSW",
+       "SESE",
+       "SESW",
+       "SWSE",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "36": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "T/R first then section-colon"
+  },
+  {
+   "id": "nm-019",
+   "parser": "legal_nm.parse",
+   "input": "T-18-S, R-33-E, Sec. 25: SW/4 SE/4",
+   "expect": {
+    "township": "18S",
+    "range": "33E",
+    "sections": {
+     "25": {
+      "qq": [
+       "SWSE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "hyphen T/R"
+  },
+  {
+   "id": "nm-020",
+   "parser": "legal_nm.parse",
+   "input": "NE4SW4 of Section 2, T21S, R33E, NMPM",
+   "expect": {
+    "township": "21S",
+    "range": "33E",
+    "sections": {
+     "2": {
+      "qq": [
+       "NESW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "compact aliquot"
+  },
+  {
+   "id": "nm-021",
+   "parser": "legal_nm.parse",
+   "input": "N2N2 of Section 9, T20S, R35E, NMPM",
+   "expect": {
+    "township": "20S",
+    "range": "35E",
+    "sections": {
+     "9": {
+      "qq": [
+       "NENE",
+       "NENW",
+       "NWNE",
+       "NWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "compact aliquot"
+  },
+  {
+   "id": "nm-022",
+   "parser": "legal_nm.parse",
+   "input": "E/2 E/2 SE/4 of Section 16, T21S, R32E, NMPM",
+   "expect": {
+    "township": "21S",
+    "range": "32E",
+    "sections": {
+     "16": {
+      "qq": [],
+      "lots": [],
+      "whole": false,
+      "sub": [
+       "E2NESE",
+       "E2SESE"
+      ]
+     }
+    }
+   },
+   "freq": "low",
+   "form": "finer than QQ"
+  },
+  {
+   "id": "nm-023",
+   "parser": "legal_nm.parse",
+   "input": "the northeast quarter of Section 20, Township 19 South, Range 34 East, N.M.P.M.",
+   "expect": {
+    "township": "19S",
+    "range": "34E",
+    "sections": {
+     "20": {
+      "qq": [
+       "NENE",
+       "NWNE",
+       "SENE",
+       "SWNE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "word aliquot"
+  },
+  {
+   "id": "nm-024",
+   "parser": "legal_nm.parse",
+   "input": "the south half of the northwest quarter of Section 11, T. 20 S., R. 33 E., N.M.P.M.",
+   "expect": {
+    "township": "20S",
+    "range": "33E",
+    "sections": {
+     "11": {
+      "qq": [
+       "SENW",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "word aliquot two-level"
+  },
+  {
+   "id": "nm-025",
+   "parser": "legal_nm.parse",
+   "input": "the E/2 of the NE/4 and the NE/4 of the SE/4 of Section 4, T19S, R36E, NMPM",
+   "expect": {
+    "township": "19S",
+    "range": "36E",
+    "sections": {
+     "4": {
+      "qq": [
+       "NENE",
+       "NESE",
+       "SENE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "'of the' aliquots"
+  },
+  {
+   "id": "nm-026",
+   "parser": "legal_nm.parse",
+   "input": "N 1/2 SE 1/4 Sec. 15 T 23 S R 31 E",
+   "expect": {
+    "township": "23S",
+    "range": "31E",
+    "sections": {
+     "15": {
+      "qq": [
+       "NESE",
+       "NWSE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "aliquots before 'Sec.' (no punctuation)"
+  },
+  {
+   "id": "nm-027",
+   "parser": "legal_nm.parse",
+   "input": "SE/4 SE/4 of 10-18S-34E, Lea County, New Mexico",
+   "expect": {
+    "township": "18S",
+    "range": "34E",
+    "sections": {
+     "10": {
+      "qq": [
+       "SESE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "compact S-T-R"
+  },
+  {
+   "id": "nm-028",
+   "parser": "legal_nm.parse",
+   "input": "Section 22: All; NE/4 of Section 27, T19S, R33E, NMPM",
+   "expect": {
+    "township": "19S",
+    "range": "33E",
+    "sections": {
+     "22": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     },
+     "27": {
+      "qq": [
+       "NENE",
+       "NWNE",
+       "SENE",
+       "SWNE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "mixed colon and 'of Section' styles"
+  },
+  {
+   "id": "nm-029",
+   "parser": "legal_nm.parse",
+   "input": "Lots One (1) and Two (2) and the S/2 NE/4 of Section 2, T. 21 S., R. 33 E., N.M.P.M.",
+   "expect": {
+    "township": "21S",
+    "range": "33E",
+    "sections": {
+     "2": {
+      "qq": [
+       "SENE",
+       "SWNE"
+      ],
+      "lots": [
+       1,
+       2
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "lot numbers in words"
+  },
+  {
+   "id": "nm-030",
+   "parser": "legal_nm.parse",
+   "input": "N/2 of Sections 15 and 22, T23S, R31E, NMPM",
+   "expect": {
+    "township": "23S",
+    "range": "31E",
+    "sections": {
+     "15": {
+      "qq": [
+       "NENE",
+       "NENW",
+       "NWNE",
+       "NWNW",
+       "SENE",
+       "SENW",
+       "SWNE",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "22": {
+      "qq": [
+       "NENE",
+       "NENW",
+       "NWNE",
+       "NWNW",
+       "SENE",
+       "SENW",
+       "SWNE",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "one aliquot, two sections"
+  },
+  {
+   "id": "nm-031",
+   "parser": "legal_nm.parse",
+   "input": "SW/4 of Section 2, Township 21 South, Range 33 East, New Mexico Principal Meridian, Lea County, New Mexico",
+   "expect": {
+    "township": "21S",
+    "range": "33E",
+    "sections": {
+     "2": {
+      "qq": [
+       "NESW",
+       "NWSW",
+       "SESW",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    },
+    "issues_absent": [
+     "meridian"
+    ]
+   },
+   "freq": "med",
+   "form": "meridian spelled out"
+  },
+  {
+   "id": "nm-032",
+   "parser": "legal_nm.parse",
+   "input": "Section 14, T20S, R34E, NMPM: SW/4, less and except a 2-acre tract for a well pad",
+   "expect": {
+    "township": "20S",
+    "range": "34E",
+    "sections": {
+     "14": {
+      "qq": [
+       "NESW",
+       "NWSW",
+       "SESW",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    },
+    "issues_contains": [
+     "section 14"
+    ]
+   },
+   "freq": "med",
+   "form": "exception left unread"
+  },
+  {
+   "id": "nm-033",
+   "parser": "legal_nm.parse",
+   "input": "Section 10: SW/4 NE/4, Twp. 19 S., Rge. 33 E., N.M.P.M.",
+   "expect": {
+    "township": "19S",
+    "range": "33E",
+    "sections": {
+     "10": {
+      "qq": [
+       "SWNE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "'Twp.' / 'Rge.' abbreviations"
+  },
+  {
+   "id": "nm-034",
+   "parser": "legal_nm.parse",
+   "input": "Section 8, T20S, R34E, NMPM: All, being the same lands described in that certain Warranty Deed recorded in Book 150, Page 22",
+   "expect": {
+    "township": "20S",
+    "range": "34E",
+    "sections": {
+     "8": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "FP: trailing recital"
+  },
+  {
+   "id": "nm-035",
+   "parser": "legal_nm.parse",
+   "input": "Section 3, T21S, R35E, NMPM: SE/4, together with all improvements thereon, Lea County",
+   "expect": {
+    "township": "21S",
+    "range": "35E",
+    "sections": {
+     "3": {
+      "qq": [
+       "NESE",
+       "NWSE",
+       "SESE",
+       "SWSE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "FP: ordinary words not aliquots"
+  },
+  {
+   "id": "nm-036",
+   "parser": "legal_nm.parse",
+   "input": "Lots 1-4, E/2 W/2 of Section 18, T25S, R35E, NMPM",
+   "expect": {
+    "township": "25S",
+    "range": "35E",
+    "sections": {
+     "18": {
+      "qq": [
+       "NENW",
+       "NESW",
+       "SENW",
+       "SESW"
+      ],
+      "lots": [
+       1,
+       2,
+       3,
+       4
+      ],
+      "whole": false,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "W/2 equivalent of a corrected section"
+  },
+  {
+   "id": "nm-037",
+   "parser": "legal_nm.parse",
+   "input": "Section 36: N/2 NE/4, SE/4 NE/4; Section 25: All, T. 17 S., R. 31 E.",
+   "expect": {
+    "township": "17S",
+    "range": "31E",
+    "sections": {
+     "36": {
+      "qq": [
+       "NENE",
+       "NWNE",
+       "SENE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "25": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "high",
+   "form": "two colon sections"
+  },
+  {
+   "id": "nm-038",
+   "parser": "legal_nm.parse",
+   "input": "NW/4 of Section 9 and all of Section 10, T. 20 S., R. 33 E., N.M.P.M.",
+   "expect": {
+    "township": "20S",
+    "range": "33E",
+    "sections": {
+     "9": {
+      "qq": [
+       "NENW",
+       "NWNW",
+       "SENW",
+       "SWNW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "10": {
+      "qq": [],
+      "lots": [],
+      "whole": true,
+      "sub": []
+     }
+    }
+   },
+   "freq": "med",
+   "form": "'and all of Section'"
+  },
+  {
+   "id": "nm-039",
+   "parser": "legal_nm.parse",
+   "input": "Section 12: E/2, T20S, R34E, NMPM; Section 13: W/2, T20S, R35E, NMPM",
+   "expect": {
+    "township": "20S",
+    "range": "34E",
+    "sections": {
+     "12": {
+      "qq": [
+       "NENE",
+       "NESE",
+       "NWNE",
+       "NWSE",
+       "SENE",
+       "SESE",
+       "SWNE",
+       "SWSE"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     },
+     "13": {
+      "qq": [
+       "NENW",
+       "NESW",
+       "NWNW",
+       "NWSW",
+       "SENW",
+       "SESW",
+       "SWNW",
+       "SWSW"
+      ],
+      "lots": [],
+      "whole": false,
+      "sub": []
+     }
+    },
+    "issues_contains": [
+     "35E"
+    ]
+   },
+   "freq": "med",
+   "form": "two ranges in one description"
+  },
+  {
+   "id": "name-001",
+   "parser": "names.search_variants",
+   "input": "John W. Smith et ux",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN W",
+     "SMITH JNO W",
+     "SMITH J W",
+     "SMITH *"
+    ],
+    "notes_include": [
+     "et ux"
+    ]
+   },
+   "freq": "high",
+   "form": "et ux"
+  },
+  {
+   "id": "name-002",
+   "parser": "names.search_variants",
+   "input": "Mary Smith et vir",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH MARY",
+     "SMITH MOLLIE"
+    ],
+    "notes_include": [
+     "et vir"
+    ]
+   },
+   "freq": "med",
+   "form": "et vir"
+  },
+  {
+   "id": "name-003",
+   "parser": "names.search_variants",
+   "input": "J. W. Jones et al",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JONES J W",
+     "JONES *"
+    ],
+    "notes_include": [
+     "et al"
+    ]
+   },
+   "freq": "high",
+   "form": "et al"
+  },
+  {
+   "id": "name-004",
+   "parser": "names.search_variants",
+   "input": "John W. Smith, Jr.",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN W JR",
+     "SMITH JOHN W"
+    ],
+    "notes_include": [
+     "Jr"
+    ]
+   },
+   "freq": "high",
+   "form": "Jr."
+  },
+  {
+   "id": "name-005",
+   "parser": "names.search_variants",
+   "input": "Smith, John W., Sr.",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN W SR",
+     "SMITH JOHN W"
+    ]
+   },
+   "freq": "med",
+   "form": "index order + Sr."
+  },
+  {
+   "id": "name-006",
+   "parser": "names.search_variants",
+   "input": "Wm. H. Johnson",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JOHNSON WM H",
+     "JOHNSON WILLIAM H"
+    ]
+   },
+   "freq": "high",
+   "form": "nickname Wm"
+  },
+  {
+   "id": "name-007",
+   "parser": "names.search_variants",
+   "input": "Jno. T. Brown",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "BROWN JNO T",
+     "BROWN JOHN T"
+    ]
+   },
+   "freq": "high",
+   "form": "nickname Jno"
+  },
+  {
+   "id": "name-008",
+   "parser": "names.search_variants",
+   "input": "Chas. Davis",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "DAVIS CHAS",
+     "DAVIS CHARLES"
+    ]
+   },
+   "freq": "high",
+   "form": "nickname Chas"
+  },
+  {
+   "id": "name-009",
+   "parser": "names.search_variants",
+   "input": "The Smith Family Trust",
+   "expect": {
+    "kind": "trust",
+    "searches_include": [
+     "SMITH FAMILY TRUST"
+    ]
+   },
+   "freq": "high",
+   "form": "trust"
+  },
+  {
+   "id": "name-010",
+   "parser": "names.search_variants",
+   "input": "John Smith, Trustee of the Smith Family Trust",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN"
+    ],
+    "notes_include": [
+     "Smith Family Trust"
+    ]
+   },
+   "freq": "high",
+   "form": "trustee capacity"
+  },
+  {
+   "id": "name-011",
+   "parser": "names.search_variants",
+   "input": "Estate of John W. Smith, Deceased",
+   "expect": {
+    "kind": "estate",
+    "searches_include": [
+     "SMITH JOHN W"
+    ]
+   },
+   "freq": "high",
+   "form": "estate + 'Deceased'"
+  },
+  {
+   "id": "name-012",
+   "parser": "names.search_variants",
+   "input": "Heirs of J. M. Wilson",
+   "expect": {
+    "kind": "heirs",
+    "searches_include": [
+     "WILSON J M"
+    ]
+   },
+   "freq": "high",
+   "form": "heirs of"
+  },
+  {
+   "id": "name-013",
+   "parser": "names.search_variants",
+   "input": "Unknown Heirs of Mary Ann Jones, Deceased",
+   "expect": {
+    "kind": "heirs",
+    "searches_include": [
+     "JONES MARY ANN"
+    ]
+   },
+   "freq": "med",
+   "form": "heirs + 'Deceased'"
+  },
+  {
+   "id": "name-014",
+   "parser": "names.search_variants",
+   "input": "Pioneer Natural Resources USA, Inc.",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "PIONEER NATURAL RESOURCES USA"
+    ]
+   },
+   "freq": "high",
+   "form": "entity Inc."
+  },
+  {
+   "id": "name-015",
+   "parser": "names.search_variants",
+   "input": "Magnolia Petroleum Co.",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "MAGNOLIA PETROLEUM",
+     "MAGNOLIA PETROLEUM COMPANY",
+     "MAGNOLIA PETROLEUM CO"
+    ]
+   },
+   "freq": "high",
+   "form": "entity Co."
+  },
+  {
+   "id": "name-016",
+   "parser": "names.search_variants",
+   "input": "XYZ Minerals, L.L.C.",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "XYZ MINERALS",
+     "XYZ MINERALS LLC"
+    ]
+   },
+   "freq": "high",
+   "form": "entity L.L.C."
+  },
+  {
+   "id": "name-017",
+   "parser": "names.search_variants",
+   "input": "The Texas Company",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "TEXAS COMPANY",
+     "TEXAS CO"
+    ]
+   },
+   "freq": "high",
+   "form": "entity leading The"
+  },
+  {
+   "id": "name-018",
+   "parser": "names.search_variants",
+   "input": "John Smith and wife, Mary Smith",
+   "expect": {
+    "kind": "multiple",
+    "parties": 2,
+    "searches_include": [
+     "SMITH JOHN",
+     "SMITH MARY"
+    ]
+   },
+   "freq": "high",
+   "form": "and wife,"
+  },
+  {
+   "id": "name-019",
+   "parser": "names.search_variants",
+   "input": "John Smith and wife Mary Smith",
+   "expect": {
+    "kind": "multiple",
+    "parties": 2,
+    "searches_include": [
+     "SMITH JOHN",
+     "SMITH MARY"
+    ]
+   },
+   "freq": "high",
+   "form": "and wife"
+  },
+  {
+   "id": "name-020",
+   "parser": "names.search_variants",
+   "input": "J. R. Brown et ux, Ruby Brown",
+   "expect": {
+    "kind": "multiple",
+    "parties": 2,
+    "searches_include": [
+     "BROWN J R",
+     "BROWN RUBY"
+    ]
+   },
+   "freq": "high",
+   "form": "et ux <Name>"
+  },
+  {
+   "id": "name-021",
+   "parser": "names.search_variants",
+   "input": "Robert L. Jones, Independent Executor of the Estate of Sarah Jones, Deceased",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JONES ROBERT L",
+     "JONES BOB L"
+    ],
+    "notes_include": [
+     "Sarah Jones",
+     "executor"
+    ]
+   },
+   "freq": "high",
+   "form": "executor capacity"
+  },
+  {
+   "id": "name-022",
+   "parser": "names.search_variants",
+   "input": "Mrs. J. W. Smith",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH J W"
+    ],
+    "notes_include": [
+     "Mrs"
+    ]
+   },
+   "freq": "med",
+   "form": "Mrs."
+  },
+  {
+   "id": "name-023",
+   "parser": "names.search_variants",
+   "input": "W. T. Waggoner Estate",
+   "expect": {
+    "kind": "estate",
+    "searches_include": [
+     "WAGGONER W T"
+    ]
+   },
+   "freq": "med",
+   "form": "X Estate"
+  },
+  {
+   "id": "name-024",
+   "parser": "names.search_variants",
+   "input": "Smith, Wm.",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH WM",
+     "SMITH WILLIAM"
+    ]
+   },
+   "freq": "med",
+   "form": "index order nickname"
+  },
+  {
+   "id": "name-025",
+   "parser": "names.search_variants",
+   "input": "Thos. J. Hall, et ux, Mattie Hall",
+   "expect": {
+    "kind": "multiple",
+    "parties": 2,
+    "searches_include": [
+     "HALL THOS J",
+     "HALL THOMAS J",
+     "HALL MATTIE",
+     "HALL MARTHA"
+    ]
+   },
+   "freq": "high",
+   "form": "et ux, <Name>"
+  },
+  {
+   "id": "name-026",
+   "parser": "names.search_variants",
+   "input": "Humble Oil & Refining Company",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "HUMBLE *"
+    ],
+    "searches_any_contains": [
+     "HUMBLE OIL & REFINING",
+     "HUMBLE OIL AND REFINING"
+    ]
+   },
+   "freq": "high",
+   "form": "entity with &"
+  },
+  {
+   "id": "name-027",
+   "parser": "names.search_variants",
+   "input": "Bank of America, N.A., Trustee of the J. Smith Trust",
+   "expect": {
+    "kind": "organization",
+    "searches_any_contains": [
+     "BANK OF AMERICA"
+    ],
+    "notes_include": [
+     "Smith Trust"
+    ]
+   },
+   "freq": "high",
+   "form": "corporate trustee"
+  },
+  {
+   "id": "name-028",
+   "parser": "names.search_variants",
+   "input": "Smith, John",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN",
+     "SMITH JNO",
+     "SMITH J"
+    ]
+   },
+   "freq": "high",
+   "form": "index order"
+  },
+  {
+   "id": "name-029",
+   "parser": "names.search_variants",
+   "input": "John Smith, as Attorney-in-Fact for Mary Jones",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH JOHN"
+    ],
+    "notes_include": [
+     "Mary Jones"
+    ]
+   },
+   "freq": "med",
+   "form": "attorney-in-fact for"
+  },
+  {
+   "id": "name-030",
+   "parser": "names.search_variants",
+   "input": "Mollie Smith",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH MOLLIE",
+     "SMITH MARY"
+    ]
+   },
+   "freq": "med",
+   "form": "nickname Mollie"
+  },
+  {
+   "id": "name-031",
+   "parser": "names.search_variants",
+   "input": "Geo. W. Littlefield",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "LITTLEFIELD GEO W",
+     "LITTLEFIELD GEORGE W"
+    ]
+   },
+   "freq": "med",
+   "form": "nickname Geo"
+  },
+  {
+   "id": "name-032",
+   "parser": "names.search_variants",
+   "input": "José García",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "GARCIA JOSE"
+    ]
+   },
+   "freq": "high",
+   "form": "accents"
+  },
+  {
+   "id": "name-033",
+   "parser": "names.search_variants",
+   "input": "Juan de la Cruz",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "DE LA CRUZ JUAN"
+    ]
+   },
+   "freq": "med",
+   "form": "compound Hispanic surname"
+  },
+  {
+   "id": "name-034",
+   "parser": "names.search_variants",
+   "input": "Martinez, Maria Guadalupe",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "MARTINEZ MARIA GUADALUPE",
+     "MARTINEZ MARIA G",
+     "MARTINEZ MARIA"
+    ]
+   },
+   "freq": "med",
+   "form": "index order Hispanic"
+  },
+  {
+   "id": "name-035",
+   "parser": "names.search_variants",
+   "input": "Ella Mae Jones, a widow",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JONES ELLA MAE",
+     "JONES ELLA M"
+    ]
+   },
+   "freq": "high",
+   "form": "marital-status tail"
+  },
+  {
+   "id": "name-036",
+   "parser": "names.search_variants",
+   "input": "Tom Jones, a single man",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JONES TOM",
+     "JONES THOMAS"
+    ]
+   },
+   "freq": "high",
+   "form": "marital-status tail"
+  },
+  {
+   "id": "name-037",
+   "parser": "names.search_variants",
+   "input": "Smith Ranch, Ltd.",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "SMITH RANCH",
+     "SMITH RANCH LTD"
+    ]
+   },
+   "freq": "med",
+   "form": "entity Ltd."
+  },
+  {
+   "id": "name-038",
+   "parser": "names.search_variants",
+   "input": "First National Bank of Midland, Trustee",
+   "expect": {
+    "kind": "organization",
+    "searches_include": [
+     "FIRST NATIONAL BANK OF MIDLAND"
+    ],
+    "notes_include": [
+     "trustee"
+    ]
+   },
+   "freq": "high",
+   "form": "corporate trustee"
+  },
+  {
+   "id": "name-039",
+   "parser": "names.search_variants",
+   "input": "Mary Smith Jones, dealing herein with her sole and separate property",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "JONES MARY S",
+     "JONES MARY"
+    ]
+   },
+   "freq": "high",
+   "form": "separate-property tail"
+  },
+  {
+   "id": "name-040",
+   "parser": "names.search_variants",
+   "input": "J.W. Smith",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH J W"
+    ]
+   },
+   "freq": "high",
+   "form": "initials without spaces"
+  },
+  {
+   "id": "name-041",
+   "parser": "names.search_variants",
+   "input": "SMITH J W",
+   "expect": {
+    "kind": "person",
+    "searches_include": [
+     "SMITH J W"
+    ]
+   },
+   "freq": "med",
+   "form": "index-style caps, no comma"
+  },
+  {
+   "id": "rs-001",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "1",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided one-half (1/2) of the one-eighth (1/8) royalty",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DOUBLE_FRACTION"
+    ]
+   },
+   "freq": "high",
+   "form": "double fraction words+numerals"
+  },
+  {
+   "id": "rs-002",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "2",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "1/2 of 1/8 royalty",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DOUBLE_FRACTION"
+    ]
+   },
+   "freq": "high",
+   "form": "double fraction numerals"
+  },
+  {
+   "id": "rs-003",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "3",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided 1/16th royalty interest (being 1/2 of the usual 1/8 royalty)",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DOUBLE_FRACTION"
+    ]
+   },
+   "freq": "high",
+   "form": "double fraction 'usual'"
+  },
+  {
+   "id": "rs-004",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "4",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided three-fourths (3/4) of the one-eighth (1/8) royalty",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DOUBLE_FRACTION"
+    ]
+   },
+   "freq": "med",
+   "form": "double fraction words"
+  },
+  {
+   "id": "rs-005",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "5",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided one-half (1/2) interest in and to the one-eighth (1/8) royalty",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DOUBLE_FRACTION"
+    ]
+   },
+   "freq": "high",
+   "form": "double fraction 'interest in and to'"
+  },
+  {
+   "id": "rs-006",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "6",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided one-fourth (1/4) of the royalty",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: fraction of royalty, not double"
+  },
+  {
+   "id": "rs-007",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "7",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "1/2 of 8/8 of all oil, gas and other minerals",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "med",
+   "form": "FP: '1/2 of 8/8'"
+  },
+  {
+   "id": "rs-008",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "8",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Royalty Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided 1/2 royalty interest for a term of fifteen (15) years from date and as long thereafter as oil, gas or other minerals are produced",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "TERM_INTEREST"
+    ]
+   },
+   "freq": "high",
+   "form": "term royalty"
+  },
+  {
+   "id": "rs-009",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "9",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided 1/4 mineral interest for a period of 20 years",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "TERM_INTEREST"
+    ]
+   },
+   "freq": "med",
+   "form": "term mineral"
+  },
+  {
+   "id": "rs-010",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "10",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Oil and Gas Lease",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "Lease of all oil and gas, primary term three (3) years and as long thereafter as oil or gas is produced",
+    "reservations_exceptions": "",
+    "lease_royalty": "1/4",
+    "lease_primary_term": "3 years",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: lease habendum"
+  },
+  {
+   "id": "rs-011",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "11",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "This conveyance is subject to that certain oil and gas lease dated May 1, 1975, for a term of five (5) years",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: deed recites a lease term"
+  },
+  {
+   "id": "rs-012",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "12",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "all of Grantor's right, title and interest in and to all oil, gas and other minerals in Reeves County, Texas",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "BLANKET_CONVEYANCE"
+    ]
+   },
+   "freq": "high",
+   "form": "blanket"
+  },
+  {
+   "id": "rs-013",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "13",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "all of my undivided mineral interest in all lands situated in Ward County, Texas",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "BLANKET_CONVEYANCE"
+    ]
+   },
+   "freq": "high",
+   "form": "blanket"
+  },
+  {
+   "id": "rs-014",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "14",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "all oil, gas and other minerals owned by Grantor in Pecos County, Texas, whether or not described herein",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "BLANKET_CONVEYANCE"
+    ]
+   },
+   "freq": "high",
+   "form": "blanket 'owned by Grantor'"
+  },
+  {
+   "id": "rs-015",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "15",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "all of Grantor's undivided interest in the oil, gas and other minerals in and under the NE/4 of Section 12, Block 33, T-2-S, T&P RR Co. Survey, situated in Midland County, Texas",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: specific tract 'situated in X County'"
+  },
+  {
+   "id": "rs-016",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "16",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "Grantor reserves an undivided 1/2 non-participating royalty interest",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "NPRI_LANGUAGE"
+    ]
+   },
+   "freq": "high",
+   "form": "NPRI spelled out"
+  },
+  {
+   "id": "rs-017",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "17",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "Grantor reserves a 1/16 NPRI",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "NPRI_LANGUAGE"
+    ]
+   },
+   "freq": "high",
+   "form": "NPRI abbreviation"
+  },
+  {
+   "id": "rs-018",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "18",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "Grantee takes a non-executive one-half mineral interest",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "NPRI_LANGUAGE"
+    ]
+   },
+   "freq": "med",
+   "form": "non-executive"
+  },
+  {
+   "id": "rs-019",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "19",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "without the right to execute oil and gas leases or to receive bonus or delay rentals",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "NPRI_LANGUAGE"
+    ]
+   },
+   "freq": "high",
+   "form": "NPRI attributes"
+  },
+  {
+   "id": "rs-020",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "20",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "First National Bank of Midland, Trustee",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "FIDUCIARY_CAPACITY"
+    ]
+   },
+   "freq": "high",
+   "form": "trustee grantor"
+  },
+  {
+   "id": "rs-021",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "21",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "Mary Smith, Independent Executrix of the Estate of John Smith, Deceased",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "FIDUCIARY_CAPACITY"
+    ]
+   },
+   "freq": "high",
+   "form": "executrix grantor"
+  },
+  {
+   "id": "rs-022",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "22",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "Mary Smith, Admx. of the Estate of J. Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "FIDUCIARY_CAPACITY"
+    ]
+   },
+   "freq": "med",
+   "form": "abbreviated 'Admx.'"
+  },
+  {
+   "id": "rs-023",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "23",
+    "state": "NM",
+    "county": "Lea",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "Mary Smith, Personal Representative of the Estate of John Smith, Deceased",
+    "grantee": "Jane Doe",
+    "legal_description": "SE/4 of Section 10, T18S, R34E, NMPM",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "FIDUCIARY_CAPACITY"
+    ]
+   },
+   "freq": "high",
+   "form": "NM personal representative"
+  },
+  {
+   "id": "rs-024",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "24",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "subject to the deed of trust to First Bank, Trustee, recorded in Vol. 40, Pg. 2",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "med",
+   "form": "FP: DOT trustee in subject-to clause"
+  },
+  {
+   "id": "rs-025",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "25",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Oil and Gas Lease",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "1/4",
+    "lease_primary_term": "3 years",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "subject to existing oil and gas lease recorded in Vol. 123, Pg. 45",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "TOP_LEASE"
+    ]
+   },
+   "freq": "high",
+   "form": "top lease 'existing'"
+  },
+  {
+   "id": "rs-026",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "26",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Oil and Gas Lease (Top Lease)",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "1/4",
+    "lease_primary_term": "3 years",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "TOP_LEASE"
+    ]
+   },
+   "freq": "med",
+   "form": "top lease in instrument type"
+  },
+  {
+   "id": "rs-027",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "27",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Oil and Gas Lease",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "This lease is expressly subject to that certain Oil, Gas and Mineral Lease dated June 1, 2015, recorded in Vol. 900, Pg. 12",
+    "lease_royalty": "1/4",
+    "lease_primary_term": "3 years",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "TOP_LEASE"
+    ]
+   },
+   "freq": "high",
+   "form": "top lease 'that certain lease'"
+  },
+  {
+   "id": "rs-028",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "28",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Assignment of Oil and Gas Lease",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "from the surface to 100 feet below the base of the Wolfcamp formation",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DEPTH_LIMITED"
+    ]
+   },
+   "freq": "high",
+   "form": "depth 'base of'"
+  },
+  {
+   "id": "rs-029",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "29",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Assignment",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "INSOFAR AND ONLY INSOFAR as to rights below 7,500 feet subsurface",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DEPTH_LIMITED"
+    ]
+   },
+   "freq": "high",
+   "form": "depth 'rights below N feet'"
+  },
+  {
+   "id": "rs-030",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "30",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Assignment",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "limited to the Wolfcamp formation only",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DEPTH_LIMITED"
+    ]
+   },
+   "freq": "med",
+   "form": "named-formation limit"
+  },
+  {
+   "id": "rs-031",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "31",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "from the surface of the earth down to the base of the Bone Spring formation",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "DEPTH_LIMITED"
+    ]
+   },
+   "freq": "high",
+   "form": "depth surface-to-base"
+  },
+  {
+   "id": "rs-032",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "32",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Deed of Trust",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "LIEN_OR_LITIGATION"
+    ]
+   },
+   "freq": "high",
+   "form": "lien"
+  },
+  {
+   "id": "rs-033",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "33",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Release of Lien",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: release of lien"
+  },
+  {
+   "id": "rs-034",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "34",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Release of Vendor's Lien",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: release of vendor's lien"
+  },
+  {
+   "id": "rs-035",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "35",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Partial Release of Deed of Trust",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "med",
+   "form": "FP: partial release"
+  },
+  {
+   "id": "rs-036",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "36",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Deed of Trust Release",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "med",
+   "form": "FP: release in index order"
+  },
+  {
+   "id": "rs-037",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "37",
+    "state": "NM",
+    "county": "Lea",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Satisfaction of Mortgage",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "SE/4 of Section 10, T18S, R34E, NMPM",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: NM satisfaction"
+  },
+  {
+   "id": "rs-038",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "38",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Abstract of Judgment",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "LIEN_OR_LITIGATION"
+    ]
+   },
+   "freq": "med",
+   "form": "judgment"
+  },
+  {
+   "id": "rs-039",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "39",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Lis Pendens",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "LIEN_OR_LITIGATION"
+    ]
+   },
+   "freq": "med",
+   "form": "lis pendens"
+  },
+  {
+   "id": "rs-040",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "40",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Warranty Deed with Vendor's Lien",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "LIEN_OR_LITIGATION"
+    ]
+   },
+   "freq": "high",
+   "form": "WD with VL"
+  },
+  {
+   "id": "rs-041",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "41",
+    "state": "NM",
+    "county": "Lea",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mortgage",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "SE/4 of Section 10, T18S, R34E, NMPM",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "LIEN_OR_LITIGATION"
+    ]
+   },
+   "freq": "high",
+   "form": "NM mortgage"
+  },
+  {
+   "id": "rs-042",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "42",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided one-fourth (1/8) interest",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "WORD_NUMERAL_MISMATCH"
+    ]
+   },
+   "freq": "med",
+   "form": "word/numeral mismatch"
+  },
+  {
+   "id": "rs-043",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "43",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "an undivided twenty-one sixty-fourths (21/64) interest",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "low",
+   "form": "FP: compound-numerator words"
+  },
+  {
+   "id": "rs-044",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "44",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "5/10/48",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "BAD_DATE"
+    ]
+   },
+   "freq": "high",
+   "form": "two-digit year"
+  },
+  {
+   "id": "rs-045",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "45",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "Sept. 3, 1952",
+    "filed_date": "Sept. 5, 1952",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": []
+   },
+   "freq": "high",
+   "form": "FP: 'Sept.' dates"
+  },
+  {
+   "id": "rs-046",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "46",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "executed by Bob Jones, attorney-in-fact for John Smith",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "POWER_OF_ATTORNEY"
+    ]
+   },
+   "freq": "med",
+   "form": "POA"
+  },
+  {
+   "id": "rs-047",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "47",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Mineral Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "together with all strips and gores adjacent thereto",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "MOTHER_HUBBARD"
+    ]
+   },
+   "freq": "med",
+   "form": "strips and gores"
+  },
+  {
+   "id": "rs-048",
+   "parser": "runsheet.check_row",
+   "input": {
+    "row": "48",
+    "state": "TX",
+    "county": "Midland",
+    "record_series": "DR",
+    "volume": "512",
+    "page": "33",
+    "instrument_no": "",
+    "instrument_type": "Quitclaim Deed",
+    "instrument_date": "1948-05-10",
+    "filed_date": "1948-05-12",
+    "grantor": "John Smith",
+    "grantee": "Jane Doe",
+    "legal_description": "Section 12, Block 33, T-2-S, T&P RR Co. Survey",
+    "interest_conveyed": "",
+    "reservations_exceptions": "",
+    "lease_royalty": "",
+    "lease_primary_term": "",
+    "depth": "",
+    "acknowledged": "Y",
+    "spouse_joined": "Y",
+    "image_file": "TX-MIDLAND-DR-0512-0033.pdf",
+    "notes": "",
+    "reviewed_by": "",
+    "reviewed_on": ""
+   },
+   "expect": {
+    "flags": [
+     "QUITCLAIM"
+    ]
+   },
+   "freq": "high",
+   "form": "quitclaim"
+  }
+ ]
+}

@@ -268,5 +268,56 @@ class ExtractRegressions(unittest.TestCase):
             extract.build_params([extract.Page(big)], doc_id="D", county="Reeves", state="TX")
 
 
+class MathAuditRegressions(unittest.TestCase):
+    """Bugs found by the hand-checked math audit (FICTIONAL owners)."""
+
+    @staticmethod
+    def _chain(*tail):
+        return [
+            Event(1, "P", "1909-01-01", "T", "ALL", "MI", "root", None, ["Able"], [F(1)], "all"),
+            Event(2, "D", "1940-01-01", "T", "ALL", "MI", "convey", "Able", ["Baker"], [F(1)], "1/2", warranty=True),
+            Event(3, "D", "1940-01-01", "T", "ALL", "NPRI", "reserve", "Able", [], [], "",
+                  npri_kind="fixed", npri_value=F(1, 16), npri_burdens="conveyed"),
+            *tail,
+        ]
+
+    def _npri(self, events):
+        totals: dict[str, F] = {}
+        for n in replay(events).positions[("T", "ALL")].npris:
+            totals[n.owner] = totals.get(n.owner, F(0)) + n.value
+        return totals
+
+    def test_absolute_npri_conveyance_is_taken_pro_rata_across_pieces(self):
+        # Heir Two holds 1/16 in two 1/32 pieces and conveys 1/32: half of each piece, not 1/32 of each.
+        heirs = [Event(4, "Probate", "1960-01-01", "T", "ALL", "ALL", "convey", "Able", ["Heir One", "Heir Two"],
+                       [F(1, 2), F(1, 2)], "all"),
+                 Event(5, "D", "1970-01-01", "T", "ALL", "NPRI", "convey", "Heir One", ["Heir Two"], [F(1)], "all")]
+        half = self._npri(self._chain(*heirs, Event(6, "D", "1980-01-01", "T", "ALL", "NPRI", "convey", "Heir Two",
+                                                    ["Doe Buyer"], [F(1)], "1/32")))
+        self.assertEqual(half, {"Heir Two": F(1, 32), "Doe Buyer": F(1, 32)})
+        everything = self._npri(self._chain(*heirs, Event(6, "D", "1980-01-01", "T", "ALL", "NPRI", "convey", "Heir Two",
+                                                          ["Doe Buyer"], [F(1)], "1/16")))
+        self.assertEqual(everything, {"Doe Buyer": F(1, 16)})
+
+    def test_relative_all_estate_conveyance_moves_the_same_share_of_npri(self):
+        events = self._chain(Event(4, "Probate", "1960-01-01", "T", "ALL", "ALL", "convey", "Able", ["Heir One"],
+                                   [F(1)], "1/2 of grantor's"))
+        r = replay(events)
+        self.assertEqual(r.positions[("T", "ALL")].minerals, {"Able": F(1, 4), "Baker": F(1, 2), "Heir One": F(1, 4)})
+        self.assertEqual(self._npri(events), {"Able": F(1, 32), "Heir One": F(1, 32)})
+        self.assertNotIn("ALL_NEEDS_RELATIVE_INTEREST", [f.code for f in r.flags])
+
+    def test_compound_numerator_words_are_not_a_false_mismatch(self):
+        from ptk.fracs import FractionError, read_fraction_text
+        for text, value in (("twenty-seven sixty-fourths (27/64)", F(27, 64)),
+                            ("three one-hundred-twenty-eighths (3/128)", F(3, 128)),
+                            ("forty-five one-hundred-twenty-eighths (45/128)", F(45, 128))):
+            reading = read_fraction_text(text)
+            self.assertIs(reading.consistent, True, text)
+            self.assertEqual(reading.value, value, text)
+        with self.assertRaises(FractionError):
+            parse_fraction("nine two sixty-fourths")  # not a number: refused, never guessed
+
+
 if __name__ == "__main__":
     unittest.main()

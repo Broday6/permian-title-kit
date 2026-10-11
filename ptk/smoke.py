@@ -6,6 +6,9 @@ against facts known to be on the page. Costs one request (a few cents).
 
 Run it after you set ANTHROPIC_API_KEY (or log in with ``ant auth login``),
 whenever you change the model, the prompt or the schema.
+
+Without an API key, ``grade_answer`` checks an abstract of the same page written in
+a chat session (``ptk smoke-test --answer answer.json``): same schema, same facts.
 """
 
 from __future__ import annotations
@@ -78,5 +81,21 @@ def run_smoke(client: Any, work_dir: Path, model: str, effort: str = "high") -> 
         report.append(f"{'PASS' if passed else 'FAIL'}  {label}")
     checks = result.get("checks") or []
     report.append(f"{'PASS' if not checks else 'WARN'}  quote checks: {len(checks)} problem(s)")
+    report += [f"      {c['code']}: {c['detail']}" for c in checks[:5]]
+    return ok, report
+
+
+def grade_answer(extraction: dict[str, Any], schema_problems: list[str], checks: list[dict[str, str]]) -> tuple[bool, list[str]]:
+    """Grade an abstract of the sample deed against the facts known to be on the page."""
+    ok = not schema_problems
+    report: list[str] = [f"FAIL  schema: {p}" for p in schema_problems[:10]] or ["PASS  answer matches the JSON schema"]
+    for label, test in EXPECTED:
+        try:
+            passed = bool(test(extraction))
+        except (KeyError, TypeError, AttributeError):
+            passed = False
+        ok &= passed
+        report.append(f"{'PASS' if passed else 'FAIL'}  {label}")
+    report.append(f"{'PASS' if not checks else 'WARN'}  quote and fraction checks: {len(checks)} problem(s)")
     report += [f"      {c['code']}: {c['detail']}" for c in checks[:5]]
     return ok, report

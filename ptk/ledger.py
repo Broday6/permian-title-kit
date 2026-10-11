@@ -195,9 +195,29 @@ def load_events(path: str | Path) -> list[Event]:
     return events
 
 
-def _is_relative(interest: str) -> bool:
+_ALL_PHRASES = ("", "all", "all of grantor", "all of grantor's", "all of grantor's interest", "all grantor's interest",
+                "all of grantors interest")
+_RELATIVE_SUFFIXES = (" of grantor's interest", " of grantors interest", " of grantor's", " of grantor")
+
+
+def relative_share(interest: str) -> Fraction | None:
+    """Share of the grantor's holding an interest phrase means ("all" = 1, "1/2 of grantor's" = 1/2);
+    None for an absolute amount ("1/4" of the whole estate). One reading for minerals, NPRIs and ALL rows."""
     t = interest.strip().lower()
-    return t in ("", "all") or t.startswith("all of grantor") or t.startswith("all grantor") or " of grantor" in t
+    if t in _ALL_PHRASES:
+        return Fraction(1)
+    for suffix in _RELATIVE_SUFFIXES:
+        if t.endswith(suffix):
+            head = t[: -len(suffix)].strip()
+            return Fraction(1) if head == "all" else parse_fraction(head)
+    return None
+
+
+def _is_relative(interest: str) -> bool:
+    try:
+        return relative_share(interest) is not None
+    except FractionError:
+        return True  # a relative phrase whose fraction can't be read: reported when it's applied
 
 
 def _amount(interest: str, balance: Fraction) -> tuple[Fraction, bool]:
@@ -205,13 +225,10 @@ def _amount(interest: str, balance: Fraction) -> tuple[Fraction, bool]:
 
     Returns (amount of the whole estate, phrase was relative to the grantor).
     """
-    t = interest.strip().lower()
-    if t in ("", "all", "all of grantor", "all of grantor's interest", "all grantor's interest"):
-        return balance, True
-    for suffix in (" of grantor's interest", " of grantor", " of grantor's"):
-        if t.endswith(suffix):
-            return parse_fraction(t[: -len(suffix)]) * balance, True
-    return parse_fraction(t), False
+    share = relative_share(interest)
+    if share is not None:
+        return share * balance, True
+    return parse_fraction(interest.strip().lower()), False
 
 
 def replay(
@@ -369,18 +386,23 @@ def _apply_npri(ev: Event, pos: Position, flags: list[Flag]) -> None:
         flags.append(Flag("CHAIN_GAP", pos.tract, pos.depth, ev.instrument,
                           f"{ev.grantor} holds no NPRI here on this date; nothing moved"))
         return
-    t = ev.interest.strip().lower()
+    # A relative phrase takes that share of every piece; an absolute amount is taken pro rata
+    # across the pieces, against the total held before any of them is reduced.
+    share = relative_share(ev.interest)
+    total_held = sum((h.value for h in held), Fraction(0))
+    if share is None:
+        amount = parse_fraction(ev.interest.strip().lower())
+        if amount > total_held:
+            flags.append(Flag("OVER_CONVEYANCE", pos.tract, pos.depth, ev.instrument,
+                              f"{ev.grantor} conveyed {fmt(amount)} NPRI but held {fmt(total_held)}; moved {fmt(total_held)}"))
+            amount = total_held
+        share = amount / total_held
+    elif share > 1:
+        flags.append(Flag("OVER_CONVEYANCE", pos.tract, pos.depth, ev.instrument,
+                          f"{ev.grantor} conveyed {fmt(share)} of its NPRI; moved all of it"))
+        share = Fraction(1)
     for n in held:
-        if t in ("", "all", "all of grantor", "all of grantor's interest"):
-            part = n.value
-        elif t.endswith(" of grantor") or t.endswith(" of grantor's interest"):
-            part = parse_fraction(t.split(" of grantor")[0]) * n.value
-        else:
-            part = parse_fraction(t) * (n.value / sum((h.value for h in held), Fraction(0)))
-            if part > n.value:
-                flags.append(Flag("OVER_CONVEYANCE", pos.tract, pos.depth, ev.instrument,
-                                  f"{ev.grantor} conveyed more NPRI than held"))
-                part = n.value
+        part = n.value * share
         n.value -= part
         for g, s in zip(ev.grantees, ev.shares):
             pos.npris.append(Npri(g, n.kind, part * s, ev.instrument, n.group))

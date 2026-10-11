@@ -8,8 +8,9 @@ Conventions (each one is a business rule the examiner should confirm):
 
 * An NPRI burdens only the mineral interests the ledger says it burdens (see
   ``npri_burdens`` in ledger.py), and comes out of those owners' royalty in
-  proportion to their burdened minerals (Wenske v. Ealy, Tex. 2017, is the
-  Texas default when the burden is spread across the estate).
+  proportion to their burdened minerals. This is the kit's modelling choice,
+  not a default rule of law: Wenske v. Ealy (Tex. 2017) turned on the words of
+  that deed, so the examiner reads each reservation.
 * A fixed NPRI is a fraction of the production attributable to the burdened
   minerals. A floating NPRI is a fraction of each burdened owner's royalty.
 * An ORRI is a fraction of 8/8 of the lease, proportionately reduced to the
@@ -18,8 +19,10 @@ Conventions (each one is a business rule the examiner should confirm):
   of net proceeds, not a royalty. In New Mexico, a compulsory pooling order
   treats the unleased interest as a 7/8 working interest plus a 1/8 royalty
   (NMSA 70-2-17).
-* In Texas, a pooled unit or allocation well doesn't bind an NPRI owner who
-  hasn't ratified. Those rows are produced but flagged.
+* In Texas, a pooled unit doesn't bind an NPRI owner who hasn't ratified
+  (Montgomery v. Rittersbacher) unless the NPRI instrument grants pooling
+  authority; how this applies to allocation wells is unsettled. Those rows are
+  produced but flagged.
 
 Every tract's revenue interests must add to exactly 1 before participation is
 applied. Anything else is flagged.
