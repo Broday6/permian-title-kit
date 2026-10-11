@@ -1,0 +1,172 @@
+<section id="automation">
+  <h2><span class="tag">Automation</span>The title factory: what to automate, in what order</h2>
+  <p>Fully automatic title isn't realistic, and you shouldn't buy anything sold that way. The realistic target is that each landman verifies three to five times more instruments per day. That comes from machines doing the search, the pull, the transcription, the first-pass abstract and all the math, while people accept or correct each field against the image. Reviewing a pre-extracted instrument should take a few minutes, against roughly 15–30 minutes to abstract it by hand. Those are planning estimates; measure your own.</p>
+
+  <div class="rule-box"><span class="label">Working starter code</span>
+    <p>The Permian title kit (private repository <a href="https://github.com/Broday6/permian-title-kit" target="_blank" rel="noopener">Broday6/permian-title-kit</a>) implements this section in tested Python:</p>
+    <ul>
+      <li><strong>Ownership:</strong> the exact-fraction ledger and unit deck, with NPRIs charged only to the minerals they burden.</li>
+      <li><strong>Records:</strong> Tesseract/Textract OCR, Texas and New Mexico legal-description parsers, a map check against RRC and BLM survey layers, index name variants, runsheet red-flag rules and county search plans.</li>
+      <li><strong>Output:</strong> live spreadsheets for the runsheet and the deck.</li>
+      <li><strong>AI:</strong> a Claude extraction step with quote checking, plus a one-command live smoke test.</li>
+    </ul>
+    <p>Run <code>ptk deck examples/project.json --xlsx deck.xlsx</code> to see a full allocation-well deck built from a fictional takeoff.</p>
+  </div>
+
+  <h3>Automate in this order (highest return first)</h3>
+  <ol class="steps">
+    <li><div><h4>Tract-to-grid mapping and "what's in the box"</h4><p>Normalize the legal description, drop it on the RRC survey polygons or BLM CadNSDI, and pull every well, lateral, unit, state/federal lease and production record that touches it. It uses free public data and saves an hour per tract.</p></div></li>
+    <li><div><h4>Index harvesting and document pull</h4><p>Use a licensed aggregator (TexasFile index export at $0.10/row; CourthouseDirect plant search). Run every name variant against both indices, then queue downloads. Stay within the vendor's terms (see guardrails).</p></div></li>
+    <li><div><h4>The fraction engine</h4><p>Use exact rational arithmetic, ownership replayed from the ledger by tract, depth and interest type, tract participation factors and 8-place decimals. It's deterministic, so you can trust it once it's tested. Reconcile its output against pay decks every month.</p></div></li>
+    <li><div><h4>OCR plus AI first-pass abstracting</h4><p>Type-specific extraction into a strict schema, with a verbatim quote and line reference for every field. People verify. This is where most of the speed-up comes from, and where most of the risk is.</p></div></li>
+    <li><div><h4>Name resolution and the chain-walking loop</h4><p>Each new party found becomes a new search, and the loop stops at the patent, the root-of-title date, or a prior opinion's cut-off.</p></div></li>
+    <li><div><h4>Rule-based red flags and curative drafting</h4><p>The rules raise the items in the red-flag table automatically. Draft affidavit of heirship packages, ratifications and stipulations from templates for a person to finish.</p></div></li>
+  </ol>
+
+  <h3>Pipeline</h3>
+  <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  A[Acquire<br/>licensed feeds, vendor exports,<br/>RRC GLO BLM NMSLO OCD GIS] --> B[Store originals<br/>immutable + SHA-256]
+  B --> C[Preprocess<br/>deskew, crop, split instruments,<br/>find marginal notes]
+  C --> D[OCR pass<br/>word boxes + confidence]
+  C --> E[Vision LLM pass<br/>verbatim transcription]
+  D --> F{Diff critical tokens<br/>fractions, names, vol/pg, dates}
+  E --> F
+  F -->|disagree| E2[Re-read crop<br/>stronger model]
+  F -->|agree| G[Classify + extract<br/>schema + line evidence]
+  E2 --> G
+  G --> H[Validate<br/>dates, word vs numeral,<br/>acreage, formats]
+  H --> I[Legal description<br/>grammar + geometry]
+  I --> J[Entity resolution<br/>aliases, heirs, successors]
+  J --> K[Chain ledger replay<br/>tract x depth x interest]
+  K --> L[Fraction engine<br/>NMA, decimals, WI/NRI]
+  L --> M[Red flags + curative]
+  M --> N[Human review<br/>image + field side by side]
+  N --> O[Runsheet, ownership report,<br/>DOI sheet, GIS, land system]
+  N -. corrections .-> P[(Gold set)]
+</pre>
+  </div>
+
+  <h3>OCR and AI: what it costs per 1,000 pages</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Engine</th><th>Role</th><th>≈ $ per 1,000 pages</th></tr></thead>
+    <tbody>
+      <tr><td>AWS Textract text detection / Google Document AI OCR / Azure Read</td><td>Word boxes and confidence scores. Your "second engine"</td><td class="num">$1.50 (≈$0.60 at volume)</td></tr>
+      <tr><td>Document AI custom extractor / Azure custom model</td><td>Trained form extraction</td><td class="num">$30 ($20 at volume)</td></tr>
+      <tr><td>Claude Haiku 4.5, page tiled in 3 strips, batch</td><td>Classification, cheap transcription</td><td class="num">≈ $5.40</td></tr>
+      <tr><td>Gemini 3.x Flash, high resolution</td><td>Cheap transcription</td><td class="num">≈ $5 (intro pricing through 2026)</td></tr>
+      <tr><td>Claude Sonnet 5.5, batch</td><td>Full transcription and extraction of complex deeds</td><td class="num">≈ $11</td></tr>
+      <tr><td>Claude Opus 5.5, batch</td><td>Escalation on flagged pages only</td><td class="num">≈ $22</td></tr>
+      <tr><td>Transkribus, custom model per clerk's hand</td><td>1880s–1920s handwritten deed books</td><td class="num">≈ €50–110</td></tr>
+      <tr><td>olmOCR or PaddleOCR-VL, self-hosted</td><td>High volume or data residency</td><td class="num">GPU cost only</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">OCR prices are list prices from the providers' pricing pages. LLM figures are computed from published token prices at about 4,800 image tokens and 1,200 output tokens per page. At 30,000 pages a month, compute stays under about $1,000. Licensed records and reviewer time are the real costs.</p>
+
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Record era</th><th>Machine-only field accuracy</th><th>With human review</th></tr></thead>
+    <tbody>
+      <tr><td>E-recorded / modern typed: headers (vol/page, dates, parties)</td><td class="num">97–99%</td><td class="num">≈ 99.5%</td></tr>
+      <tr><td>Modern: interest fraction and its basis</td><td class="num">85–92%</td><td class="num">≈ 99%</td></tr>
+      <tr><td>1930s–60s typed and carbon copies: fractions</td><td class="num">80–90%</td><td class="num">≈ 99%</td></tr>
+      <tr><td>1880s–1920s handwritten: names and numbers</td><td class="num">80–92%</td><td class="num">98–99%, review-heavy</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Planning estimates, not measurements. Build a gold set of 300–500 instruments stratified by county, era and type, and measure your own numbers before you rely on any of them.</p>
+
+  <div class="stop"><span class="label">How AI title extraction fails</span>
+    <p>Vision models <strong>normalize</strong>. They quietly "fix" spellings and fill illegible spots with plausible words and numbers. The damaging cases are swapped fractions (1/2↔1/4, 1/8↔1/3), invented volume and page numbers, and corrected names. The controls:</p>
+    <ul>
+      <li>Every field carries a verbatim quote tied to OCR line IDs, checked automatically.</li>
+      <li>A second OCR engine, with any disagreement on digits, fractions, names or dates sent to review.</li>
+      <li>A mismatch between the written fraction and the numeral ("one-half (1/4)") always raises a flag.</li>
+      <li>Ignore the model's self-reported confidence. Measure confidence by agreement between engines.</li>
+      <li>Never use AI super-resolution on a source image. It invents characters.</li>
+    </ul>
+  </div>
+
+  <h3>Review tiers</h3>
+  <div class="grid2">
+    <div class="rule-box"><span class="label">Tier A: a person always reviews</span><p>Anything that changes ownership: conveyed fractions and their basis, reservations and exceptions, parties and capacity on pre-1970 instruments, and every double-fraction, over-conveyance, word/numeral or illegible flag.</p></div>
+    <div class="rule-box"><span class="label">Tier B: sample review</span><p>Header fields where both engines agree and every validator passed. Spot-check 5–10% and accept the rest. Send every correction into the gold set.</p></div>
+  </div>
+
+  <h3>Extraction prompt and schema</h3>
+  <p>Send the page images <em>plus</em> the OCR text with stable line IDs (<code>p3.l17: …</code>), and ask for line IDs and a verbatim quote in every evidence entry. Run a cheap model first to classify and split instruments. Then run a prompt specific to that instrument type, because a lease and a mineral deed need different questions.</p>
+  <div class="codeblock"><button type="button" class="copy">Copy</button><pre id="prompt-text">You are abstracting a recorded instrument for an oil and gas runsheet in {COUNTY} County, {STATE}.
+Inputs: page images, and OCR text where every line has an ID like p2.l14.
+
+Rules:
+1. Transcribe and extract only what is on the page. If a value is not on the page, return null.
+2. Copy names, fractions, legal descriptions and recording references exactly as written,
+   including both the words and the numerals of every fraction. Never correct spelling.
+3. If text is illegible, put [illegible] in the quote and add an "illegible" flag. Never guess digits.
+4. Every extracted object needs evidence: page, the OCR line_ids, and a verbatim quote.
+5. Record each fraction as factors (for "1/2 of 1/8": [1/2, 1/8]) and the basis exactly as stated
+   (of the minerals, of grantor's interest, of royalty, of production). Do not decide whether a
+   royalty is fixed or floating, whether Duhig applies, or who the heirs are. Only flag it.
+6. Flag: written fraction ≠ numeral, double fractions, term language ("for __ years and as long
+   thereafter"), "all my interest in __ County" language, a spouse who didn't join, an unclear
+   capacity (trustee, executor, attorney-in-fact), interlineations, missing pages, no acknowledgment,
+   marginal notations, and conveyances larger than the grantor appears to own.
+7. List every reservation, exception, "save and except" and "subject to" clause separately,
+   with its full verbatim text.
+8. Return JSON that matches the schema exactly. No commentary.</pre></div>
+
+  <details class="more"><summary>Full instrument JSON schema (strict structured output; fractions stored as strings, never floats)</summary>
+    <div class="codeblock"><button type="button" class="copy">Copy</button><pre id="schema-text">__SCHEMA__</pre></div>
+  </details>
+
+  <h3>Data model: an ownership ledger, not a spreadsheet</h3>
+  <ul>
+    <li><strong>Core tables:</strong> <code>document</code> (immutable image + hash), <code>instrument</code>, <code>party</code> (as written) linked to a resolved <code>person_entity</code>, and <code>entity_link</code> (aka, fka, merged into, heir of, spouse of, successor trustee) with evidence on every link.</li>
+    <li><strong>Tracts:</strong> <code>legal_description</code> → <code>tract</code> (PostGIS geometry) → <code>tract_fragment</code> for save-and-except slices. Plus <code>depth_interval</code> and <code>interest_type</code> (MI, executive, bonus, royalty, NPRI fixed/floating, ORRI, WI, NRI).</li>
+    <li><strong>The ledger, <code>conveyance_event</code>:</strong> one row per instrument × grantor → grantee × fragment × depth × interest. It stores fraction factors as NUMERIC numerator/denominator pairs, plus the basis.</li>
+    <li><strong>Ownership on any date</strong> is a replay of the events in order. A grantor whose balance goes below zero raises an over-conveyance (Duhig) flag.</li>
+    <li><strong>Leases, units and allocation wells</strong> carry their own tract participation factors and the source of each factor: PSA, unit designation or pooling order. RRC acreage forms like the P-16 are regulatory filings, not ownership.</li>
+  </ul>
+
+  <h3>Legal descriptions and GIS</h3>
+  <div class="grid2">
+    <div>
+      <h4>Texas: abstract, survey, block, section</h4>
+      <ul>
+        <li>Parse with a deterministic grammar first: county, abstract (<code>A-123</code>), survey (T&amp;P, H&amp;TC, GC&amp;SF, PSL, UL…), block (<code>C-21</code>, <code>33</code>), township (<code>T-2-S</code>), section, aliquots and save-and-excepts. Use the LLM only as a fallback, and check its output against the survey layer.</li>
+        <li>Use the <a href="https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/" target="_blank" rel="noopener">RRC digital map data</a> (free county shapefiles: survey polygons, surface and bottom-hole well locations, lateral arcs). The GLO's statewide survey grid is licensed from a third party and can't be redistributed. Use the RRC version, or license Whitestar.</li>
+        <li>Irregular sections: "N/2 of Section 12" needs a geometric split. Mark it as approximate geometry, and treat the legal text as controlling.</li>
+        <li>The Texas vara is 33⅓ inches. Watch for magnetic bearings and check traverse misclosure on metes-and-bounds tracts.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>New Mexico: PLSS</h4>
+      <ul>
+        <li>Resolve aliquots right to left: "N/2 SE/4" → {NESE, NWSE}. Normalize lots through CadNSDI <code>PLSSIntersected</code> and compare geometry, never strings. "W/2 of irregular Section 6" can equal "Lots 3–7, SE/4NW/4, E/2SW/4."</li>
+        <li>Sources: <a href="https://gbp-blm-egis.hub.arcgis.com/pages/newmexico" target="_blank" rel="noopener">BLM CadNSDI (NM)</a>, <a href="https://mapservice.nmstatelands.org/GISDataDownloads/" target="_blank" rel="noopener">NMSLO GIS downloads</a> (UTM 13N, EPSG:26913), <a href="https://ocd-hub-nm-emnrd.hub.arcgis.com/" target="_blank" rel="noopener">OCD GIS hub</a>, <a href="https://reports.blm.gov/reports/MLRS" target="_blank" rel="noopener">BLM MLRS reports</a>.</li>
+        <li>Check each layer's projection file for NAD27 vs NAD83.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The search loop</h3>
+  <ol class="steps">
+    <li><div><p><strong>Seed</strong> with the tract and its known owners (the CAD mineral roll in Texas, or the deal file).</p></div></li>
+    <li><div><p><strong>Expand every name:</strong> initials, nicknames (Jno., Wm., Chas.), married and maiden names, "et ux" forms, trusts and estates, corporate predecessors and successors. Use phonetic keys, because old index books group names by letter codes and misindex often.</p></div></li>
+    <li><div><p><strong>Search both directions:</strong> the grantor index from acquisition forward, including after death; the grantee index back toward the root. Limit each search to the window when that person could have owned the tract, with some slack for late recording.</p></div></li>
+    <li><div><p><strong>Filter hits by legal description</strong>, but always keep "all my interest in X County" conveyances and anything that cites an instrument already in the chain.</p></div></li>
+    <li><div><p><strong>Queue every new party</strong> for the same loop. Stop at the patent, the root-of-title date, or a prior opinion's cut-off. Fall back to legal-description indexes or the plant to catch misindexed instruments.</p></div></li>
+  </ol>
+
+  <h3>Guardrails</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Risk</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td>Scraping county portals and vendor sites</td><td>Don't. Their terms usually prohibit bots and bulk download, and getting around logins or rate limits creates contract and computer-crime exposure. Use paid accounts, licensed exports and negotiated bulk feeds, and get counsel to sign off on each source. RRC, GLO, BLM and NMSLO public data are free to download.</td></tr>
+      <tr><td>Practice of law</td><td>Label outputs "Runsheet / landman ownership report: not a title opinion." Send legal-effect questions (Duhig, fixed vs floating, heirship, curative sufficiency) to attorneys. Drilling, division order and acquisition opinions stay with attorneys.</td></tr>
+      <tr><td>Owner personal data</td><td>Redact SSNs, birth dates and account numbers before pages go to any AI vendor. Use enterprise or zero-retention terms. Encrypt, limit access and log it.</td></tr>
+      <tr><td>Data licenses</td><td>Read vendor terms for "no derivative datasets" and "no ML training" clauses. The GLO survey grid, the pyTRS PLSS parser and the Surya/Marker OCR weights all carry commercial-use limits.</td></tr>
+      <tr><td>Model drift</td><td>Pin model versions. Re-run the gold set on every model or prompt change. Store the prompt, model and schema version with every extracted value.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Recommended build: Python, FastAPI, Pydantic (one schema source for the LLM and for validation), PostgreSQL with PostGIS, pg_trgm and fuzzystrmatch, object storage with object lock for originals, a durable workflow queue, and a review screen that shows the page image with the field's box highlighted next to the extracted value.</p>
+</section>

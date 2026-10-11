@@ -13,6 +13,8 @@ Working tools for running mineral and lease title across the Texas and New Mexic
 | Build the chain | `ptk ledger` | Replays a takeoff in recording order, in exact fractions. Flags Duhig candidates, chain gaps, over-conveyances and NPRI merger without deciding them |
 | Compute decimals | `ptk deck`, `ptk calc` | Unit deck for a pooled unit or allocation well: royalty, fixed/floating NPRI (only on the minerals it burdens), ORRI, WI/NRI, unleased owners (TX cotenant; NM 7/8 + 1/8). Every tract must add to exactly 1. `--xlsx` writes a live spreadsheet |
 
+Rebuilding or extending the kit? Start with [HANDOFF.md](HANDOFF.md). It has the module specs, the exact outputs a rebuild must reproduce, the bugs already fixed, and the roadmap.
+
 **This is landman work product, not a title opinion.** It prepares runsheets and ownership schedules. Drilling, division order and acquisition opinions stay with your examining attorney, and so does every flag the tools raise.
 
 ## Install
@@ -182,4 +184,6 @@ ptk/xlsx.py       runsheet and deck spreadsheets
 ptk/schema/       instrument JSON schema
 examples/         fictional takeoff, project, runsheet, map layers, sample answer, batch jobs
 tests/            unit and end-to-end tests
+playbook/         the Permian Title Playbook page (built) and its source (src/build.py)
+HANDOFF.md        builder's guide: specs, acceptance outputs, pitfalls, roadmap
 ```

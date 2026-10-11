@@ -1,0 +1,22 @@
+COUNTIES.push(
+  { county: "Eddy", st: "NM", area: "Delaware Basin / Northwest Shelf",
+    portal: "Kofile PublicSearch (free index; images paid) — https://eddy.nm.publicsearch.us. Legacy CountyFusion, searchable by legal description — https://countyfusion2.kofiletech.us/countyweb/loginDisplay.action?countyname=EddyNM",
+    aggregators: "CourthouseDirect images 1906→ (lags weeks to months). BasinLandRecords (run by the local abstractors) — https://basinlandrecords.com/creddy.html. Enverus Courthouse",
+    appraisal: "No county mineral roll. NM taxes production at the state level, so there's no appraisal-roll shortcut to current owners",
+    notes: "Plants: Eddy County Abstract & Title (Carlsbad, since 1891); Currier Abstract (Artesia, since 1939). Back-file records sit in both Carlsbad and Artesia. Pre-1917 records for southern Lea County lands are here." },
+  { county: "Lea", st: "NM", area: "Delaware Basin / Central Basin Platform / Northwest Shelf",
+    portal: "Liveweb (free): grantor/grantee, probate, and scanned index books 1917–1981 — http://liveweb.leacounty-nm.org/",
+    aggregators: "CourthouseDirect images only 1988→. BasinLandRecords — https://www.basinlandrecords.com/crlea.html. Enverus Courthouse has a Lea digital abstract plant indexed back to sovereignty",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Created 1917 from Chaves and Eddy. Search Chaves (north) or Eddy (south) before 1917. Plant: Lea County Abstract & Title (Lovington). Lea refused a bulk export to TexasFile (N.M. Ct. App. 2019), so aggregator depth is thinner." },
+  { county: "Chaves", st: "NM", area: "Northwest Shelf",
+    portal: "County \"Property Info\" document search: book/page 1987–2019, instrument number 2019→ — https://www.chavescounty.gov/how-do-i/find",
+    aggregators: "Little online before 1987",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Holds pre-1917 records for northern Lea lands. Plant: Landmark Title (Roswell)." },
+  { county: "Roosevelt", st: "NM", area: "Northwest Shelf (north edge)",
+    portal: "Tyler EagleWeb recorder, about 1903→, not every document online — https://rooseveltcountynm-web.tylerhost.net/recorder/web/",
+    aggregators: "Check CourthouseDirect's NM county list",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Formed 1903 from Chaves and Guadalupe. Title company: Graham Abstract & Title (Portales)." }
+);

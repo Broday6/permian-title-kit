@@ -1,0 +1,1403 @@
+<title>Permian Title Playbook</title>
+<meta name="description" content="How to run mineral and lease title across the Texas and New Mexico Permian Basin: fast, defensible, and as automated as the records allow.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: a working field manual — sticky contents rail on the left, one reading column, wide tables scroll in place. Greenbar ledger + plat-map lettering. */
+:root {
+  --paper: #f5f7f3;
+  --panel: #ffffff;
+  --ink: #18222b;
+  --muted: #56636c;
+  --rule: #d3dbd4;
+  --bar: #edf3ee;
+  --accent: #1c6a50;
+  --accent-ink: #ffffff;
+  --flag: #9a620e;
+  --flag-bg: #fbf1df;
+  --stop: #a2392b;
+  --stop-bg: #fbe9e6;
+  --code-bg: #eef2ee;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 0.9688rem;
+  --step-1: 1.125rem;
+  --step-2: 1.375rem;
+  --step-3: 1.875rem;
+  --step-4: 2.75rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11171b; --panel: #161e23; --ink: #e2e8e4; --muted: #9aa8a2; --rule: #2a353a; --bar: #18231f;
+    --accent: #5fc39c; --accent-ink: #0d1a14; --flag: #e3a64c; --flag-bg: #2a2214; --stop: #f08f7f; --stop-bg: #2c1a17; --code-bg: #1b2429;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11171b; --panel: #161e23; --ink: #e2e8e4; --muted: #9aa8a2; --rule: #2a353a; --bar: #18231f;
+  --accent: #5fc39c; --accent-ink: #0d1a14; --flag: #e3a64c; --flag-bg: #2a2214; --stop: #f08f7f; --stop-bg: #2c1a17; --code-bg: #1b2429;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 20px; padding-block: 0 64px; }
+
+/* Masthead */
+.mast { border-bottom: 2px solid var(--ink); padding-block: 36px 22px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.eyebrow { font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0.12em; font-size: var(--step--1); color: var(--accent); font-weight: 600; }
+h1 { font-family: var(--f-display); font-weight: 700; font-size: var(--step-4); line-height: 1.02; margin: 6px 0 10px; letter-spacing: -0.01em; text-wrap: balance; }
+.lede { max-width: 62ch; color: var(--muted); font-size: var(--step-1); margin: 0; }
+.stamp {
+  font-family: var(--f-mono); font-size: 0.75rem; line-height: 1.5; color: var(--accent);
+  border: 2px solid var(--accent); border-radius: 4px; padding: 10px 14px; transform: rotate(-2deg);
+  text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap;
+}
+.stamp b { display: block; font-size: 0.9rem; }
+
+/* Two-column body */
+.layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 48px; padding-top: 28px; }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); align-self: start; max-height: calc(100vh - 32px); overflow: auto; font-size: var(--step--1); }
+nav.toc summary { font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--muted); cursor: pointer; list-style: none; }
+nav.toc summary::-webkit-details-marker { display: none; }
+nav.toc ol { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 2px; counter-reset: toc; }
+nav.toc li a { display: block; padding: 4px 8px; border-left: 2px solid var(--rule); color: var(--ink); text-decoration: none; }
+nav.toc li a:hover { border-left-color: var(--accent); color: var(--accent); }
+main { min-width: 0; }
+
+section { padding-block: 8px 28px; border-bottom: 1px solid var(--rule); scroll-margin-top: 16px; }
+section:last-of-type { border-bottom: 0; }
+h2 { font-family: var(--f-display); font-size: var(--step-3); line-height: 1.15; margin: 24px 0 6px; text-wrap: balance; }
+h2 .tag { display: block; font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); font-weight: 600; margin-bottom: 2px; }
+h3 { font-family: var(--f-display); font-size: var(--step-2); margin: 26px 0 6px; line-height: 1.2; text-wrap: balance; }
+h4 { font-family: var(--f-display); font-size: var(--step-1); margin: 18px 0 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+p, li { max-width: 72ch; }
+p { margin: 0 0 12px; }
+ul, ol { padding-left: 1.25em; margin: 0 0 14px; }
+li { margin-bottom: 5px; }
+li::marker { color: var(--muted); }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
+strong { font-weight: 600; }
+.muted { color: var(--muted); }
+.small { font-size: var(--step--1); }
+
+/* Callouts by role */
+.rule-box { border-left: 4px solid var(--accent); background: var(--panel); padding: 12px 16px; margin: 14px 0; }
+.rule-box > :last-child { margin-bottom: 0; }
+.flag { border-left: 4px solid var(--flag); background: var(--flag-bg); padding: 12px 16px; margin: 14px 0; }
+.flag > :last-child { margin-bottom: 0; }
+.stop { border-left: 4px solid var(--stop); background: var(--stop-bg); padding: 12px 16px; margin: 14px 0; }
+.stop > :last-child { margin-bottom: 0; }
+.label { font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: var(--step--1); font-weight: 600; display: block; margin-bottom: 4px; }
+
+/* Tables: greenbar rows */
+.table-scroll { overflow-x: auto; margin: 12px 0 18px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: var(--step--1); line-height: 1.45; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+th { font-family: var(--f-display); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; background: var(--panel); position: sticky; top: 0; white-space: nowrap; }
+tbody tr:nth-child(even) td { background: var(--bar); }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.wide-table { min-width: 860px; }
+.mid-table { min-width: 640px; }
+
+/* Steps (real sequence) */
+ol.steps { list-style: none; padding: 0; counter-reset: step; display: grid; gap: 14px; }
+ol.steps > li { counter-increment: step; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; max-width: none; }
+ol.steps > li::before { content: counter(step, decimal-leading-zero); font-family: var(--f-mono); font-weight: 600; color: var(--accent); border-top: 2px solid var(--accent); padding-top: 4px; font-size: 0.85rem; }
+ol.steps > li > div > p, ol.steps > li > div > ul { max-width: 70ch; }
+ol.steps h4 { margin-top: 2px; }
+
+/* Grids of short items */
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 24px; }
+.grid2 > *, .grid3 > * { min-width: 0; }
+
+/* Checklists */
+.checklist { list-style: none; padding: 0; }
+.checklist li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; align-items: start; }
+.checklist input { margin-top: 5px; accent-color: var(--accent); }
+
+/* County finder */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+.chip { font: inherit; font-size: var(--step--1); border: 1px solid var(--rule); background: var(--panel); color: var(--ink); padding: 5px 12px; border-radius: 999px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+input[type="search"], input[type="text"], select {
+  font: inherit; font-size: var(--step-0); color: var(--ink); background: var(--panel);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 7px 10px; min-width: 0;
+}
+.count { font-family: var(--f-mono); font-size: var(--step--1); color: var(--muted); }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 0.72rem; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.tx { color: var(--accent); }
+.pill.nm { color: var(--flag); }
+
+/* Calculator */
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 18px; margin: 14px 0; }
+.calc fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; min-width: 0; }
+.calc label { display: grid; gap: 3px; font-size: var(--step--1); color: var(--muted); }
+.calc .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.calc .radios { display: flex; flex-wrap: wrap; gap: 6px; }
+.result { font-family: var(--f-mono); font-variant-numeric: tabular-nums; min-width: 0; }
+.result .big { font-size: var(--step-3); font-weight: 600; color: var(--accent); line-height: 1.1; word-break: break-all; }
+.result dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; margin: 12px 0; font-size: var(--step--1); }
+.result dt { color: var(--muted); font-family: var(--f-body); }
+.result dd { margin: 0; word-break: break-word; }
+.result .math { font-size: var(--step--1); color: var(--muted); border-top: 1px solid var(--rule); padding-top: 8px; }
+.result .err { color: var(--stop); font-family: var(--f-body); }
+
+/* Code + copy */
+.codeblock { position: relative; margin: 12px 0 18px; }
+.codeblock pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px; padding: 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.78rem; line-height: 1.55; margin: 0; max-height: 460px; }
+.copy { position: absolute; top: 8px; right: 8px; font: inherit; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+.copy.done { color: var(--accent); border-color: var(--accent); }
+
+details.more { border: 1px solid var(--rule); border-radius: 4px; padding: 8px 14px; margin: 10px 0; background: var(--panel); }
+details.more summary { cursor: pointer; font-weight: 600; }
+
+.diagram { overflow-x: auto; margin: 14px 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); padding: 12px; }
+
+footer { color: var(--muted); font-size: var(--step--1); padding-top: 18px; }
+
+@media (max-width: 920px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  nav.toc { position: static; max-height: none; border: 1px solid var(--rule); border-radius: 4px; padding: 10px 12px; background: var(--panel); }
+  .calc, .grid2, .grid3 { grid-template-columns: minmax(0, 1fr); }
+  .mast { grid-template-columns: minmax(0, 1fr); }
+  .stamp { justify-self: start; }
+}
+@media (max-width: 480px) {
+  h1 { font-size: 2.1rem; }
+  .wrap { padding-inline: 16px; }
+  .calc .row2 { grid-template-columns: minmax(0, 1fr); }
+}
+
+</style>
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="eyebrow">Land department operating manual · Texas &amp; New Mexico Permian</div>
+      <h1>Permian Title Playbook</h1>
+      <p class="lede">How a minerals and land company runs title across the Midland and Delaware Basins: what to search, where the records are, which tools to buy, and how to automate everything except the judgment calls.</p>
+    </div>
+    <div class="stamp" aria-label="Prepared October 1, 2026">Filed for record<b>Oct 1, 2026</b>TX + NM Permian · 24 counties</div>
+  </header>
+  <div class="layout">
+    <nav class="toc" aria-label="Contents">
+      <details open id="toc-details"><summary>Contents</summary>
+        <ol><li><a href="#thesis">Start here</a></li>
+<li><a href="#scope">Five title products</a></li>
+<li><a href="#sop">The run, step by step</a></li>
+<li><a href="#counties">County finder</a></li>
+<li><a href="#texas">Texas</a></li>
+<li><a href="#newmexico">New Mexico</a></li>
+<li><a href="#redflags">Red flags</a></li>
+<li><a href="#math">Decimal calculator</a></li>
+<li><a href="#automation">Automation</a></li>
+<li><a href="#tools">Tool stack</a></li>
+<li><a href="#qc">QC and KPIs</a></li>
+<li><a href="#team">People and costs</a></li>
+<li><a href="#plan">First 90 days</a></li>
+<li><a href="#sources">Sources</a></li></ol>
+      </details>
+    </nav>
+    <main>
+<section id="thesis">
+  <h2><span class="tag">Start here</span>How a title shop gets fast without getting sloppy</h2>
+  <p>Title speed depends mostly on the records, then on the people, and only after that on the software. Before you staff a project, know which of your counties have their records imaged online back to the patent and which ones still need a trip to the courthouse or an abstract plant. That one question sets your schedule more than anything else.</p>
+  <div class="grid2">
+    <div class="rule-box"><span class="label">Rule 1: Build on prior work</span><p>Prior drilling and division order title opinions, base abstracts, operator pay decks and your own old runsheets all carry a "certified through" date. Run a supplemental from that date forward. On a developed Permian section that usually saves most of the courthouse time.</p></div>
+    <div class="rule-box"><span class="label">Rule 2: Match the run to the decision</span><p>A mineral purchase screen, an acquisition closing and a drilling title opinion need very different amounts of work. Pick the product before anyone opens an index (see the scope tiers below).</p></div>
+    <div class="rule-box"><span class="label">Rule 3: One runsheet format, every image linked</span><p>Use one runsheet schema, one naming convention and one takeoff format across every landman, contractor and tool. Every row points to the recorded image. If a row has no image behind it, it hasn't been verified.</p></div>
+    <div class="rule-box"><span class="label">Rule 4: Machines do the clerical work, people make the calls</span><p>Automate index searching, downloads, OCR, first-pass abstracting, fraction math and flagging. Keep people on interpretation, curative and anything an attorney will sign. Landmen run title and prepare ownership reports. Attorneys render opinions.</p></div>
+  </div>
+  <div class="flag"><span class="label">Where the hours go on a manual run</span>
+    <p>On a typical full run, the larger share of the hours goes to finding and pulling instruments (index searches, name variants, chasing probates and court records). Abstracting and building the chain take the next share, and ownership math and reports take the rest. Automation pays first in search and pull, then in first-pass abstracting. Of those three, only the math can be fully trusted to a machine, because exact fraction arithmetic is deterministic.</p>
+  </div>
+</section>
+
+<section id="scope">
+  <h2><span class="tag">Scope</span>Five title products, and when to use each one</h2>
+  <p>Have every request name its product. Most cost overruns come from someone running a full sovereignty-to-present chain when a bring-down from an existing opinion was enough.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Product</th><th>Use it for</th><th>Search window</th><th>Planning time per tract*</th><th>Deliverable</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Ownership check</strong><br><span class="muted">"current owner"</span></td><td>Lease offers, top-lease targeting, mineral purchase screening, owner outreach lists</td><td>Last vesting instrument forward, plus a grantor search of the current owner for out-conveyances, liens and probate</td><td class="num">2–4 hrs</td><td>Current owner(s), NMA, lease status, contact info</td></tr>
+      <tr><td><strong>Acquisition diligence</strong></td><td>Closing a mineral or royalty purchase</td><td>From a base (prior DOTO, division order or opinion) to present. If there's no base, back to a reliable root (patent or a 40+ year vesting chain)</td><td class="num">½–1 day</td><td>Vesting chain, NMA/NRA, decimal reconciled to the pay deck, liens and defects, curative list</td></tr>
+      <tr><td><strong>Mineral / lease ownership report</strong><br><span class="muted">MOR / LOR</span></td><td>Leasing campaigns, unit planning, pooling notice lists</td><td>Base abstract or patent to present for minerals. Lease takeoff for leasehold</td><td class="num">1–3 days</td><td>Ownership by tract and depth, leases, burdens, runsheet + images</td></tr>
+      <tr><td><strong>Full runsheet for an opinion</strong></td><td>Drilling title opinion, DOTO, federal/state unit work</td><td>Sovereignty to present (TX patent / NM patent or federal/state status), or base abstract plus supplemental</td><td class="num">2–5+ days</td><td>Complete runsheet, every instrument imaged, plats, a package the examining attorney can work from</td></tr>
+      <tr><td><strong>Supplemental / bring-down</strong></td><td>Updating an opinion before spud or first sales, closing bring-downs</td><td>From the opinion's effective date to present</td><td class="num">1–4 hrs</td><td>New instruments, effect on ownership, new requirements</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">*Rough planning ranges for one quarter-section to one section in a county with good online images. Double them where pre-1950 records are offline, where heirship is deep, or where the tract has been cut up by surface sales.</p>
+</section>
+
+<section id="sop">
+  <h2><span class="tag">Standard operating procedure</span>The run, step by step</h2>
+  <p>This is the sequence every tract goes through, whether a contractor in Pecos runs it or a pipeline in the cloud does. The automation section later maps each step to what can be machine-run.</p>
+  <ol class="steps">
+    <li><div><h4>Intake and scoping</h4><p>Capture the purpose, product tier, tracts (as written legal descriptions), depths, deadline and budget. Add any base you already have: prior opinions, pay decks, data-room files.</p></div></li>
+    <li><div><h4>Map the tract before searching</h4><p>Plot it on the Texas abstract grid or the New Mexico PLSS. Note every survey or section it touches, overlaps, railroad strips, highways, riverbeds and possible vacancies. Flag state (GLO / Relinquishment Act / University Lands / NMSLO) and federal (BLM) status. Pull existing wells, units and production from the RRC or OCD, since production history tells you which leases are probably held by production.</p></div></li>
+    <li><div><h4>Find the base</h4><p>Look in your files, the operator's, abstract plants and prior opinions. The appraisal district mineral roll shows who is paying tax on a decimal today, which makes a good lead list and cross-check. Record the base's certified-through date. Your search window starts there.</p></div></li>
+    <li><div><h4>Search every index, both directions</h4><p>Search grantor and grantee for every owner and every name variant over their ownership window. Cover deed and Official Public Records, oil and gas records, probate (including other counties and states), district court (divorces, partitions, tax suits, receiverships, quiet title), judgments and abstracts of judgment, federal and state tax liens, lis pendens, plats, and BLM/NMSLO/GLO files where they apply. Where the county indexes by abstract or section, also run a legal-description search to catch misindexed instruments.</p></div></li>
+    <li><div><h4>Pull and image every instrument</h4><p>File each one under a consistent key, such as <code>TX-REEVES-OPR-2019-012345.pdf</code> or <code>TX-MIDLAND-DR-0512-0033.pdf</code>. No image, no row.</p></div></li>
+    <li><div><h4>Abstract into the runsheet</h4><p>One row per instrument: type, execution date, filing date, recording reference, grantor, grantee, legal as written, interest conveyed, reservations and exceptions, lease terms, and notes. AI can draft this. A person verifies it against the image.</p></div></li>
+    <li><div><h4>Build the chain (takeoff / flowchart)</h4><p>Tie every conveyance to a prior vesting. Flag gaps (no probate, name mismatch, lost instrument), over-conveyances (Duhig situations), wild deeds and anything conveying "all my interest in" the county.</p></div></li>
+    <li><div><h4>Calculate ownership by depth</h4><p>Work out mineral, royalty, NPRI (fixed or floating), executive rights, leasehold WI/NRI and ORRIs, tract by tract and depth by depth. Use exact fractions all the way through and round only at the final decimal.</p></div></li>
+    <li><div><h4>Review lease status</h4><p>Check the primary term, extensions, Pugh and retained-acreage clauses, depth limits, shut-in and cessation clauses, and recorded releases. Confirm HBP against RRC or OCD production for the lease or well, not against what the operator says.</p></div></li>
+    <li><div><h4>Write requirements and curative</h4><p>For each defect, give the recommended cure: affidavit of heirship, ratification, correction deed, release, stipulation of interest, probate or muniment, or quiet title. Assign an owner and a due date to each.</p></div></li>
+    <li><div><h4>QC with a second person</h4><p>Check 100% of the math and 100% of the chain links. Re-run a sample of the index searches and check name variants. Reconcile the result to the division order or pay-deck decimal. If it doesn't tie out, it doesn't ship.</p></div></li>
+    <li><div><h4>Deliver and load</h4><p>Deliver the ownership report, runsheet, images, map and requirements. Load owners, tracts, leases and interests into the land system. Update GIS. Log the certified-through date so the next run is a bring-down.</p></div></li>
+  </ol>
+</section>
+<section id="counties">
+  <h2><span class="tag">County finder</span>Where the records are, and how far back they go online</h2>
+  <p>Plan every project around this table. A county where the full index starts in 1983 needs courthouse or abstract-plant days budgeted before anyone promises a delivery date. "Full index" years are TexasFile's published coverage. CourthouseDirect years are its published index, image and historical-book coverage. Both change as vendors scan more books, so re-check the vendor's county page at project start.</p>
+  <div class="filters">
+    <button type="button" class="chip" data-state="all" aria-pressed="true">All</button>
+    <button type="button" class="chip" data-state="TX" aria-pressed="false">Texas</button>
+    <button type="button" class="chip" data-state="NM" aria-pressed="false">New Mexico</button>
+    <label for="county-q" class="small muted">Search</label>
+    <input type="search" id="county-q" placeholder="County, platform, year…">
+    <span class="count" id="county-count"></span>
+  </div>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>County</th><th>Clerk portal</th><th>Aggregator coverage</th><th>Appraisal / minerals</th><th>Parent counties, gaps, notes</th></tr></thead>
+    <tbody id="county-body"></tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="flag"><span class="label">Late-index counties: budget courthouse time</span>
+      <p>In Irion (1983→), Crockett (1982→), Upton (1984→), Dawson (1970→), Ward (1935→) and Martin (1915→), TexasFile's full index starts late. Use CourthouseDirect's historical books where they exist (Ward, Upton, Dawson, Martin). Otherwise plan on the courthouse or a local plant.</p>
+    </div>
+    <div class="rule-box"><span class="label">Search the parent county too</span>
+      <p>Most Permian counties were carved out of Bexar (1876 land-district counties), Tom Green (1887–1903 counties), Presidio (Pecos, and through it Reeves) or El Paso (Culberson). Unorganized counties were attached to a neighbor for recording. Search the parent for anything filed before the organization date. Some counties transcribed the parent's records, which is why an index can start before the county existed.</p>
+    </div>
+  </div>
+  <p class="small muted">To confirm a county's current platform, use NETR Online (publicrecords.netronline.com/state/TX/county/&lt;county&gt;) or the clerk's own page. Mineral appraisers (Pritchard &amp; Abbott, Thomas Y. Pickett, Capitol Appraisal and others) are contracted per appraisal district and can change, so check the CAD's mineral roll page.</p>
+</section>
+<section id="texas">
+  <h2><span class="tag">Texas</span>Classify the section before you search the county</h2>
+  <p>In the Texas Permian, the first title question is how the land left the State. The answer decides whether the State still owns the minerals, holds a free royalty, or holds nothing. Pull the abstract from the <a href="https://www.glo.texas.gov/archives-heritage/search-our-collections/land-grant-search" target="_blank" rel="noopener">GLO Land Grant Database</a> (search by county and abstract number; most files are scanned and free). The class and sale papers tell you which row you're in. The survey name alone won't tell you: alternate railroad sections were often sold later as school land but kept the railroad's block label.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>How the land left the State</th><th>What the State kept</th><th>Who leases</th></tr></thead>
+    <tbody>
+      <tr><td>Railroad grant section, patented to the railroad</td><td>Nothing reserved; minerals passed with the patent</td><td>Private chain from the patent. On many T&amp;P sections, look for Texas Pacific Land's retained NPRI, with fractions varying by section.</td></tr>
+      <tr><td>School land sold before Sep 1, 1895 with no reservation</td><td>Nothing</td><td>Private owner</td></tr>
+      <tr><td><strong>Mineral-classified school land sold Sep 1, 1895 – Aug 21, 1931</strong></td><td><strong>Relinquishment Act land.</strong> The State owns the oil and gas. The surface owner leases as the State's agent, and the two split lease benefits ½ and ½.</td><td>The surface owner, on the GLO form, with GLO approval</td></tr>
+      <tr><td>School land sold after Aug 21, 1931</td><td>A free royalty, usually 1/16, sometimes 1/8 (read the award)</td><td>The private mineral owner. The State's royalty is paid off production.</td></tr>
+      <tr><td>Unsold Permanent School Fund land, state riverbeds, vacancies</td><td>The full mineral estate</td><td>GLO / School Land Board, by sealed bid</td></tr>
+      <tr><td>University Lands (2.1M acres in 19 West Texas counties)</td><td>The Permanent University Fund owns 100% of the minerals</td><td>University Lands. There's no fee mineral chain to run, only the leasehold chain.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="flag"><span class="label">Relinquishment Act lease checklist</span>
+      <ul class="checklist" data-store="ral">
+        <li><input type="checkbox" id="ral1"><label for="ral1">Lease is on the current GLO RAL form, and every rider was approved by the GLO.</label></li>
+        <li><input type="checkbox" id="ral2"><label for="ral2">GLO approval exists, and a certified copy was accepted for filing. No RAL lease is effective until then.</label></li>
+        <li><input type="checkbox" id="ral3"><label for="ral3">Any power of attorney used expressly authorizes signing RAL leases. A general POA isn't enough.</label></li>
+        <li><input type="checkbox" id="ral4"><label for="ral4">The State's half of the bonus was paid.</label></li>
+        <li><input type="checkbox" id="ral5"><label for="ral5">Assignments, including ORRIs, were filed with the GLO within 90 days (31 TAC §9.93).</label></li>
+        <li><input type="checkbox" id="ral6"><label for="ral6">Division order filed with the GLO within 30 days of first production.</label></li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Where state and university leases are checked</span>
+      <ul>
+        <li><strong>GLO:</strong> State leases are filed by Mineral File number (MF######). Find it in the GLO GIS viewer or the <a href="https://data-glo.hub.arcgis.com/" target="_blank" rel="noopener">GLO open-data hub</a> (active and inactive lease layer), then pull the scanned file: lease, assignments, releases and pooling approvals.</li>
+        <li><strong>University Lands:</strong> the <a href="https://universitylands.utsystem.edu/Resources/GIS" target="_blank" rel="noopener">UL GIS downloads</a> include blocks, sections, oil and gas leases and wellbores. Reconcile them against county assignments and confirm with UL leasing staff.</li>
+        <li><strong>Riverbeds:</strong> the beds of navigable streams belong to the Permanent School Fund. Check the Pecos River bed tracts whenever a lateral crosses the river.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Railroad Commission: the operator's filings are free evidence</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>RRC record</th><th>What it does for title</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://gis.rrc.texas.gov/GISViewer/" target="_blank" rel="noopener">GIS Viewer</a></td><td>Wells, permitted and as-drilled laterals, survey and abstract lines. Shows which sections a lateral crosses.</td></tr>
+      <tr><td>W-1 and plat; as-drilled plat and directional survey</td><td>First and last take points and lease lines. Completed lateral length per tract is how allocation-well participation is usually computed.</td></tr>
+      <tr><td>P-16 acreage designation</td><td>The tracts the operator says are in the well. Compare it to your tract list. It's a regulatory filing, not a title determination or an allocation formula.</td></tr>
+      <tr><td>P-4 history</td><td>Who operated and purchased, and when. Needed for lease-maintenance questions and for knowing where to send requirements.</td></tr>
+      <tr><td>Production Data Query (PDQ)</td><td>Zero-production months for cessation and termination analysis. Oil is reported by lease ID, gas by well. Reconcile against the P-4 and P-17.</td></tr>
+      <tr><td>Allocation and PSA wells</td><td>Under long-standing RRC practice, a PSA well needs a production sharing agreement signed by at least 65% of the working and royalty owners in each tract. An allocation well relies on the operator's good-faith claim. Allocation-well permits have been challenged in court, so check current RRC rules and case status before relying on them.</td></tr>
+      <tr><td>Rule 37 spacing exceptions</td><td>Notice goes to affected persons, including unleased mineral owners on adjacent tracts. Your title work produces that list.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>CAD mineral rolls</strong> list the owner, address, interest type and the decimal the operator is paying, usually by RRC lease number. They make a free cross-check of your decimals and a lead list for missing heirs. They're a January 1 snapshot, usually at unit level, and they can omit very small interests. A missing roll entry doesn't mean no ownership.</p>
+
+  <h3>Texas law that changes the ownership math</h3>
+  <p>These are the decisions a runsheet and fraction engine have to respect. The software flags them, and the examining attorney decides them. Check pin cites and any later history before you rely on a case in an opinion.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Issue</th><th>Authority</th><th>What it does to your runsheet</th></tr></thead>
+    <tbody>
+      <tr><td>Over-conveyance under a warranty</td><td><em>Duhig v. Peavy-Moore Lumber</em> (Tex. 1940)</td><td>When a warranty deed's grant and reservation can't both be satisfied, the reservation fails first. Fill the grantee's share before the grantor's. Doesn't apply to quitclaims.</td></tr>
+      <tr><td>Reading the whole deed</td><td><em>Luckel v. White</em> (Tex. 1991); <em>Concord Oil v. Pennzoil</em> (Tex. 1998)</td><td>Harmonize every clause within the four corners. A fraction in the granting clause can give way to the rest of the deed. Flag deeds whose clauses state different fractions.</td></tr>
+      <tr><td>Double fractions ("1/2 of 1/8")</td><td><em>Hysaw v. Dawkins</em> (Tex. 2016); <em>Van Dyke v. Navigator Group</em> (Tex. 2023); <em>ConocoPhillips v. Hahn</em> (Tex. 2024)</td><td>In older instruments, a double fraction using 1/8 is presumed to mean the whole estate (the "estate misconception"). So "1/2 of 1/8" is usually a floating ½. Only language in the instrument itself rebuts that. <strong>Re-check legacy runsheets that booked a fixed 1/16.</strong></td></tr>
+      <tr><td>Outstanding NPRI burden</td><td><em>Wenske v. Ealy</em> (Tex. 2017)</td><td>An existing NPRI burdens the reserved and conveyed mineral interests proportionately unless the deed clearly puts it on one side.</td></tr>
+      <tr><td>NPRI and pooling</td><td><em>Brown v. Smith</em> (Tex. 1943); <em>Montgomery v. Rittersbacher</em> (Tex. 1968)</td><td>A pooling doesn't bind an NPRI owner who hasn't joined or ratified. List every NPRI under a unit or allocation well with its ratification status. This is a classic DOI error.</td></tr>
+      <tr><td>Executive rights</td><td><em>Altman v. Blake</em> (1986); <em>French v. Chevron</em> (1995); <em>KCM Fin. v. Bradshaw</em> (2015); <em>Texas Outfitters v. Nicholson</em> (2019)</td><td>Record which of the five mineral attributes each interest carries. The executive's lease binds non-executive interests, and the executive owes them utmost good faith.</td></tr>
+      <tr><td>ORRI survival</td><td><em>Sunac v. Parkes</em> (Tex. 1967)</td><td>An ORRI dies with its lease unless an anti-washout clause carries it to a new lease. Record each ORRI's scope and any renewal/extension clause.</td></tr>
+      <tr><td>Royalty valuation</td><td><em>Heritage v. NationsBank</em> (1996); <em>Burlington v. Texas Crude</em> (2019); <em>Devon v. Sheppard</em> (2023)</td><td>These don't change decimals. They change how the royalty is valued. Record each lease's valuation clause (at the well, gross proceeds, cost-free, add-back).</td></tr>
+      <tr><td>Lease termination</td><td><em>Clifton v. Koontz</em> (1959); <em>Anadarko v. Thompson</em> (2002); <em>Endeavor v. Discovery</em> (2018); <em>Point Energy v. MRC Permian</em> (2023)</td><td>A lease ends automatically when paying production stops, subject to its savings clauses. Calendar retained-acreage and continuous-development deadlines. Before honoring a top lease, check the force-majeure clause and any notices, which are often unrecorded, so ask the operator.</td></tr>
+      <tr><td>Horizontals across tract lines</td><td><em>Browning Oil v. Luecke</em> (Tex. App. 2000); <em>Lightning Oil v. Anadarko</em> (Tex. 2017)</td><td>Allocate by a reasonable method, usually completed lateral in the tract over total lateral, unless a PSA sets the formula. The surface owner, not the mineral lessee, grants subsurface pass-through.</td></tr>
+      <tr><td>Notice and purchasers</td><td>Prop. Code §§13.001–.002; <em>Westland Oil v. Gulf Oil</em> (1982)</td><td>You're charged with unrecorded agreements that recorded instruments refer to, such as farmouts and JOAs. Chase every one. A quitclaim grantee generally can't be a bona fide purchaser.</td></tr>
+      <tr><td>Strips and rights-of-way</td><td><em>Cantley v. Gulf</em> (1940); <em>Angelo v. Biscamp</em> (1969); <em>J. Hiram Moore v. Greer</em> (2005); <em>Brightwell v. I-GN R.R.</em> (1932)</td><td>A conveyance of the adjoining land presumptively carries a narrow strip (strip and gore). A railroad "right of way" deed usually conveys only an easement. Pull the railroad's acquisition instrument for every right-of-way a lateral crosses.</td></tr>
+      <tr><td>Adverse possession</td><td>CPRC §§16.024–.028; <em>Natural Gas Pipeline v. Pool</em> (Tex. 2003)</td><td>After severance, possessing the surface doesn't reach the minerals. Texas has no dormant mineral act. Find the severance date before you credit any limitation title.</td></tr>
+      <tr><td>Technical defects</td><td>CPRC §16.033</td><td>A 2-year limitation period cures many formal defects, such as acknowledgment problems. Note the recording date.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Heirship and probate in Texas</h3>
+  <div class="grid2">
+    <ul>
+      <li><strong>Affidavit of heirship (Est. Code §203.001):</strong> after 5 years of record it becomes prima facie evidence. Use disinterested affiants, record it in every county where the minerals are, and calendar the 5-year date. For large interests or disputed families, require a judgment declaring heirship.</li>
+      <li><strong>Muniment of title:</strong> a will probated this way makes the order a transfer instrument. Wills generally must be offered within 4 years of death. An unprobated will doesn't pass title.</li>
+      <li><strong>Small estate affidavit:</strong> passes only homestead real property. <strong>Don't accept it as the source of mineral title.</strong></li>
+      <li><strong>Transfer-on-death deeds</strong> (since 2015): search for one before applying intestacy.</li>
+    </ul>
+    <ul>
+      <li><strong>Intestacy, separate property with spouse and children:</strong> the spouse gets a <em>life estate in ⅓</em> of the real property, including minerals. The children get the remainder plus the other ⅔. Both the life tenant and the remaindermen must sign leases.</li>
+      <li><strong>Community property:</strong> it all goes to the surviving spouse only if all the decedent's descendants are also the spouse's. Deaths before Sep 1, 1993 follow the older rule. <strong>Always apply the law in force on the date of death.</strong></li>
+      <li><strong>Out-of-state probate:</strong> record an authenticated copy in each Texas county (Est. Code ch. 503). Until you do, the chain is broken.</li>
+      <li><strong>Missing owners:</strong> a receivership (CPRC §64.091) lets a court-appointed receiver sign the lease. Title needs the whole proceeding file. ClaimItTexas shows which operator holds an owner's proceeds in suspense.</li>
+    </ul>
+  </div>
+  <p class="small muted">Payment timing under Nat. Res. Code §91.402: first payment within 120 days after the end of the month of first sale, then 60 days (oil) or 90 days (gas). A division order can't amend the lease. Mergers vest property without a deed (Bus. Orgs. Code §10.008), so record the certificate of merger in each county to close the chain.</p>
+</section>
+<section id="newmexico">
+  <h2><span class="tag">New Mexico</span>Three sovereigns, one spacing unit</h2>
+  <p>A Delaware Basin horizontal in Eddy or Lea often crosses federal, state and fee tracts. Each one is examined from its own source, then reconciled into one unit. New Mexico has no Marketable Record Title Act and no dormant mineral act, so you examine from sovereignty, and old fractional heirs never drop out of the chain.</p>
+
+  <h3>Federal tracts (BLM): run them in this order</h3>
+  <ol class="steps">
+    <li><div><h4>Normalize to PLSS</h4><p>For example, "Sec 15, T23S, R31E, NMPM, NE/4". Join it to BLM CadNSDI polygons. Watch for the irregular lots along north and west township lines and the Texas line.</p></div></li>
+    <li><div><h4>Confirm mineral status</h4><p>Check the Master Title Plat and Historical Index, the MLRS land-status layers and the BLM GLO patent. Stock-Raising Homestead (1916) and 1914 Act patents put federal minerals under private surface all over Eddy, Lea and Chaves. Rule out NMSLO state minerals as well.</p></div></li>
+    <li><div><h4>Pull every case on the lands from MLRS</h4><p>Run the geographic case-recordation report by township, range and section (<a href="https://reports.blm.gov/reports/MLRS" target="_blank" rel="noopener">reports.blm.gov/reports/MLRS</a>). A Login.gov account unlocks unredacted reports. This lists leases, communitization agreements (CAs), units and bonds.</p></div></li>
+    <li><div><h4>Read each lease's serial register page</h4><p>Note dates, disposition, record-title and operating-rights percentages, and the action history: approved assignments, segregations, CA or unit commitment, production determinations, suspensions, termination and reinstatement.</p></div></li>
+    <li><div><h4>Order the case file</h4><p>Request it from the BLM New Mexico State Office public room in Santa Fe, or by FOIA. MLRS doesn't reliably show <strong>depth limits on operating rights, ORRI owners or the royalty rate</strong>. Those are only in the lease and assignment documents.</p></div></li>
+    <li><div><h4>Pull each CA and unit</h4><p>Exhibit B of a CA lists record title, operating rights and ORRI owners by tract, which makes it one of the best title sources there is. Until BLM approves the CA, federal royalty is paid lease by lease and the division of interest is wrong.</p></div></li>
+    <li><div><h4>Search the county records</h4><p>ORRIs, term assignments, farmouts, JOA memoranda, mortgages, probates and divorces are often recorded in the county but never filed with BLM. Corporate mergers and name changes often appear only at BLM. A complete federal chain needs both sources reconciled.</p></div></li>
+    <li><div><h4>Check OCD, set the royalty, confirm the bond</h4><p>Pull C-102 dedication plats, pooling orders and production from OCD. Set the federal royalty by the lease's issue date (table below). Confirm the operator's bond coverage.</p></div></li>
+  </ol>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Federal lease issued</th><th>Royalty rate</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><td>Before Aug 16, 2022</td><td class="num">12.5%</td><td>Older leases may carry step-scale or sliding-scale royalties. Read the lease form.</td></tr>
+      <tr><td>Aug 16, 2022 – Jul 3, 2025</td><td class="num">16⅔%</td><td>Inflation Reduction Act</td></tr>
+      <tr><td>On or after Jul 4, 2025</td><td class="num">12.5% min.</td><td>P.L. 119-21 (2025 reconciliation act); BLM direct final rule effective Jun 29, 2026</td></tr>
+    </tbody>
+  </table></div>
+  <div class="flag"><span class="label">Federal assignment rules that break chains</span>
+    <ul>
+      <li>Record-title and operating-rights assignments both need <strong>BLM approval</strong>. File within 90 days of execution. The assignment takes effect the first of the month after BLM has the complete filing.</li>
+      <li>ORRIs are filed with BLM but not approved.</li>
+      <li>A partial assignment of record title can split the lease into a new serial number.</li>
+      <li>BLM approval doesn't give constructive notice under New Mexico's recording act, so record the assignment in the county too.</li>
+      <li>The 2024 leasing rule raised minimum bonds and renumbered parts of 43 CFR 3100. A June 2026 proposed rule would roll those bonds back, but it isn't final. Check every regulatory cite against the current eCFR.</li>
+    </ul>
+  </div>
+
+  <h3>State tracts (NMSLO)</h3>
+  <ul>
+    <li>Search SLOConnect by lease, township/range or account. Note the lessee of record, status, lease form, royalty and assignment history. Order the lease file from Santa Fe or by public records request.</li>
+    <li>Record-title assignments are acknowledged conveyances approved by the Commissioner. The <strong>two-person rule</strong> means state record title can't sit in more than two persons or entities.</li>
+    <li>Any CA or unit that includes state lands needs <strong>Commissioner approval</strong> as well as BLM or OCD approval.</li>
+    <li>Leasing on trust lands is governed by 19.2.100 NMAC.</li>
+  </ul>
+
+  <h3>Fee tracts (Eddy, Lea, Chaves, Roosevelt)</h3>
+  <ul>
+    <li><strong>Start at the patent</strong> (BLM GLO Records) or the state patent, and note any mineral reservations.</li>
+    <li><strong>Lea County before 1917:</strong> Lea was carved from Chaves and Eddy in 1917. Its earlier chain is in those counties' records.</li>
+    <li><strong>Community property.</strong> NMSA 40-3-13 requires both spouses to join any conveyance or mortgage of community real property, and minerals count. A deed signed by one spouse is void unless a power of attorney is recorded. Check marriage indexes and divorce decrees at every link.</li>
+    <li><strong>Heirship.</strong> Examiners generally want probate. An affidavit of heirship is supporting evidence, not a cure. The small-estate affidavit (45-3-1201) moves personal property only. For out-of-state estates, file the foreign appointment under 45-4-204 or open an ancillary proceeding.</li>
+    <li><strong>Probate files</strong> are in two places. Informal probate is filed with the County Clerk as clerk of the probate court (searchable on Lea's Liveweb). Formal or contested probate and heirship determinations are in District Court: the Fifth Judicial District for Chaves, Eddy and Lea, searchable on NM Case Lookup and re:SearchNM.</li>
+    <li><strong>Acknowledgments.</strong> An unacknowledged instrument isn't "of record" (14-8-4), even if the clerk entered it. Defects in acknowledgment and authority are cured 15 years after recording (37-1-28).</li>
+    <li><strong>Adverse possession</strong> takes 10 years, color of title and payment of taxes (37-1-22). It is practically unavailable against severed minerals.</li>
+    <li><strong>No county mineral appraisal roll.</strong> New Mexico taxes production at the state level, so the Texas shortcut of using the CAD mineral roll to find current owners doesn't exist here.</li>
+  </ul>
+
+  <h3>OCD pooling is title work</h3>
+  <p>Compulsory pooling (NMSA 70-2-17; 19.15.13 NMAC; risk charge up to 200%) runs on your ownership schedule. Under a pooling order, an <strong>unleased mineral owner is treated as a 7/8 working interest plus a 1/8 royalty</strong>, and is carried subject to the risk charge if they don't elect to participate. Since <strong>Dec 1, 2025</strong>, every pooling application must include a table of <em>all</em> owners in the proposed unit with notice details for each. An owner your title run missed now shows up in that exhibit, and a notice defect puts the order at risk.</p>
+  <p class="small muted">OCD API county codes: Eddy 30-015, Lea 30-025, Chaves 30-005, Roosevelt 30-041. Well files and hearing case files are on OCD Permitting and OCD Imaging.</p>
+</section>
+<section id="redflags">
+  <h2><span class="tag">Red flags</span>What gets missed, and how it costs you</h2>
+  <p>These are the defects that cause most Permian title surprises. Build each one into your runsheet template as a required check, and into your automation as a rule that raises a flag.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Red flag</th><th>Where it hides</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mineral tax suits and tax deeds</strong></td><td>District court civil index (delinquent ad valorem tax suits against minerals, often against "unknown owners"), sheriff's and tax resale deeds</td><td>Search district court for every owner and for the legal description. Check the service and notice in the suit before you rely on the tax deed.</td></tr>
+      <tr><td><strong>Out-of-county and out-of-state probate</strong></td><td>The decedent's home county, not the land's county</td><td>Use obituaries and genealogy sources to find the domicile. Record certified copies, or use ancillary probate or an affidavit of heirship.</td></tr>
+      <tr><td><strong>Unprobated deaths and heirship gaps</strong></td><td>Grantor disappears from the index, or a later deed comes from "heirs of"</td><td>Affidavit of heirship from a disinterested witness, family tree, and spouse/community property analysis. In Texas, compute intestate shares under the Estates Code.</td></tr>
+      <tr><td><strong>Name variants and misindexing</strong></td><td>Initials, nicknames, married names, "et ux," misspellings, trusts and estates, corporate renames</td><td>Expand aliases automatically. Search by legal description where the county allows it. Check the SOS for mergers and name changes.</td></tr>
+      <tr><td><strong>Carried-forward exceptions</strong></td><td>"Save and except," "less and except," and "subject to" clauses in a deed 3 or 4 links back</td><td>Read every vesting deed in full. Each exception becomes its own line in the takeoff until it's resolved.</td></tr>
+      <tr><td><strong>Double fractions and fixed/floating royalty</strong></td><td>"1/2 of 1/8 royalty," "1/16 royalty," "1/2 of the royalty" in pre-1980 deeds and reservations</td><td>Flag every royalty fraction for attorney review under current Texas law (see the Texas section). Don't let software decide fixed vs floating.</td></tr>
+      <tr><td><strong>Term royalties and term minerals</strong></td><td>"For 15 years and as long thereafter as oil, gas or other minerals are produced"</td><td>Pull the production history for the whole term window, including any cessation, to decide whether the interest expired.</td></tr>
+      <tr><td><strong>NPRI and pooling</strong></td><td>A reserved NPRI under a tract in a pooled unit or allocation well</td><td>In Texas the executive can't pool an NPRI without the NPRI owner's joinder. Get ratifications before the pay deck is set.</td></tr>
+      <tr><td><strong>Unreleased liens</strong></td><td>Old vendor's liens, deeds of trust covering minerals, judgments, federal tax liens</td><td>Run lien and judgment indices for each owner. Get releases or subordinations, or document limitations.</td></tr>
+      <tr><td><strong>State and federal land traps</strong></td><td>Relinquishment Act leases not filed with the GLO, University Lands, NMSLO leases, federal assignments not approved by BLM, depth-severed operating rights</td><td>Check the agency record as well as the county record. The agency's approval is part of the chain.</td></tr>
+      <tr><td><strong>Strips, gores and rights-of-way</strong></td><td>Railroad and highway strips, roads, old townsite plats, riverbeds</td><td>Decide fee vs easement for each strip. Apply strip-and-gore analysis. Check whether a riverbed is state-owned.</td></tr>
+      <tr><td><strong>Litigation and bankruptcy</strong></td><td>Lis pendens, partition and quiet title suits, PACER bankruptcies of an owner or lessee</td><td>Search lis pendens and district court for every owner, and PACER for entity owners and operators.</td></tr>
+      <tr><td><strong>Trust and entity authority</strong></td><td>Trustee deeds without the trust, terminated trusts with no distribution deeds, dissolved corporations</td><td>Get a certificate of trust or the trust instrument and SOS status, and record a distribution or wind-up deed if needed.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="math">
+  <h2><span class="tag">Ownership math</span>Decimal interest calculator</h2>
+  <p>This calculator works the way your fraction engine should: exact fractions all the way through, rounded to eight places only at the end. Type fractions as written in the instrument (<code>3/16</code>, <code>1/2 of 1/8</code>, <code>18.75%</code>). For a horizontal allocation or PSA well, choose how tract participation is set: by acreage, or by completed lateral length in the tract.</p>
+  <form class="calc" id="calc" autocomplete="off">
+    <fieldset>
+      <label for="c-type">Interest type
+        <select id="c-type">
+          <option value="mineral">Mineral owner (leased): royalty</option>
+          <option value="npri_fixed">NPRI, fixed (fraction of production)</option>
+          <option value="npri_float">NPRI, floating (fraction of royalty)</option>
+          <option value="orri">Overriding royalty (ORRI)</option>
+          <option value="wi">Working interest → NRI</option>
+        </select>
+      </label>
+      <div class="row2">
+        <label for="c-acres">Gross tract acres<input type="text" id="c-acres" value="640" inputmode="decimal"></label>
+        <label for="c-owned" id="c-owned-label">Undivided mineral interest<input type="text" id="c-owned" value="1/16"></label>
+      </div>
+      <div class="row2">
+        <label for="c-royalty">Lease royalty<input type="text" id="c-royalty" value="1/4"></label>
+        <label for="c-burden" id="c-burden-label" hidden>Burden fraction<input type="text" id="c-burden" value="1/32"></label>
+      </div>
+      <label for="c-orri" id="c-orri-label" hidden>Existing ORRIs on the lease (for NRI)<input type="text" id="c-orri" value="1/40"></label>
+      <div>
+        <span class="small muted">Tract participation</span>
+        <div class="radios" role="group" aria-label="Tract participation method">
+          <button type="button" class="chip" data-method="none" aria-pressed="false">Tract only</button>
+          <button type="button" class="chip" data-method="acreage" aria-pressed="true">Unit by acreage</button>
+          <button type="button" class="chip" data-method="lateral" aria-pressed="false">Allocation by lateral</button>
+        </div>
+      </div>
+      <div class="row2" id="c-acreage">
+        <label for="c-inunit">Tract acres in unit<input type="text" id="c-inunit" value="640"></label>
+        <label for="c-unit">Unit acres<input type="text" id="c-unit" value="1280"></label>
+      </div>
+      <div class="row2" id="c-lateral" hidden>
+        <label for="c-tl">Lateral feet in tract<input type="text" id="c-tl" value="5,000"></label>
+        <label for="c-al">Total completed lateral feet<input type="text" id="c-al" value="10,000"></label>
+      </div>
+    </fieldset>
+    <div class="result" aria-live="polite" id="c-out"></div>
+  </form>
+  <p class="small muted">NRA is shown on a 1/8 basis (NMA × royalty ÷ 1/8), the convention most mineral buyers price on. Confirm which basis your counterparty uses. An unleased Texas cotenant is paid a share of net proceeds after costs, not a royalty, so price that case separately. A tract fully inside one unit gives the same decimal by acreage as NMA ÷ unit acres × royalty.</p>
+</section>
+<section id="automation">
+  <h2><span class="tag">Automation</span>The title factory: what to automate, in what order</h2>
+  <p>Fully automatic title isn't realistic, and you shouldn't buy anything sold that way. The realistic target is that each landman verifies three to five times more instruments per day. That comes from machines doing the search, the pull, the transcription, the first-pass abstract and all the math, while people accept or correct each field against the image. Reviewing a pre-extracted instrument should take a few minutes, against roughly 15–30 minutes to abstract it by hand. Those are planning estimates; measure your own.</p>
+
+  <div class="rule-box"><span class="label">Working starter code</span>
+    <p>The Permian title kit (private repository <a href="https://github.com/Broday6/permian-title-kit" target="_blank" rel="noopener">Broday6/permian-title-kit</a>) implements this section in tested Python:</p>
+    <ul>
+      <li><strong>Ownership:</strong> the exact-fraction ledger and unit deck, with NPRIs charged only to the minerals they burden.</li>
+      <li><strong>Records:</strong> Tesseract/Textract OCR, Texas and New Mexico legal-description parsers, a map check against RRC and BLM survey layers, index name variants, runsheet red-flag rules and county search plans.</li>
+      <li><strong>Output:</strong> live spreadsheets for the runsheet and the deck.</li>
+      <li><strong>AI:</strong> a Claude extraction step with quote checking, plus a one-command live smoke test.</li>
+    </ul>
+    <p>Run <code>ptk deck examples/project.json --xlsx deck.xlsx</code> to see a full allocation-well deck built from a fictional takeoff.</p>
+  </div>
+
+  <h3>Automate in this order (highest return first)</h3>
+  <ol class="steps">
+    <li><div><h4>Tract-to-grid mapping and "what's in the box"</h4><p>Normalize the legal description, drop it on the RRC survey polygons or BLM CadNSDI, and pull every well, lateral, unit, state/federal lease and production record that touches it. It uses free public data and saves an hour per tract.</p></div></li>
+    <li><div><h4>Index harvesting and document pull</h4><p>Use a licensed aggregator (TexasFile index export at $0.10/row; CourthouseDirect plant search). Run every name variant against both indices, then queue downloads. Stay within the vendor's terms (see guardrails).</p></div></li>
+    <li><div><h4>The fraction engine</h4><p>Use exact rational arithmetic, ownership replayed from the ledger by tract, depth and interest type, tract participation factors and 8-place decimals. It's deterministic, so you can trust it once it's tested. Reconcile its output against pay decks every month.</p></div></li>
+    <li><div><h4>OCR plus AI first-pass abstracting</h4><p>Type-specific extraction into a strict schema, with a verbatim quote and line reference for every field. People verify. This is where most of the speed-up comes from, and where most of the risk is.</p></div></li>
+    <li><div><h4>Name resolution and the chain-walking loop</h4><p>Each new party found becomes a new search, and the loop stops at the patent, the root-of-title date, or a prior opinion's cut-off.</p></div></li>
+    <li><div><h4>Rule-based red flags and curative drafting</h4><p>The rules raise the items in the red-flag table automatically. Draft affidavit of heirship packages, ratifications and stipulations from templates for a person to finish.</p></div></li>
+  </ol>
+
+  <h3>Pipeline</h3>
+  <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  A[Acquire<br/>licensed feeds, vendor exports,<br/>RRC GLO BLM NMSLO OCD GIS] --> B[Store originals<br/>immutable + SHA-256]
+  B --> C[Preprocess<br/>deskew, crop, split instruments,<br/>find marginal notes]
+  C --> D[OCR pass<br/>word boxes + confidence]
+  C --> E[Vision LLM pass<br/>verbatim transcription]
+  D --> F{Diff critical tokens<br/>fractions, names, vol/pg, dates}
+  E --> F
+  F -->|disagree| E2[Re-read crop<br/>stronger model]
+  F -->|agree| G[Classify + extract<br/>schema + line evidence]
+  E2 --> G
+  G --> H[Validate<br/>dates, word vs numeral,<br/>acreage, formats]
+  H --> I[Legal description<br/>grammar + geometry]
+  I --> J[Entity resolution<br/>aliases, heirs, successors]
+  J --> K[Chain ledger replay<br/>tract x depth x interest]
+  K --> L[Fraction engine<br/>NMA, decimals, WI/NRI]
+  L --> M[Red flags + curative]
+  M --> N[Human review<br/>image + field side by side]
+  N --> O[Runsheet, ownership report,<br/>DOI sheet, GIS, land system]
+  N -. corrections .-> P[(Gold set)]
+</pre>
+  </div>
+
+  <h3>OCR and AI: what it costs per 1,000 pages</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Engine</th><th>Role</th><th>≈ $ per 1,000 pages</th></tr></thead>
+    <tbody>
+      <tr><td>AWS Textract text detection / Google Document AI OCR / Azure Read</td><td>Word boxes and confidence scores. Your "second engine"</td><td class="num">$1.50 (≈$0.60 at volume)</td></tr>
+      <tr><td>Document AI custom extractor / Azure custom model</td><td>Trained form extraction</td><td class="num">$30 ($20 at volume)</td></tr>
+      <tr><td>Claude Haiku 4.5, page tiled in 3 strips, batch</td><td>Classification, cheap transcription</td><td class="num">≈ $5.40</td></tr>
+      <tr><td>Gemini 3.x Flash, high resolution</td><td>Cheap transcription</td><td class="num">≈ $5 (intro pricing through 2026)</td></tr>
+      <tr><td>Claude Sonnet 5.5, batch</td><td>Full transcription and extraction of complex deeds</td><td class="num">≈ $11</td></tr>
+      <tr><td>Claude Opus 5.5, batch</td><td>Escalation on flagged pages only</td><td class="num">≈ $22</td></tr>
+      <tr><td>Transkribus, custom model per clerk's hand</td><td>1880s–1920s handwritten deed books</td><td class="num">≈ €50–110</td></tr>
+      <tr><td>olmOCR or PaddleOCR-VL, self-hosted</td><td>High volume or data residency</td><td class="num">GPU cost only</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">OCR prices are list prices from the providers' pricing pages. LLM figures are computed from published token prices at about 4,800 image tokens and 1,200 output tokens per page. At 30,000 pages a month, compute stays under about $1,000. Licensed records and reviewer time are the real costs.</p>
+
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Record era</th><th>Machine-only field accuracy</th><th>With human review</th></tr></thead>
+    <tbody>
+      <tr><td>E-recorded / modern typed: headers (vol/page, dates, parties)</td><td class="num">97–99%</td><td class="num">≈ 99.5%</td></tr>
+      <tr><td>Modern: interest fraction and its basis</td><td class="num">85–92%</td><td class="num">≈ 99%</td></tr>
+      <tr><td>1930s–60s typed and carbon copies: fractions</td><td class="num">80–90%</td><td class="num">≈ 99%</td></tr>
+      <tr><td>1880s–1920s handwritten: names and numbers</td><td class="num">80–92%</td><td class="num">98–99%, review-heavy</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Planning estimates, not measurements. Build a gold set of 300–500 instruments stratified by county, era and type, and measure your own numbers before you rely on any of them.</p>
+
+  <div class="stop"><span class="label">How AI title extraction fails</span>
+    <p>Vision models <strong>normalize</strong>. They quietly "fix" spellings and fill illegible spots with plausible words and numbers. The damaging cases are swapped fractions (1/2↔1/4, 1/8↔1/3), invented volume and page numbers, and corrected names. The controls:</p>
+    <ul>
+      <li>Every field carries a verbatim quote tied to OCR line IDs, checked automatically.</li>
+      <li>A second OCR engine, with any disagreement on digits, fractions, names or dates sent to review.</li>
+      <li>A mismatch between the written fraction and the numeral ("one-half (1/4)") always raises a flag.</li>
+      <li>Ignore the model's self-reported confidence. Measure confidence by agreement between engines.</li>
+      <li>Never use AI super-resolution on a source image. It invents characters.</li>
+    </ul>
+  </div>
+
+  <h3>Review tiers</h3>
+  <div class="grid2">
+    <div class="rule-box"><span class="label">Tier A: a person always reviews</span><p>Anything that changes ownership: conveyed fractions and their basis, reservations and exceptions, parties and capacity on pre-1970 instruments, and every double-fraction, over-conveyance, word/numeral or illegible flag.</p></div>
+    <div class="rule-box"><span class="label">Tier B: sample review</span><p>Header fields where both engines agree and every validator passed. Spot-check 5–10% and accept the rest. Send every correction into the gold set.</p></div>
+  </div>
+
+  <h3>Extraction prompt and schema</h3>
+  <p>Send the page images <em>plus</em> the OCR text with stable line IDs (<code>p3.l17: …</code>), and ask for line IDs and a verbatim quote in every evidence entry. Run a cheap model first to classify and split instruments. Then run a prompt specific to that instrument type, because a lease and a mineral deed need different questions.</p>
+  <div class="codeblock"><button type="button" class="copy">Copy</button><pre id="prompt-text">You are abstracting a recorded instrument for an oil and gas runsheet in {COUNTY} County, {STATE}.
+Inputs: page images, and OCR text where every line has an ID like p2.l14.
+
+Rules:
+1. Transcribe and extract only what is on the page. If a value is not on the page, return null.
+2. Copy names, fractions, legal descriptions and recording references exactly as written,
+   including both the words and the numerals of every fraction. Never correct spelling.
+3. If text is illegible, put [illegible] in the quote and add an "illegible" flag. Never guess digits.
+4. Every extracted object needs evidence: page, the OCR line_ids, and a verbatim quote.
+5. Record each fraction as factors (for "1/2 of 1/8": [1/2, 1/8]) and the basis exactly as stated
+   (of the minerals, of grantor's interest, of royalty, of production). Do not decide whether a
+   royalty is fixed or floating, whether Duhig applies, or who the heirs are. Only flag it.
+6. Flag: written fraction ≠ numeral, double fractions, term language ("for __ years and as long
+   thereafter"), "all my interest in __ County" language, a spouse who didn't join, an unclear
+   capacity (trustee, executor, attorney-in-fact), interlineations, missing pages, no acknowledgment,
+   marginal notations, and conveyances larger than the grantor appears to own.
+7. List every reservation, exception, "save and except" and "subject to" clause separately,
+   with its full verbatim text.
+8. Return JSON that matches the schema exactly. No commentary.</pre></div>
+
+  <details class="more"><summary>Full instrument JSON schema (strict structured output; fractions stored as strings, never floats)</summary>
+    <div class="codeblock"><button type="button" class="copy">Copy</button><pre id="schema-text">{
+  &quot;$schema&quot;: &quot;https://json-schema.org/draft/2020-12/schema&quot;,
+  &quot;title&quot;: &quot;ExtractedInstrument&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;additionalProperties&quot;: false,
+  &quot;required&quot;: [&quot;doc_id&quot;,&quot;instrument_type&quot;,&quot;instrument_title_verbatim&quot;,&quot;recording&quot;,&quot;execution&quot;,&quot;parties&quot;,&quot;conveyances&quot;,&quot;reservations_exceptions&quot;,&quot;subject_to&quot;,&quot;legal_descriptions&quot;,&quot;lease_terms&quot;,&quot;references&quot;,&quot;flags&quot;],
+  &quot;properties&quot;: {
+    &quot;doc_id&quot;: {&quot;type&quot;: &quot;string&quot;},
+    &quot;instrument_type&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [
+      &quot;warranty_deed&quot;,&quot;special_warranty_deed&quot;,&quot;quitclaim_deed&quot;,&quot;mineral_deed&quot;,&quot;royalty_deed&quot;,&quot;npri_deed&quot;,&quot;term_royalty_deed&quot;,
+      &quot;oil_gas_lease&quot;,&quot;memorandum_of_lease&quot;,&quot;lease_amendment_or_extension&quot;,&quot;ratification&quot;,&quot;release_of_lease&quot;,&quot;partial_release&quot;,
+      &quot;assignment_of_lease&quot;,&quot;assignment_or_conveyance_of_orri&quot;,&quot;pooling_unit_designation&quot;,&quot;unit_agreement&quot;,&quot;production_sharing_agreement&quot;,
+      &quot;division_order&quot;,&quot;stipulation_of_interest&quot;,&quot;affidavit_of_heirship&quot;,&quot;affidavit_of_non_production&quot;,&quot;affidavit_of_identity&quot;,
+      &quot;will_or_probate_order&quot;,&quot;letters_testamentary&quot;,&quot;power_of_attorney&quot;,&quot;correction_instrument&quot;,&quot;deed_of_trust&quot;,&quot;release_of_lien&quot;,
+      &quot;judgment_or_lis_pendens&quot;,&quot;patent&quot;,&quot;easement_or_row&quot;,&quot;other&quot;]},
+    &quot;instrument_title_verbatim&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]},
+    &quot;recording&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;state&quot;,&quot;county&quot;,&quot;record_series&quot;,&quot;volume&quot;,&quot;page&quot;,&quot;instrument_number&quot;,&quot;file_datetime&quot;,&quot;recorded_date&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;state&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;TX&quot;,&quot;NM&quot;]},
+        &quot;county&quot;: {&quot;type&quot;: &quot;string&quot;},
+        &quot;record_series&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;], &quot;description&quot;: &quot;Deed Records, Oil &amp; Gas Records, Official Public Records, Misc., Probate&quot;},
+        &quot;volume&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]}, &quot;page&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]},
+        &quot;instrument_number&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]},
+        &quot;file_datetime&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;], &quot;description&quot;: &quot;ISO 8601; partial allowed&quot;},
+        &quot;recorded_date&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}},
+    &quot;execution&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;instrument_date&quot;,&quot;effective_date&quot;,&quot;acknowledgments&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;instrument_date&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]}, &quot;effective_date&quot;: {&quot;type&quot;: [&quot;string&quot;,&quot;null&quot;]},
+        &quot;acknowledgments&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+          &quot;required&quot;: [&quot;party_ref&quot;,&quot;date&quot;,&quot;county&quot;,&quot;state&quot;,&quot;notary_name&quot;],
+          &quot;properties&quot;: {&quot;party_ref&quot;: {&quot;type&quot;:&quot;string&quot;}, &quot;date&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;county&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+                         &quot;state&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;notary_name&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}}}},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}},
+    &quot;parties&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;$ref&quot;: &quot;#/$defs/party&quot;}},
+    &quot;conveyances&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;from_party_refs&quot;,&quot;to_party_refs&quot;,&quot;estate&quot;,&quot;interest&quot;,&quot;legal_description_ids&quot;,&quot;depth&quot;,&quot;term&quot;,&quot;warranty&quot;,&quot;evidence&quot;,&quot;confidence&quot;],
+      &quot;properties&quot;: {
+        &quot;from_party_refs&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;:&quot;string&quot;}},
+        &quot;to_party_refs&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;:&quot;string&quot;}},
+        &quot;estate&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;fee_simple_all&quot;,&quot;surface_only&quot;,&quot;mineral&quot;,&quot;royalty&quot;,&quot;npri&quot;,&quot;orri&quot;,&quot;leasehold_wi&quot;,&quot;executive_right&quot;,&quot;bonus_rentals&quot;,&quot;unknown&quot;]},
+        &quot;interest&quot;: {&quot;$ref&quot;: &quot;#/$defs/fraction&quot;},
+        &quot;legal_description_ids&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;:&quot;string&quot;}},
+        &quot;depth&quot;: {&quot;$ref&quot;: &quot;#/$defs/depth&quot;},
+        &quot;term&quot;: {&quot;$ref&quot;: &quot;#/$defs/term&quot;},
+        &quot;warranty&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;general&quot;,&quot;special&quot;,&quot;none_quitclaim&quot;,&quot;unknown&quot;]},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;},
+        &quot;confidence&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;high&quot;,&quot;medium&quot;,&quot;low&quot;]}}}},
+    &quot;reservations_exceptions&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;kind&quot;,&quot;reserved_by_party_refs&quot;,&quot;estate&quot;,&quot;interest&quot;,&quot;executive_rights&quot;,&quot;depth&quot;,&quot;term&quot;,&quot;legal_description_ids&quot;,&quot;text_verbatim&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;kind&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;reservation&quot;,&quot;exception_prior_reservation&quot;,&quot;exception_prior_conveyance&quot;,&quot;save_and_except_tract&quot;,&quot;exception_existing_lease&quot;]},
+        &quot;reserved_by_party_refs&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;:&quot;string&quot;}},
+        &quot;estate&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;mineral&quot;,&quot;royalty&quot;,&quot;npri&quot;,&quot;orri&quot;,&quot;executive_right&quot;,&quot;bonus_rentals&quot;,&quot;surface&quot;,&quot;other&quot;]},
+        &quot;interest&quot;: {&quot;$ref&quot;: &quot;#/$defs/fraction&quot;},
+        &quot;executive_rights&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;retained&quot;,&quot;conveyed&quot;,&quot;waived&quot;,&quot;not_addressed&quot;]},
+        &quot;depth&quot;: {&quot;$ref&quot;: &quot;#/$defs/depth&quot;}, &quot;term&quot;: {&quot;$ref&quot;: &quot;#/$defs/term&quot;},
+        &quot;legal_description_ids&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;:&quot;string&quot;}},
+        &quot;text_verbatim&quot;: {&quot;type&quot;: &quot;string&quot;},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}}},
+    &quot;subject_to&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;text_verbatim&quot;,&quot;referenced_instrument&quot;,&quot;category&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;text_verbatim&quot;: {&quot;type&quot;:&quot;string&quot;},
+        &quot;referenced_instrument&quot;: {&quot;$ref&quot;: &quot;#/$defs/instrument_ref&quot;},
+        &quot;category&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;existing_oil_gas_lease&quot;,&quot;prior_mineral_or_royalty_reservation&quot;,&quot;easements&quot;,&quot;liens&quot;,&quot;general_boilerplate&quot;,&quot;other&quot;]},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}}},
+    &quot;legal_descriptions&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;$ref&quot;: &quot;#/$defs/legal_description&quot;}},
+    &quot;lease_terms&quot;: {&quot;anyOf&quot;: [{&quot;type&quot;:&quot;null&quot;}, {&quot;$ref&quot;: &quot;#/$defs/lease_terms&quot;}]},
+    &quot;references&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;$ref&quot;: &quot;#/$defs/instrument_ref&quot;}},
+    &quot;flags&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;code&quot;,&quot;detail&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;code&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;illegible&quot;,&quot;interlineation_or_correction&quot;,&quot;missing_pages&quot;,&quot;unsigned&quot;,&quot;unacknowledged&quot;,
+          &quot;marginal_notation&quot;,&quot;numeral_word_mismatch&quot;,&quot;double_fraction&quot;,&quot;possible_over_conveyance&quot;,&quot;capacity_unclear&quot;,
+          &quot;spouse_not_joined&quot;,&quot;possible_duplicate&quot;,&quot;correction_or_rerecording&quot;,&quot;other&quot;]},
+        &quot;detail&quot;: {&quot;type&quot;:&quot;string&quot;}, &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}}}
+  },
+  &quot;$defs&quot;: {
+    &quot;evidence&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;page&quot;,&quot;line_ids&quot;,&quot;quote&quot;],
+      &quot;properties&quot;: {&quot;page&quot;: {&quot;type&quot;:&quot;integer&quot;}, &quot;line_ids&quot;: {&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}}, &quot;quote&quot;: {&quot;type&quot;:&quot;string&quot;}}}},
+    &quot;fraction&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;text_verbatim&quot;,&quot;factors&quot;,&quot;basis&quot;,&quot;all_of_grantors_interest&quot;,&quot;numeral_word_consistent&quot;,&quot;fixed_or_floating_signal&quot;],
+      &quot;properties&quot;: {
+        &quot;text_verbatim&quot;: {&quot;type&quot;:&quot;string&quot;},
+        &quot;factors&quot;: {&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;additionalProperties&quot;:false,&quot;required&quot;:[&quot;num&quot;,&quot;den&quot;],
+                    &quot;properties&quot;:{&quot;num&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;den&quot;:{&quot;type&quot;:&quot;string&quot;}}}, &quot;description&quot;:&quot;Product of factors, e.g. 1/2 of 1/8 -&gt; [{1,2},{1,8}]&quot;},
+        &quot;basis&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;of_whole_mineral_estate&quot;,&quot;of_grantors_interest&quot;,&quot;of_royalty&quot;,&quot;of_production_8_8&quot;,&quot;of_leasehold_8_8&quot;,&quot;of_working_interest&quot;,&quot;of_lease_royalty_as_reserved&quot;,&quot;unstated&quot;]},
+        &quot;all_of_grantors_interest&quot;: {&quot;type&quot;:&quot;boolean&quot;},
+        &quot;numeral_word_consistent&quot;: {&quot;type&quot;:[&quot;boolean&quot;,&quot;null&quot;]},
+        &quot;fixed_or_floating_signal&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;fixed_language&quot;,&quot;floating_language&quot;,&quot;ambiguous&quot;,&quot;not_applicable&quot;], &quot;description&quot;:&quot;Textual signal only; legal characterization reserved for attorney&quot;}}},
+    &quot;depth&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false, &quot;required&quot;: [&quot;limited&quot;,&quot;top&quot;,&quot;base&quot;,&quot;text_verbatim&quot;],
+      &quot;properties&quot;: {&quot;limited&quot;: {&quot;type&quot;:&quot;boolean&quot;},
+        &quot;top&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;], &quot;description&quot;:&quot;e.g. &#x27;surface&#x27;, &#x27;7,500 ft&#x27;, &#x27;top of Wolfcamp&#x27;&quot;},
+        &quot;base&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;text_verbatim&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}}},
+    &quot;term&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false, &quot;required&quot;: [&quot;is_term_interest&quot;,&quot;fixed_years&quot;,&quot;thereafter_condition&quot;,&quot;text_verbatim&quot;],
+      &quot;properties&quot;: {&quot;is_term_interest&quot;: {&quot;type&quot;:&quot;boolean&quot;}, &quot;fixed_years&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;thereafter_condition&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;text_verbatim&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}}},
+    &quot;party&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;party_id&quot;,&quot;role&quot;,&quot;name_verbatim&quot;,&quot;name_normalized&quot;,&quot;entity_type&quot;,&quot;capacity&quot;,&quot;represented_entity&quot;,&quot;marital_descriptor&quot;,&quot;spouse_name&quot;,&quot;residence&quot;,&quot;signed&quot;],
+      &quot;properties&quot;: {
+        &quot;party_id&quot;: {&quot;type&quot;:&quot;string&quot;},
+        &quot;role&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;grantor&quot;,&quot;grantee&quot;,&quot;lessor&quot;,&quot;lessee&quot;,&quot;assignor&quot;,&quot;assignee&quot;,&quot;releasor&quot;,&quot;affiant&quot;,&quot;decedent&quot;,&quot;heir&quot;,&quot;trustee&quot;,&quot;executor&quot;,&quot;attorney_in_fact&quot;,&quot;other&quot;]},
+        &quot;name_verbatim&quot;: {&quot;type&quot;:&quot;string&quot;}, &quot;name_normalized&quot;: {&quot;type&quot;:&quot;string&quot;},
+        &quot;entity_type&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;individual&quot;,&quot;married_couple&quot;,&quot;corporation&quot;,&quot;llc&quot;,&quot;partnership&quot;,&quot;trust&quot;,&quot;estate&quot;,&quot;government&quot;,&quot;unknown&quot;]},
+        &quot;capacity&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;individually&quot;,&quot;trustee&quot;,&quot;executor_administrator&quot;,&quot;attorney_in_fact&quot;,&quot;officer_agent&quot;,&quot;guardian&quot;,&quot;heir&quot;,&quot;unknown&quot;]},
+        &quot;represented_entity&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;marital_descriptor&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;], &quot;description&quot;:&quot;feme sole, et ux, et vir, a single man, joined pro forma...&quot;},
+        &quot;spouse_name&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;residence&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;signed&quot;: {&quot;type&quot;:[&quot;boolean&quot;,&quot;null&quot;]}}},
+    &quot;instrument_ref&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false, &quot;required&quot;: [&quot;volume&quot;,&quot;page&quot;,&quot;instrument_number&quot;,&quot;record_series&quot;,&quot;text_verbatim&quot;],
+      &quot;properties&quot;: {&quot;volume&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;page&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;instrument_number&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+                     &quot;record_series&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;text_verbatim&quot;:{&quot;type&quot;:&quot;string&quot;}}},
+    &quot;legal_description&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;ld_id&quot;,&quot;text_verbatim&quot;,&quot;county&quot;,&quot;system&quot;,&quot;tx_survey&quot;,&quot;plss&quot;,&quot;metes_and_bounds&quot;,&quot;stated_acres&quot;,&quot;more_or_less&quot;,&quot;save_and_except_text&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;ld_id&quot;: {&quot;type&quot;:&quot;string&quot;}, &quot;text_verbatim&quot;: {&quot;type&quot;:&quot;string&quot;}, &quot;county&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;system&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;tx_abstract_survey&quot;,&quot;nm_plss&quot;,&quot;metes_and_bounds&quot;,&quot;subdivision_lot_block&quot;,&quot;by_reference_only&quot;,&quot;mixed&quot;]},
+        &quot;tx_survey&quot;: {&quot;anyOf&quot;:[{&quot;type&quot;:&quot;null&quot;},{&quot;type&quot;:&quot;object&quot;,&quot;additionalProperties&quot;:false,
+          &quot;required&quot;:[&quot;abstract_no&quot;,&quot;survey_name&quot;,&quot;survey_no&quot;,&quot;block&quot;,&quot;township&quot;,&quot;section&quot;,&quot;certificate&quot;,&quot;aliquot_parts&quot;],
+          &quot;properties&quot;:{&quot;abstract_no&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;survey_name&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;survey_no&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+            &quot;block&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;township&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;section&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+            &quot;certificate&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;aliquot_parts&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}}}}]},
+        &quot;plss&quot;: {&quot;anyOf&quot;:[{&quot;type&quot;:&quot;null&quot;},{&quot;type&quot;:&quot;object&quot;,&quot;additionalProperties&quot;:false,
+          &quot;required&quot;:[&quot;meridian&quot;,&quot;township&quot;,&quot;range&quot;,&quot;section&quot;,&quot;aliquots&quot;,&quot;lots&quot;],
+          &quot;properties&quot;:{&quot;meridian&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},&quot;township&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;range&quot;:{&quot;type&quot;:&quot;string&quot;},
+            &quot;section&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;aliquots&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},&quot;lots&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}}}}]},
+        &quot;metes_and_bounds&quot;: {&quot;anyOf&quot;:[{&quot;type&quot;:&quot;null&quot;},{&quot;type&quot;:&quot;object&quot;,&quot;additionalProperties&quot;:false,
+          &quot;required&quot;:[&quot;pob_text&quot;,&quot;calls&quot;],
+          &quot;properties&quot;:{&quot;pob_text&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;calls&quot;:{&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;object&quot;,&quot;additionalProperties&quot;:false,
+            &quot;required&quot;:[&quot;bearing_text&quot;,&quot;distance&quot;,&quot;unit&quot;,&quot;monument_text&quot;],
+            &quot;properties&quot;:{&quot;bearing_text&quot;:{&quot;type&quot;:&quot;string&quot;},&quot;distance&quot;:{&quot;type&quot;:&quot;string&quot;},
+              &quot;unit&quot;:{&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;varas&quot;,&quot;feet&quot;,&quot;chains&quot;,&quot;rods_poles&quot;,&quot;links&quot;,&quot;meters&quot;,&quot;unknown&quot;]},
+              &quot;monument_text&quot;:{&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}}}}}}]},
+        &quot;stated_acres&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;more_or_less&quot;: {&quot;type&quot;:&quot;boolean&quot;},
+        &quot;save_and_except_text&quot;: {&quot;type&quot;:&quot;array&quot;,&quot;items&quot;:{&quot;type&quot;:&quot;string&quot;}},
+        &quot;evidence&quot;: {&quot;$ref&quot;: &quot;#/$defs/evidence&quot;}}},
+    &quot;lease_terms&quot;: {&quot;type&quot;: &quot;object&quot;, &quot;additionalProperties&quot;: false,
+      &quot;required&quot;: [&quot;form_name&quot;,&quot;lease_type&quot;,&quot;primary_term&quot;,&quot;option_to_extend&quot;,&quot;royalty_oil&quot;,&quot;royalty_gas&quot;,&quot;royalty_valuation&quot;,&quot;cost_free_language&quot;,&quot;bonus_recital&quot;,&quot;delay_rental&quot;,&quot;shut_in&quot;,&quot;cessation_days&quot;,&quot;continuous_development&quot;,&quot;pugh_clause&quot;,&quot;depth_limitation&quot;,&quot;retained_acreage&quot;,&quot;pooling&quot;,&quot;gross_acres&quot;,&quot;evidence&quot;],
+      &quot;properties&quot;: {
+        &quot;form_name&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;lease_type&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;paid_up&quot;,&quot;unless&quot;,&quot;or&quot;,&quot;unknown&quot;]},
+        &quot;primary_term&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;], &quot;description&quot;:&quot;verbatim + normalized, e.g. &#x27;3 years&#x27;&quot;},
+        &quot;option_to_extend&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;royalty_oil&quot;: {&quot;$ref&quot;:&quot;#/$defs/fraction&quot;}, &quot;royalty_gas&quot;: {&quot;$ref&quot;:&quot;#/$defs/fraction&quot;},
+        &quot;royalty_valuation&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;market_value&quot;,&quot;amount_realized_proceeds&quot;,&quot;mixed&quot;,&quot;unstated&quot;]},
+        &quot;cost_free_language&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;bonus_recital&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;delay_rental&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;shut_in&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]}, &quot;cessation_days&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;continuous_development&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;pugh_clause&quot;: {&quot;type&quot;:&quot;string&quot;,&quot;enum&quot;:[&quot;none&quot;,&quot;vertical&quot;,&quot;horizontal&quot;,&quot;both&quot;,&quot;unclear&quot;]},
+        &quot;depth_limitation&quot;: {&quot;$ref&quot;:&quot;#/$defs/depth&quot;}, &quot;retained_acreage&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;pooling&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;], &quot;description&quot;:&quot;authority + size limits verbatim&quot;},
+        &quot;gross_acres&quot;: {&quot;type&quot;:[&quot;string&quot;,&quot;null&quot;]},
+        &quot;evidence&quot;: {&quot;$ref&quot;:&quot;#/$defs/evidence&quot;}}}
+  }
+}</pre></div>
+  </details>
+
+  <h3>Data model: an ownership ledger, not a spreadsheet</h3>
+  <ul>
+    <li><strong>Core tables:</strong> <code>document</code> (immutable image + hash), <code>instrument</code>, <code>party</code> (as written) linked to a resolved <code>person_entity</code>, and <code>entity_link</code> (aka, fka, merged into, heir of, spouse of, successor trustee) with evidence on every link.</li>
+    <li><strong>Tracts:</strong> <code>legal_description</code> → <code>tract</code> (PostGIS geometry) → <code>tract_fragment</code> for save-and-except slices. Plus <code>depth_interval</code> and <code>interest_type</code> (MI, executive, bonus, royalty, NPRI fixed/floating, ORRI, WI, NRI).</li>
+    <li><strong>The ledger, <code>conveyance_event</code>:</strong> one row per instrument × grantor → grantee × fragment × depth × interest. It stores fraction factors as NUMERIC numerator/denominator pairs, plus the basis.</li>
+    <li><strong>Ownership on any date</strong> is a replay of the events in order. A grantor whose balance goes below zero raises an over-conveyance (Duhig) flag.</li>
+    <li><strong>Leases, units and allocation wells</strong> carry their own tract participation factors and the source of each factor: PSA, unit designation or pooling order. RRC acreage forms like the P-16 are regulatory filings, not ownership.</li>
+  </ul>
+
+  <h3>Legal descriptions and GIS</h3>
+  <div class="grid2">
+    <div>
+      <h4>Texas: abstract, survey, block, section</h4>
+      <ul>
+        <li>Parse with a deterministic grammar first: county, abstract (<code>A-123</code>), survey (T&amp;P, H&amp;TC, GC&amp;SF, PSL, UL…), block (<code>C-21</code>, <code>33</code>), township (<code>T-2-S</code>), section, aliquots and save-and-excepts. Use the LLM only as a fallback, and check its output against the survey layer.</li>
+        <li>Use the <a href="https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/" target="_blank" rel="noopener">RRC digital map data</a> (free county shapefiles: survey polygons, surface and bottom-hole well locations, lateral arcs). The GLO's statewide survey grid is licensed from a third party and can't be redistributed. Use the RRC version, or license Whitestar.</li>
+        <li>Irregular sections: "N/2 of Section 12" needs a geometric split. Mark it as approximate geometry, and treat the legal text as controlling.</li>
+        <li>The Texas vara is 33⅓ inches. Watch for magnetic bearings and check traverse misclosure on metes-and-bounds tracts.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>New Mexico: PLSS</h4>
+      <ul>
+        <li>Resolve aliquots right to left: "N/2 SE/4" → {NESE, NWSE}. Normalize lots through CadNSDI <code>PLSSIntersected</code> and compare geometry, never strings. "W/2 of irregular Section 6" can equal "Lots 3–7, SE/4NW/4, E/2SW/4."</li>
+        <li>Sources: <a href="https://gbp-blm-egis.hub.arcgis.com/pages/newmexico" target="_blank" rel="noopener">BLM CadNSDI (NM)</a>, <a href="https://mapservice.nmstatelands.org/GISDataDownloads/" target="_blank" rel="noopener">NMSLO GIS downloads</a> (UTM 13N, EPSG:26913), <a href="https://ocd-hub-nm-emnrd.hub.arcgis.com/" target="_blank" rel="noopener">OCD GIS hub</a>, <a href="https://reports.blm.gov/reports/MLRS" target="_blank" rel="noopener">BLM MLRS reports</a>.</li>
+        <li>Check each layer's projection file for NAD27 vs NAD83.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The search loop</h3>
+  <ol class="steps">
+    <li><div><p><strong>Seed</strong> with the tract and its known owners (the CAD mineral roll in Texas, or the deal file).</p></div></li>
+    <li><div><p><strong>Expand every name:</strong> initials, nicknames (Jno., Wm., Chas.), married and maiden names, "et ux" forms, trusts and estates, corporate predecessors and successors. Use phonetic keys, because old index books group names by letter codes and misindex often.</p></div></li>
+    <li><div><p><strong>Search both directions:</strong> the grantor index from acquisition forward, including after death; the grantee index back toward the root. Limit each search to the window when that person could have owned the tract, with some slack for late recording.</p></div></li>
+    <li><div><p><strong>Filter hits by legal description</strong>, but always keep "all my interest in X County" conveyances and anything that cites an instrument already in the chain.</p></div></li>
+    <li><div><p><strong>Queue every new party</strong> for the same loop. Stop at the patent, the root-of-title date, or a prior opinion's cut-off. Fall back to legal-description indexes or the plant to catch misindexed instruments.</p></div></li>
+  </ol>
+
+  <h3>Guardrails</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>Risk</th><th>Rule</th></tr></thead>
+    <tbody>
+      <tr><td>Scraping county portals and vendor sites</td><td>Don't. Their terms usually prohibit bots and bulk download, and getting around logins or rate limits creates contract and computer-crime exposure. Use paid accounts, licensed exports and negotiated bulk feeds, and get counsel to sign off on each source. RRC, GLO, BLM and NMSLO public data are free to download.</td></tr>
+      <tr><td>Practice of law</td><td>Label outputs "Runsheet / landman ownership report: not a title opinion." Send legal-effect questions (Duhig, fixed vs floating, heirship, curative sufficiency) to attorneys. Drilling, division order and acquisition opinions stay with attorneys.</td></tr>
+      <tr><td>Owner personal data</td><td>Redact SSNs, birth dates and account numbers before pages go to any AI vendor. Use enterprise or zero-retention terms. Encrypt, limit access and log it.</td></tr>
+      <tr><td>Data licenses</td><td>Read vendor terms for "no derivative datasets" and "no ML training" clauses. The GLO survey grid, the pyTRS PLSS parser and the Surya/Marker OCR weights all carry commercial-use limits.</td></tr>
+      <tr><td>Model drift</td><td>Pin model versions. Re-run the gold set on every model or prompt change. Store the prompt, model and schema version with every extracted value.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="small muted">Recommended build: Python, FastAPI, Pydantic (one schema source for the LLM and for validation), PostgreSQL with PostGIS, pg_trgm and fuzzystrmatch, object storage with object lock for originals, a durable workflow queue, and a review screen that shows the page image with the field's box highlighted next to the extracted value.</p>
+</section>
+<section id="tools">
+  <h2><span class="tag">Tool stack</span>What to buy, and who owns it now</h2>
+  <p>The Permian land-tech market consolidated a lot between 2020 and 2026. Know who owns your vendors before you sign multi-year terms. The ownership below is from press releases and vendor pages. Pricing is the vendor's published pricing as of 2026. Speed claims are the vendors' own and haven't been independently tested.</p>
+
+  <h3>Who owns what</h3>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Product</th><th>Owner (2026)</th><th>What it means for you</th></tr></thead>
+    <tbody>
+      <tr><td>Enverus (formerly Drillinginfo)</td><td>Blackstone agreed to acquire it for about $6B in Aug 2025</td><td>The largest single source of courthouse, plant, well and AI data. Expect bundle pricing and lock-in.</td></tr>
+      <tr><td>CourthouseDirect.com</td><td>Enverus (2020)</td><td>Stays the cheapest retail path to Enverus-held images and plant indexes</td></tr>
+      <tr><td>Integrity Title (title plants)</td><td>Enverus (2021)</td><td>92 Texas and 15 New Mexico plant counties feed Enverus Courthouse</td></tr>
+      <tr><td>Tracts.co</td><td>Independent; deeper Enverus integration announced Apr 2026</td><td>Enverus Courthouse data flows into Tracts projects, starting with the Permian plants</td></tr>
+      <tr><td>Landdox</td><td>Quorum (2020), now "Quorum On Demand Land"</td><td>Quorum itself sold to Francisco Partners (announced Mar 2025)</td></tr>
+      <tr><td>P2 Energy Solutions</td><td>IFS (2022): IFS BOLO, Excalibur, Tobin, iLandMan</td><td>The choice if your accounting already runs on IFS</td></tr>
+      <tr><td>Whitestar (Texas abstract grid)</td><td>ESG / Pandell (2024)</td><td>The standard Texas abstract polygon layer, now paired with Pandell's land system</td></tr>
+      <tr><td>TexasFile</td><td>Independent</td><td>Low-cost, pay-as-you-go records with AI features priced per use</td></tr>
+      <tr><td>Kofile / GovOS (publicsearch.us)</td><td>Kofile; launched the "Kleio" AI search platform in Dec 2025</td><td>The free county portals some Permian counties use (Reeves, Ward)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Records access</h3>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Source</th><th>Best for</th><th>Published pricing</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><strong>TexasFile</strong><br><a href="https://www.texasfile.com/pricing/" target="_blank" rel="noopener">texasfile.com</a></td><td>Grantor/grantee name searching in all 254 Texas counties. Index export for automation</td><td class="num">Index search free<br>$1/page<br>$0.10 per index row exported<br>AI summary $1–$4/doc</td><td>No geographic (legal-description) plant index. Full index starts late in Ward, Dawson, Crockett, Irion, Upton and Martin.</td></tr>
+      <tr><td><strong>CourthouseDirect.com</strong><br><a href="https://www.courthousedirect.com/SignUpPricing.aspx" target="_blank" rel="noopener">courthousedirect.com</a></td><td>Legal-description (plant) searching in 96 Texas and 9 New Mexico counties. Historical handwritten index books. Pre-modern images</td><td class="num">TVP Plus: $1/doc in TX, $200/user/mo minimum<br>Legal Search: $5 + $0.10/result</td><td>The better pre-modern source in Ward, Upton, Dawson and Martin. Also offers lease alerts and lien search.</td></tr>
+      <tr><td><strong>Enverus Courthouse</strong></td><td>Teams that want plants, images, AI summaries and runsheet assist in one place</td><td class="num">Enterprise quote</td><td>Has a Lea County, NM digital plant indexed back to sovereignty. "Instant Analyst – Courthouse" and "Runsheet Assistant" (2025) summarize instruments with an audit trail.</td></tr>
+      <tr><td><strong>County portals</strong></td><td>Free index checks and the latest filings</td><td class="num">Free index; images ≈ $1/page</td><td>Platforms vary: GovOS PublicSearch, Tyler EagleWeb, Kofile QuickLink, iDocket, i2j (see the county finder).</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Ownership, runsheet and AI title tools</h3>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Tool</th><th>What it does</th><th>Pricing</th><th>My read</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tracts.co</strong></td><td>The landman keys each instrument once. A math engine builds the chain, runsheet, flowchart and mineral/leasehold ownership reports live</td><td class="num">$250/day per seat (first 5 days free) or $2,500/mo per seat</td><td>The strongest ownership-math engine on the market. Day seats work well for contract landmen. It doesn't find or read documents by itself; the Enverus feed fills that gap.</td></tr>
+      <tr><td><strong>Enverus Instant Analyst – Courthouse</strong></td><td>Generative-AI summaries and term extraction across courthouse records; Runsheet Assistant</td><td class="num">Enterprise</td><td>The most mature AI that sits directly on top of the records</td></tr>
+      <tr><td><strong>Energy Domain TitleLab</strong></td><td>Classifies instruments, extracts parties and lease terms, parses legal descriptions, and maps chains to wells and tracts (launched Feb 2026)</td><td class="num">Early access, Permian counties</td><td>Worth a pilot as a second source to Enverus. Accuracy hasn't been proven yet.</td></tr>
+      <tr><td><strong>Quorum On Demand Land + Dynamic Docs</strong></td><td>Land system with AI extraction of lease and agreement terms</td><td class="num">Quote</td><td>For lease administration and intake, not for building chains</td></tr>
+      <tr><td><strong>Grooper</strong> / <strong>Collide</strong></td><td>Bulk document processing (OCR + LLM) for leases, division orders and revenue statements</td><td class="num">Quote</td><td>Best for loading an acquisition data room, not for running a chain</td></tr>
+      <tr><td>Young AI title startups: MineralScout.ai, TitleTrackr, Landman.ai, Mineral Intelligence, ChainBuilder.ai, TitleBrain, Parse AI</td><td>AI patent-to-present chains, runsheet extraction, gap detection</td><td class="num">Varies</td><td>Promising but young. Several lean toward Colorado. Confirm their Permian county coverage and run the bake-off below before you trust any output.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Land system, mineral management and GIS</h3>
+  <ul>
+    <li><strong>Mineral and royalty management:</strong> Enverus MineralSoft (revenue tracking, check reconciliation, valuation). This is the usual default for a minerals shop.</li>
+    <li><strong>Land system of record:</strong> Quorum On Demand Land (small and mid-size), IFS BOLO/iLandMan (if accounting is on IFS), Pandell LandWorks with Whitestar (GIS-centric), PakEnergy Land (mid-market value), TotaLand (popular with brokers).</li>
+    <li><strong>Grid:</strong> Whitestar Texas Original Land Survey grid (about 309,000 abstract polygons statewide) plus NM PLSS. Alternatives are IFS Tobin, the Enverus grid and US Land Grid.</li>
+    <li><strong>GIS:</strong> QGIS (free) is enough for a small shop. Use ArcGIS Online or Enterprise once several people need shared ownership maps.</li>
+    <li><strong>Owner contact and heirship:</strong> TLOxp or Accurint (needs a permissible-purpose credential), FamilySearch (free), Ancestry and Newspapers.com, Legacy.com obituaries, ClaimItTexas and NM unclaimed property, and DocuSign for ratifications and stipulations.</li>
+  </ul>
+
+  <h3>Recommended stacks</h3>
+  <div class="grid2">
+    <div class="rule-box"><span class="label">Minerals and land shop, 3–10 people</span>
+      <ul>
+        <li>Use TexasFile for name searches and index export. Add CourthouseDirect TVP Plus for plant and legal-description searches and pre-modern images.</li>
+        <li>Use free county portals, BLM MLRS and NMSLO for the latest filings and for federal and state records.</li>
+        <li>Turn on Tracts.co day seats only during active projects. Move to monthly seats once usage is steady.</li>
+        <li>Use MineralSoft for the owned portfolio. Use QGIS with Whitestar for your area of interest, plus free RRC, GLO and BLM layers.</li>
+        <li>Build a thin in-house AI extraction layer (see Automation) on an enterprise LLM plan that doesn't train on your data.</li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Larger team or fund</span>
+      <ul>
+        <li>Run Enverus Courthouse (plants, Instant Analyst, Runsheet Assistant) feeding Tracts.co.</li>
+        <li>Benchmark Energy Domain TitleLab against it as a second source, so you aren't dependent on one vendor.</li>
+        <li>Pick the system of record to match accounting: Quorum, IFS or Pandell.</li>
+        <li>Use Grooper or Collide to load acquisition data rooms. Use ArcGIS Enterprise for shared maps.</li>
+        <li>Give every broker a seat in your system, and set up central de-duplication of title already run, so nobody re-runs a tract the company already owns the work on.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="flag"><span class="label">Run a bake-off before you buy any AI title tool</span>
+    <p>Pick 20 tracts across 4 or 5 counties that already have attorney opinions: a mix of plant counties and late-index counties like Irion or Upton, and at least 3 tracts with heirship breaks. Give each vendor the same legal descriptions. Score them on:</p>
+    <ul>
+      <li><strong>Instrument recall:</strong> did they find every instrument the attorney examined?</li>
+      <li><strong>Field accuracy:</strong> parties, dates, recording references and interest conveyed.</li>
+      <li><strong>Final decimals:</strong> exact match to the opinion.</li>
+      <li><strong>Hours of landman review per tract.</strong></li>
+    </ul>
+    <p>Missing an instrument is the expensive failure, so weight recall heaviest.</p>
+  </div>
+</section>
+<section id="qc">
+  <h2><span class="tag">Quality control</span>The QC gate and the numbers to manage by</h2>
+  <div class="grid2">
+    <div>
+      <h3>Before anything ships</h3>
+      <ul class="checklist" data-store="qc">
+        <li><input type="checkbox" id="qc1"><label for="qc1">Every runsheet row has a linked image and a recording reference.</label></li>
+        <li><input type="checkbox" id="qc2"><label for="qc2">Grantor and grantee searched for every owner, with alias expansion logged.</label></li>
+        <li><input type="checkbox" id="qc3"><label for="qc3">Probate, district court, liens, judgments and lis pendens searched for every owner in the window.</label></li>
+        <li><input type="checkbox" id="qc4"><label for="qc4">Every link in the chain ties to a prior vesting instrument, with no orphan conveyances.</label></li>
+        <li><input type="checkbox" id="qc5"><label for="qc5">Interests in each tract and depth add up to exactly 1 (8/8) in exact fractions.</label></li>
+        <li><input type="checkbox" id="qc6"><label for="qc6">Every royalty fraction, term interest and NPRI is flagged for review.</label></li>
+        <li><input type="checkbox" id="qc7"><label for="qc7">Lease status confirmed against RRC or OCD production and recorded releases.</label></li>
+        <li><input type="checkbox" id="qc8"><label for="qc8">Decimals reconciled to the pay deck or division order, with variances explained.</label></li>
+        <li><input type="checkbox" id="qc9"><label for="qc9">State and federal records checked where the tract touches them.</label></li>
+        <li><input type="checkbox" id="qc10"><label for="qc10">Certified-through date stamped on the deliverable and in the tracker.</label></li>
+      </ul>
+      <p class="small muted">Checkmarks are saved in this browser only.</p>
+    </div>
+    <div>
+      <h3>KPIs for the land department</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Metric</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td>Cycle time per tract, by product</td><td>The number your deal team feels</td></tr>
+          <tr><td>Cost per tract (internal + contract + records)</td><td>Tells you whether to buy or build</td></tr>
+          <tr><td>QC defect rate per tract</td><td>Shows which contractors and tools to trust</td></tr>
+          <tr><td>AI-abstracted fields accepted without edits</td><td>The real accuracy of your automation</td></tr>
+          <tr><td>Instrument recall against attorney exhibits</td><td>Measures whether the search missed anything</td></tr>
+          <tr><td>Pay-deck variance closed per month</td><td>Unpaid or overpaid decimals are recoverable money</td></tr>
+          <tr><td>Curative items open, by age</td><td>Old curative holds up payment and closings</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+<section id="team">
+  <h2><span class="tag">People and economics</span>Who does the work, and what it costs</h2>
+  <div class="grid2">
+    <div>
+      <h3>The operating model</h3>
+      <ul>
+        <li><strong>In-house core:</strong> a land manager who owns the title product menu and the tracker; one or two senior title landmen who review and QC rather than abstract; a GIS/data analyst; and, if you build, one engineer who owns the pipeline and the fraction engine.</li>
+        <li><strong>Contract brokers</strong> for courthouse-heavy counties (late-index counties, plant visits, heirship legwork). Give each one a seat in your system and your runsheet template so the work comes back in your format.</li>
+        <li><strong>Title attorneys</strong> for drilling, division order and acquisition opinions, and for every legal-effect call the software flags.</li>
+        <li><strong>One rule:</strong> before anyone opens an index, check the title register for existing work on that tract. Duplicate runs are the most common waste in land departments.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Cost benchmarks (2026)</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Item</th><th>Range</th></tr></thead>
+        <tbody>
+          <tr><td>Contract landman, fully weighted</td><td class="num">$500–$650/day</td></tr>
+          <tr><td>Permian field landman, entry → senior title specialist</td><td class="num">$400 → $1,200/day + per diem</td></tr>
+          <tr><td>Midland O&amp;G title abstractor</td><td class="num">≈ $29–$62/hr</td></tr>
+          <tr><td>Records (TexasFile / CourthouseDirect TVP Plus)</td><td class="num">$1/page · $1/doc</td></tr>
+          <tr><td>Tracts.co seat</td><td class="num">$250/day or $2,500/mo</td></tr>
+          <tr><td>AI compute at 30k pages/month</td><td class="num">&lt; ≈ $1,000/mo</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small muted">Day rates are from Enverus's 2026 land-workflow analysis and Permian job-market sources. Title opinion fees vary too much by firm and complexity to benchmark publicly, so get quotes per unit. Track contractor value as day rate ÷ instruments verified per day.</p>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <h2><span class="tag">Rollout</span>The first 90 days</h2>
+  <div class="grid3">
+    <div class="rule-box"><span class="label">Days 1–30: Standardize</span>
+      <ul>
+        <li>Adopt the five products, the runsheet schema, the file-naming key and the QC gate on this page.</li>
+        <li>Inventory every opinion, runsheet and abstract you own. Register each by tract with its certified-through date.</li>
+        <li>Open TexasFile and CourthouseDirect TVP Plus accounts. Get BLM Login.gov access for MLRS reports.</li>
+        <li>Load the GIS base: RRC surveys and wells, GLO and University Lands leases, BLM CadNSDI, NMSLO status, OCD wells.</li>
+        <li>Build and test the fraction engine. Pick 20 already-opined tracts as the gold set.</li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Days 31–60: Pilot</span>
+      <ul>
+        <li>Run the vendor bake-off on the gold set: Enverus Courthouse + Tracts, Energy Domain TitleLab, and one young AI title tool.</li>
+        <li>Stand up the in-house extraction path (OCR + vision model + schema + review screen) on the same 20 tracts.</li>
+        <li>Score instrument recall, field accuracy, decimal match and review minutes per instrument.</li>
+        <li>Start the name-variant library and corporate-succession table.</li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Days 61–90: Production</span>
+      <ul>
+        <li>Put live deals through the winning path with Tier A / Tier B review.</li>
+        <li>Turn on the KPI dashboard: cycle time, cost per tract, QC defects, auto-accept rate.</li>
+        <li>Start monthly pay-deck reconciliation against your computed decimals.</li>
+        <li>Launch the curative tracker with owners and due dates.</li>
+        <li>Make the build-vs-buy call based on the bake-off numbers, not on the demos.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="sources">
+  <h2><span class="tag">Sources</span>Where this came from, and what to re-check</h2>
+  <p>This page combines a senior land practitioner's operating method with research done on Oct 1, 2026. Vendor ownership, pricing and county coverage come from vendor pages, county pages and press releases as indexed by search. Many primary pages couldn't be opened directly during the research, so <strong>re-check county coverage years, platform URLs and fees at project start</strong>. Case law and statutes are cited for orientation. Have counsel confirm pin cites, later history and any 2025–26 changes before relying on them in an opinion. Speed claims for AI tools are vendor claims.</p>
+  <div class="grid2">
+    <ul class="small">
+      <li><a href="https://www.glo.texas.gov/archives-heritage/search-our-collections/land-grant-search" target="_blank" rel="noopener">GLO Land Grant Database</a> · <a href="https://www.glo.texas.gov/land/gis-maps-and-data" target="_blank" rel="noopener">GLO GIS</a> · <a href="https://www.glo.texas.gov/sites/default/files/2025-10/Guidelines%20for%20Relinquishment%20Act%20Leasing.pdf" target="_blank" rel="noopener">RAL leasing guidelines (2025)</a></li>
+      <li><a href="https://universitylands.utsystem.edu/Resources/GIS" target="_blank" rel="noopener">University Lands GIS</a></li>
+      <li><a href="https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/" target="_blank" rel="noopener">RRC data downloads</a> · <a href="https://gis.rrc.texas.gov/GISViewer/" target="_blank" rel="noopener">RRC GIS Viewer</a> · <a href="https://www.arcgis.com/home/item.html?id=4ef2ab14e55a406ca68d0c0221f2ef8a" target="_blank" rel="noopener">Statewide land grid (RRC version)</a></li>
+      <li><a href="https://www.texasfile.com/pricing/" target="_blank" rel="noopener">TexasFile pricing</a> · <a href="https://www.courthousedirect.com/SignUpPricing.aspx" target="_blank" rel="noopener">CourthouseDirect pricing</a> · <a href="https://www.courthousedirect.com/docs/LegalSearchInfoPricing.pdf" target="_blank" rel="noopener">CourthouseDirect Legal Search</a></li>
+      <li><a href="https://www.enverus.com/products/courthouse/" target="_blank" rel="noopener">Enverus Courthouse</a> · <a href="https://tracts.co/pricing/" target="_blank" rel="noopener">Tracts.co pricing</a> · <a href="https://www.energydomain.com/titlelab" target="_blank" rel="noopener">Energy Domain TitleLab</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="https://www.blm.gov/services/land-records/mlrs" target="_blank" rel="noopener">BLM MLRS</a> · <a href="https://reports.blm.gov/reports/MLRS" target="_blank" rel="noopener">MLRS reports</a> · <a href="https://gbp-blm-egis.hub.arcgis.com/pages/newmexico" target="_blank" rel="noopener">BLM CadNSDI (NM)</a></li>
+      <li><a href="https://www.federalregister.gov/documents/2026/04/29/2026-08280/revisions-to-regulations-regarding-oil-and-gas-leasing-fees-rentals-and-royalties" target="_blank" rel="noopener">BLM royalty direct final rule (2026)</a> · <a href="https://www.federalregister.gov/documents/2026/06/24/2026-12734/oil-and-gas-leasing" target="_blank" rel="noopener">Proposed leasing/bonding rule (Jun 2026)</a></li>
+      <li><a href="https://mapservice.nmstatelands.org/GISDataDownloads/" target="_blank" rel="noopener">NMSLO GIS downloads</a> · <a href="https://www.srca.nm.gov/parts/title19/19.015.0013.html" target="_blank" rel="noopener">19.15.13 NMAC (pooling)</a> · <a href="https://www.emnrd.nm.gov/ocd/wp-content/uploads/sites/6/public-notice-evidentiary-requirements-gc.pdf" target="_blank" rel="noopener">OCD all-owner notice exhibit (Dec 2025)</a></li>
+      <li><a href="https://basinlandrecords.com/creddy.html" target="_blank" rel="noopener">BasinLandRecords (Eddy/Lea)</a> · <a href="http://liveweb.leacounty-nm.org/" target="_blank" rel="noopener">Lea County Liveweb</a> · <a href="https://caselaw.findlaw.com/court/nm-court-of-appeals/1981656.html" target="_blank" rel="noopener">TexasFile v. Lea County (2019)</a></li>
+      <li><a href="https://www.enverus.com/blog/land-title-workflow-cost/" target="_blank" rel="noopener">Enverus: land title workflow cost</a> · <a href="https://tracts.co/key-metrics-every-land-manager-should-have-when-running-title/" target="_blank" rel="noopener">Tracts: land manager metrics</a></li>
+    </ul>
+  </div>
+</section>
+
+      <footer>Landman work product for internal planning. It is not a title opinion or legal advice. Ownership conclusions that need legal judgment belong to your examining attorney.</footer>
+    </main>
+  </div>
+</div>
+<script>
+// Exact rational arithmetic for title math. Fractions never touch floating point.
+const Q = (() => {
+  const abs = (a) => (a < 0n ? -a : a);
+  const gcd = (a, b) => { a = abs(a); b = abs(b); while (b) { [a, b] = [b, a % b]; } return a || 1n; };
+  const make = (n, d = 1n) => {
+    if (d === 0n) throw new Error("Division by zero");
+    if (d < 0n) { n = -n; d = -d; }
+    const g = gcd(n, d);
+    return { n: n / g, d: d / g };
+  };
+  const mul = (a, b) => make(a.n * b.n, a.d * b.d);
+  const div = (a, b) => make(a.n * b.d, a.d * b.n);
+  const add = (a, b) => make(a.n * b.d + b.n * a.d, a.d * b.d);
+  const sub = (a, b) => make(a.n * b.d - b.n * a.d, a.d * b.d);
+  const one = make(1n), zero = make(0n);
+  // Parses "3/16", "0.1875", "18.75%", "1/2 of 1/8", "1/2 x 1/8", "640", "159.86".
+  function parse(text) {
+    const s = String(text || "").replace(/,/g, "").trim().toLowerCase();
+    if (!s) throw new Error("Enter a value");
+    const parts = s.split(/\s*(?:\bof\b|\*|×|\bx\b)\s*/).filter(Boolean);
+    return parts.map(parseOne).reduce(mul, one);
+  }
+  function parseOne(p) {
+    let pct = false;
+    if (p.endsWith("%")) { pct = true; p = p.slice(0, -1).trim(); }
+    let q;
+    const frac = p.match(/^(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)$/);
+    if (frac) q = div(dec(frac[1]), dec(frac[2]));
+    else if (/^\d+(?:\.\d+)?$|^\.\d+$/.test(p)) q = dec(p);
+    else throw new Error(`Can't read "${p}" — use 3/16, 0.1875 or 18.75%`);
+    return pct ? div(q, make(100n)) : q;
+  }
+  function dec(str) {
+    if (str.startsWith(".")) str = "0" + str;
+    const [i, f = ""] = str.split(".");
+    return make(BigInt(i + f), 10n ** BigInt(f.length));
+  }
+  // Round half-up to `places` decimals, the way most pay decks carry interests.
+  function fixed(q, places = 8) {
+    const scale = 10n ** BigInt(places);
+    const neg = q.n < 0n;
+    const n = abs(q.n);
+    let v = (n * scale * 2n + q.d) / (q.d * 2n);
+    const s = v.toString().padStart(places + 1, "0");
+    return (neg ? "-" : "") + s.slice(0, -places) + "." + s.slice(-places);
+  }
+  const str = (q) => (q.d === 1n ? q.n.toString() : `${q.n}/${q.d}`);
+  const gt = (a, b) => a.n * b.d > b.n * a.d;
+  return { make, mul, div, add, sub, parse, fixed, str, gt, one, zero };
+})();
+
+// type: mineral | npri_fixed | npri_float | orri | wi
+function titleCalc(input) {
+  const acres = Q.parse(input.acres);
+  const owned = Q.parse(input.owned);         // undivided share of minerals (or of the lease, for ORRI/WI: share of minerals the lease covers)
+  const royalty = Q.parse(input.royalty);     // lessor's royalty in the lease
+  let part = Q.one, partNote = "Tract-level (no unit) — participation 1";
+  if (input.method === "acreage") {
+    const inUnit = Q.parse(input.tractInUnit), unit = Q.parse(input.unitAcres);
+    if (Q.gt(inUnit, unit)) throw new Error("Tract acres in the unit can't exceed unit acres");
+    part = Q.div(inUnit, unit);
+    partNote = `Tract participation = ${Q.str(inUnit)} ÷ ${Q.str(unit)} ac`;
+  } else if (input.method === "lateral") {
+    const tl = Q.parse(input.tractLateral), all = Q.parse(input.totalLateral);
+    if (Q.gt(tl, all)) throw new Error("Tract lateral feet can't exceed total lateral feet");
+    part = Q.div(tl, all);
+    partNote = `Tract participation = ${Q.str(tl)} ÷ ${Q.str(all)} ft of completed lateral`;
+  }
+  const nma = Q.mul(acres, owned);
+  const out = { nma, part, partNote, rows: [] };
+  const eighth = Q.make(1n, 8n);
+  switch (input.type) {
+    case "mineral": {
+      const d = Q.mul(Q.mul(owned, royalty), part);
+      out.decimal = d;
+      out.math = `${Q.str(owned)} minerals × ${Q.str(royalty)} royalty × participation ${Q.str(part)}`;
+      out.nra = Q.div(Q.mul(nma, royalty), eighth);
+      break;
+    }
+    case "npri_fixed": {
+      const npri = Q.parse(input.burden);
+      const d = Q.mul(npri, part);
+      out.decimal = d;
+      out.math = `Fixed NPRI ${Q.str(npri)} of production × participation ${Q.str(part)} (lease royalty doesn't change it)`;
+      if (Q.gt(npri, royalty)) out.warn = "Fixed NPRI is larger than the lease royalty — the mineral owner's royalty can't carry it. Check the reservation language and Texas double-fraction case law before you book this.";
+      break;
+    }
+    case "npri_float": {
+      const npri = Q.parse(input.burden);
+      const d = Q.mul(Q.mul(npri, royalty), part);
+      out.decimal = d;
+      out.math = `Floating NPRI ${Q.str(npri)} of royalty × ${Q.str(royalty)} lease royalty × participation ${Q.str(part)}`;
+      break;
+    }
+    case "orri": {
+      const orri = Q.parse(input.burden);
+      const d = Q.mul(Q.mul(orri, owned), part);
+      out.decimal = d;
+      out.math = `ORRI ${Q.str(orri)} × ${Q.str(owned)} of minerals the lease covers (proportionate reduction) × participation ${Q.str(part)}`;
+      break;
+    }
+    case "wi": {
+      const wi = Q.parse(input.burden);
+      const orri = input.orriBurden ? Q.parse(input.orriBurden) : Q.zero;
+      const wiDec = Q.mul(Q.mul(wi, owned), part);
+      const nriFactor = Q.sub(Q.sub(Q.one, royalty), orri);
+      if (!Q.gt(nriFactor, Q.zero)) throw new Error("Royalty plus ORRI burdens use up the whole lease");
+      out.wi = wiDec;
+      out.decimal = Q.mul(wiDec, nriFactor);
+      out.math = `WI ${Q.str(wi)} × ${Q.str(owned)} leased × participation ${Q.str(part)} = ${Q.fixed(wiDec)} WI; × (1 − ${Q.str(royalty)} − ${Q.str(orri)}) = NRI`;
+      break;
+    }
+    default: throw new Error("Unknown interest type");
+  }
+  return out;
+}
+
+if (typeof module !== "undefined") module.exports = { Q, titleCalc };
+
+const COUNTIES = [
+  { county: "Reeves", st: "TX", area: "Delaware Basin",
+    portal: "GovOS/Kofile PublicSearch: index + full-text OCR, all land records online — https://reeves.tx.publicsearch.us",
+    aggregators: "TexasFile full index 1874→; plats 1882→. CourthouseDirect images 1885→, geo-indexed plant 1884→, historical probate 1888→",
+    appraisal: "Reeves CAD (confirm the mineral appraiser on the CAD site)",
+    notes: "Created 1883 from Pecos, organized 1884: search Pecos before 1884. Reeves also holds Loving County filings from 1897–1931, when Loving was disorganized." },
+  { county: "Loving", st: "TX", area: "Delaware Basin",
+    portal: "Tyler EagleWeb (guest login) — https://lovingtx.countygovernmentrecords.com/LovingTXRecorder/web/",
+    aggregators: "TexasFile full index 1905→. CourthouseDirect index 1920→ but images only 1998→; historical index and property books 1905→",
+    appraisal: "Loving CAD",
+    notes: "Organized 1893, disorganized 1897, reorganized 1931. Search Reeves for 1897–1931 and Tom Green before that. Combined county/district clerk." },
+  { county: "Ward", st: "TX", area: "Delaware Basin (west) / Central Basin Platform (east)",
+    portal: "GovOS/Kofile PublicSearch — https://ward.tx.publicsearch.us",
+    aggregators: "TexasFile full index starts only in 1935. CourthouseDirect images and title plant 1873→, historical O&G records 1897–1999. Use CourthouseDirect before 1935",
+    appraisal: "Ward CAD",
+    notes: "Created 1887 from Tom Green, organized 1892. Likely holds early Winkler filings (Winkler attached to Ward until 1910)." },
+  { county: "Winkler", st: "TX", area: "Central Basin Platform / Delaware edge",
+    portal: "Tyler Self-Service (EagleWeb), linked from the county clerk page",
+    aggregators: "TexasFile full index 1883→. CourthouseDirect index 1910→, images 1965→, historical property 1883→",
+    appraisal: "Winkler CAD — https://winklercad.org",
+    notes: "Created 1887, organized 1910. Pre-1910 filings are in Ward. The early start date points to transcribed records." },
+  { county: "Pecos", st: "TX", area: "Delaware Basin (NW) / Central Basin Platform",
+    portal: "Two systems. Tyler EagleWeb for about 1983→ (https://tx.countygovernmentrecords.com/texas/web/). Kofile QuickLink for 1884–1983 (deed vols 1–521, O&G lease vols 1–584) at $1/page + $0.25 — https://kofilequicklinks.com/pecos/",
+    aggregators: "TexasFile full index 1862→ (deed records 1911–1990, O&G leases 1920–1990). CourthouseDirect index 1983→, historical index 1884→",
+    appraisal: "Pecos CAD",
+    notes: "Created 1871 from Presidio, organized 1875: search Presidio before 1875. Parent county of Reeves. University Lands acreage." },
+  { county: "Culberson", st: "TX", area: "Delaware Basin (west)",
+    portal: "No modern county portal found. Kofile QuickLink — https://kofilequicklinks.com/culberson/",
+    aggregators: "TexasFile full index 1854→ (transcribed), plats 1888→. CourthouseDirect historical index 1882→, property 1900→",
+    appraisal: "Culberson CAD — https://culbersoncad.org",
+    notes: "Created 1911 from El Paso. Originals of early records are in El Paso County." },
+  { county: "Midland", st: "TX", area: "Midland Basin",
+    portal: "County clerk — https://www.co.midland.tx.us/175/County-Clerk (confirm the current search platform)",
+    aggregators: "TexasFile full index 1884→ (deed records 1885–1993, OPR 1994→). CourthouseDirect index 1874→, images 1979→, updated daily",
+    appraisal: "Midland CAD",
+    notes: "Created 1885 from Tom Green: search Tom Green before 1885. Ector was attached to Midland before 1891. Several local title companies." },
+  { county: "Martin", st: "TX", area: "Midland Basin",
+    portal: "Official records search — https://martinclerk.com/252/Official-Records-Search",
+    aggregators: "TexasFile full index starts only in 1915. CourthouseDirect index and images 1876→. Use CourthouseDirect before 1915",
+    appraisal: "Martin CAD",
+    notes: "Created 1876 from the Bexar Land District, organized 1884. Find the county it was attached to before 1884." },
+  { county: "Howard", st: "TX", area: "Midland Basin (NE)",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1882→. CourthouseDirect index 1881→, images 1983→, historical index 1886–1982",
+    appraisal: "Howard CAD",
+    notes: "Created 1876, organized 1882. Several neighbors (Borden, Glasscock, Martin and others) may have recorded here before organizing." },
+  { county: "Glasscock", st: "TX", area: "Midland Basin",
+    portal: "County clerk page — https://www.co.glasscock.tx.us/page/glasscock.County.Clerk (no online portal confirmed)",
+    aggregators: "TexasFile full index 1893→. CourthouseDirect images 1918→, historical property 1877→, legal-description plant search",
+    appraisal: "Glasscock CAD",
+    notes: "Created 1887 from Tom Green, organized 1893: search Tom Green before 1893." },
+  { county: "Reagan", st: "TX", area: "Midland Basin (south)",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1903→. CourthouseDirect historical index 1903→, property 1886→, historical O&G records; images only 2010–2016",
+    appraisal: "Reagan CAD",
+    notes: "Created 1903 from Tom Green: search Tom Green before 1903. University Lands acreage." },
+  { county: "Upton", st: "TX", area: "Midland Basin (SW)",
+    portal: "US Land Records (i2j) — https://i2j.uslandrecords.com/TX/Upton/D/default.aspx",
+    aggregators: "TexasFile full index starts only in 1984. CourthouseDirect images 1900→, historical index 1887–1985. Use CourthouseDirect before 1984",
+    appraisal: "Upton CAD",
+    notes: "Created 1887, organized 1910. University Lands acreage." },
+  { county: "Andrews", st: "TX", area: "Central Basin Platform / NW Midland Basin",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1881→ (deed records 1881–1999, OPR 2000→), plats 1907→. CourthouseDirect images and title plant 1914→, legal-description search",
+    appraisal: "Andrews CAD",
+    notes: "Created 1876, organized 1910. University Lands acreage." },
+  { county: "Ector", st: "TX", area: "Central Basin Platform",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1887→. CourthouseDirect index and images 1958→, historical index 1888–2008, updated weekly, legal-description search",
+    appraisal: "Ector CAD",
+    notes: "Created 1887 from Tom Green, organized 1891: search Midland for 1887–1891." },
+  { county: "Crane", st: "TX", area: "Central Basin Platform",
+    portal: "Tyler EagleWeb, registration required, $1/page or $350/month — https://cranetx.countygovernmentrecords.com/CraneTX/web/login.jsp",
+    aggregators: "TexasFile full index 1888→. CourthouseDirect images 2012→, historical index 1888–2018, property 1888→",
+    appraisal: "Crane CAD",
+    notes: "Created 1887, organized 1927. Early filings may be in Tom Green, Midland, Ector or Ward, so check all four. University Lands acreage." },
+  { county: "Crockett", st: "TX", area: "Val Verde Basin / southern Midland Basin",
+    portal: "iDocket (subscription)",
+    aggregators: "TexasFile full index starts only in 1982. No CourthouseDirect Texas page found",
+    appraisal: "Crockett CAD — https://crockettcad.com",
+    notes: "Before 1982, plan on the courthouse in Ozona or a local abstract plant. Created 1875, organized 1891. University Lands acreage." },
+  { county: "Irion", st: "TX", area: "Southern Midland Basin / Eastern Shelf",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index starts only in 1983. Little or nothing found online before 1983",
+    appraisal: "Irion CAD",
+    notes: "Biggest online gap in the priority list. Budget courthouse or abstract-plant days for anything before 1983. Created 1889 from Tom Green." },
+  { county: "Dawson", st: "TX", area: "Northern Midland Basin",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index starts only in 1970. CourthouseDirect index and images 1991→, historical index 1900–2002, probate 1920–2009, legal-description search. Use CourthouseDirect before 1970",
+    appraisal: "Dawson CAD",
+    notes: "Created 1876, organized 1905." },
+  { county: "Borden", st: "TX", area: "Eastern Shelf / Midland Basin edge",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1877→. CourthouseDirect current index only 2013→, historical index 1880–2016, probate 1894→",
+    appraisal: "Borden CAD",
+    notes: "Created 1876, organized 1891." },
+  { county: "Gaines", st: "TX", area: "Central Basin Platform (north) / Northwest Shelf",
+    portal: "Confirm the current platform through NETR Online",
+    aggregators: "TexasFile full index 1881→, but deed vols 1–8 (1881–1916) have a basic index only. CourthouseDirect index 1907→, images 2010→, geo-index, historical O&G records 1926–1997",
+    appraisal: "Gaines CAD",
+    notes: "Created 1876, organized 1905. Search the early deed volumes page by page or by legal description." },
+];
+
+COUNTIES.push(
+  { county: "Eddy", st: "NM", area: "Delaware Basin / Northwest Shelf",
+    portal: "Kofile PublicSearch (free index; images paid) — https://eddy.nm.publicsearch.us. Legacy CountyFusion, searchable by legal description — https://countyfusion2.kofiletech.us/countyweb/loginDisplay.action?countyname=EddyNM",
+    aggregators: "CourthouseDirect images 1906→ (lags weeks to months). BasinLandRecords (run by the local abstractors) — https://basinlandrecords.com/creddy.html. Enverus Courthouse",
+    appraisal: "No county mineral roll. NM taxes production at the state level, so there's no appraisal-roll shortcut to current owners",
+    notes: "Plants: Eddy County Abstract & Title (Carlsbad, since 1891); Currier Abstract (Artesia, since 1939). Back-file records sit in both Carlsbad and Artesia. Pre-1917 records for southern Lea County lands are here." },
+  { county: "Lea", st: "NM", area: "Delaware Basin / Central Basin Platform / Northwest Shelf",
+    portal: "Liveweb (free): grantor/grantee, probate, and scanned index books 1917–1981 — http://liveweb.leacounty-nm.org/",
+    aggregators: "CourthouseDirect images only 1988→. BasinLandRecords — https://www.basinlandrecords.com/crlea.html. Enverus Courthouse has a Lea digital abstract plant indexed back to sovereignty",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Created 1917 from Chaves and Eddy. Search Chaves (north) or Eddy (south) before 1917. Plant: Lea County Abstract & Title (Lovington). Lea refused a bulk export to TexasFile (N.M. Ct. App. 2019), so aggregator depth is thinner." },
+  { county: "Chaves", st: "NM", area: "Northwest Shelf",
+    portal: "County \"Property Info\" document search: book/page 1987–2019, instrument number 2019→ — https://www.chavescounty.gov/how-do-i/find",
+    aggregators: "Little online before 1987",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Holds pre-1917 records for northern Lea lands. Plant: Landmark Title (Roswell)." },
+  { county: "Roosevelt", st: "NM", area: "Northwest Shelf (north edge)",
+    portal: "Tyler EagleWeb recorder, about 1903→, not every document online — https://rooseveltcountynm-web.tylerhost.net/recorder/web/",
+    aggregators: "Check CourthouseDirect's NM county list",
+    appraisal: "No county mineral roll (state production tax)",
+    notes: "Formed 1903 from Chaves and Guadalupe. Title company: Graham Abstract & Title (Portales)." }
+);
+
+// ---- Calculator UI ----
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const form = $("calc");
+  if (!form) return;
+  let method = "acreage";
+  const acresFmt = (q) => {
+    const s = Q.fixed(q, 4).replace(/\.?0+$/, "");
+    return s === "" ? "0" : s;
+  };
+  function syncFields() {
+    const t = $("c-type").value;
+    $("c-burden-label").hidden = !["npri_fixed", "npri_float", "orri", "wi"].includes(t);
+    $("c-orri-label").hidden = t !== "wi";
+    const burdenText = { npri_fixed: "Fixed NPRI (of production)", npri_float: "Floating NPRI (of royalty)", orri: "ORRI (of 8/8)", wi: "Working interest in the lease" }[t];
+    if (burdenText) $("c-burden-label").firstChild.nodeValue = burdenText;
+    $("c-owned-label").firstChild.nodeValue = ["orri", "wi"].includes(t) ? "Share of minerals the lease covers" : "Undivided mineral interest";
+    $("c-acreage").hidden = method !== "acreage";
+    $("c-lateral").hidden = method !== "lateral";
+  }
+  function run() {
+    syncFields();
+    const out = $("c-out");
+    try {
+      const r = titleCalc({
+        type: $("c-type").value, acres: $("c-acres").value, owned: $("c-owned").value,
+        royalty: $("c-royalty").value, burden: $("c-burden").value, orriBurden: $("c-orri").value,
+        method, tractInUnit: $("c-inunit").value, unitAcres: $("c-unit").value,
+        tractLateral: $("c-tl").value, totalLateral: $("c-al").value,
+      });
+      const label = $("c-type").value === "wi" ? "Net revenue interest" : "Decimal interest";
+      let rows = `<dt>Exact fraction</dt><dd>${Q.str(r.decimal)}</dd>`;
+      if (r.wi) rows += `<dt>Working interest</dt><dd>${Q.fixed(r.wi)}</dd>`;
+      rows += `<dt>Net mineral acres</dt><dd>${acresFmt(r.nma)}</dd>`;
+      if (r.nra) rows += `<dt>NRA (1/8 basis)</dt><dd>${acresFmt(r.nra)}</dd>`;
+      rows += `<dt>Participation</dt><dd>${Q.fixed(r.part)} <span class="muted">(${Q.str(r.part)})</span></dd>`;
+      out.innerHTML = `<div class="small muted">${label}</div><div class="big">${Q.fixed(r.decimal)}</div><dl>${rows}</dl>` +
+        `<div class="math">${r.partNote}.<br>${r.math}.</div>` + (r.warn ? `<p class="err">${r.warn}</p>` : "");
+    } catch (e) {
+      out.innerHTML = `<p class="err">${e.message}</p>`;
+    }
+  }
+  form.addEventListener("input", run);
+  form.addEventListener("submit", (e) => e.preventDefault());
+  form.querySelectorAll("[data-method]").forEach((b) => b.addEventListener("click", () => {
+    method = b.dataset.method;
+    form.querySelectorAll("[data-method]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    run();
+  }));
+  run();
+})();
+
+// ---- County finder ----
+(function () {
+  const body = document.getElementById("county-body");
+  if (!body || typeof COUNTIES === "undefined") return;
+  const q = document.getElementById("county-q");
+  const count = document.getElementById("county-count");
+  let state = "all";
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const linkify = (s) => esc(s).replace(/(https?:\/\/[^\s,;)]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  function render() {
+    const term = (q.value || "").trim().toLowerCase();
+    const rows = COUNTIES.filter((c) => (state === "all" || c.st === state) &&
+      (!term || Object.values(c).join(" ").toLowerCase().includes(term)));
+    body.innerHTML = rows.map((c) => `<tr>
+      <td><strong>${esc(c.county)}</strong> <span class="pill ${c.st.toLowerCase()}">${c.st}</span><br><span class="muted">${esc(c.area)}</span></td>
+      <td>${linkify(c.portal)}</td>
+      <td>${linkify(c.aggregators)}</td>
+      <td>${linkify(c.appraisal)}</td>
+      <td>${linkify(c.notes)}</td></tr>`).join("");
+    count.textContent = `${rows.length} of ${COUNTIES.length} counties`;
+  }
+  q.addEventListener("input", render);
+  document.querySelectorAll("[data-state]").forEach((b) => b.addEventListener("click", () => {
+    state = b.dataset.state;
+    document.querySelectorAll("[data-state]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    render();
+  }));
+  render();
+})();
+
+// ---- Copy buttons ----
+document.querySelectorAll(".codeblock").forEach((block) => {
+  const btn = block.querySelector(".copy");
+  const pre = block.querySelector("pre");
+  btn.addEventListener("click", () => {
+    const done = () => { btn.textContent = "Copied"; btn.classList.add("done"); setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("done"); }, 1600); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected. Press Ctrl+C"; };
+    try { navigator.clipboard.writeText(pre.innerText).then(done, fallback); } catch (e) { fallback(); }
+  });
+});
+
+// ---- Checklist memory (this browser only) ----
+document.querySelectorAll(".checklist[data-store]").forEach((list) => {
+  const key = "permian-title-" + list.dataset.store;
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(key) || "{}"); } catch (e) { saved = {}; }
+  list.querySelectorAll("input[type=checkbox]").forEach((cb) => {
+    cb.checked = !!saved[cb.id];
+    cb.addEventListener("change", () => {
+      saved[cb.id] = cb.checked;
+      try { localStorage.setItem(key, JSON.stringify(saved)); } catch (e) { /* storage blocked */ }
+    });
+  });
+});
+
+(function () {
+  var d = document.getElementById("toc-details");
+  if (d && window.matchMedia && window.matchMedia("(max-width: 920px)").matches) d.open = false;
+})();
+</script>

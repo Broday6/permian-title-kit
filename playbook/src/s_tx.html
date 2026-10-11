@@ -1,0 +1,89 @@
+<section id="texas">
+  <h2><span class="tag">Texas</span>Classify the section before you search the county</h2>
+  <p>In the Texas Permian, the first title question is how the land left the State. The answer decides whether the State still owns the minerals, holds a free royalty, or holds nothing. Pull the abstract from the <a href="https://www.glo.texas.gov/archives-heritage/search-our-collections/land-grant-search" target="_blank" rel="noopener">GLO Land Grant Database</a> (search by county and abstract number; most files are scanned and free). The class and sale papers tell you which row you're in. The survey name alone won't tell you: alternate railroad sections were often sold later as school land but kept the railroad's block label.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>How the land left the State</th><th>What the State kept</th><th>Who leases</th></tr></thead>
+    <tbody>
+      <tr><td>Railroad grant section, patented to the railroad</td><td>Nothing reserved; minerals passed with the patent</td><td>Private chain from the patent. On many T&amp;P sections, look for Texas Pacific Land's retained NPRI, with fractions varying by section.</td></tr>
+      <tr><td>School land sold before Sep 1, 1895 with no reservation</td><td>Nothing</td><td>Private owner</td></tr>
+      <tr><td><strong>Mineral-classified school land sold Sep 1, 1895 – Aug 21, 1931</strong></td><td><strong>Relinquishment Act land.</strong> The State owns the oil and gas. The surface owner leases as the State's agent, and the two split lease benefits ½ and ½.</td><td>The surface owner, on the GLO form, with GLO approval</td></tr>
+      <tr><td>School land sold after Aug 21, 1931</td><td>A free royalty, usually 1/16, sometimes 1/8 (read the award)</td><td>The private mineral owner. The State's royalty is paid off production.</td></tr>
+      <tr><td>Unsold Permanent School Fund land, state riverbeds, vacancies</td><td>The full mineral estate</td><td>GLO / School Land Board, by sealed bid</td></tr>
+      <tr><td>University Lands (2.1M acres in 19 West Texas counties)</td><td>The Permanent University Fund owns 100% of the minerals</td><td>University Lands. There's no fee mineral chain to run, only the leasehold chain.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="grid2">
+    <div class="flag"><span class="label">Relinquishment Act lease checklist</span>
+      <ul class="checklist" data-store="ral">
+        <li><input type="checkbox" id="ral1"><label for="ral1">Lease is on the current GLO RAL form, and every rider was approved by the GLO.</label></li>
+        <li><input type="checkbox" id="ral2"><label for="ral2">GLO approval exists, and a certified copy was accepted for filing. No RAL lease is effective until then.</label></li>
+        <li><input type="checkbox" id="ral3"><label for="ral3">Any power of attorney used expressly authorizes signing RAL leases. A general POA isn't enough.</label></li>
+        <li><input type="checkbox" id="ral4"><label for="ral4">The State's half of the bonus was paid.</label></li>
+        <li><input type="checkbox" id="ral5"><label for="ral5">Assignments, including ORRIs, were filed with the GLO within 90 days (31 TAC §9.93).</label></li>
+        <li><input type="checkbox" id="ral6"><label for="ral6">Division order filed with the GLO within 30 days of first production.</label></li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Where state and university leases are checked</span>
+      <ul>
+        <li><strong>GLO:</strong> State leases are filed by Mineral File number (MF######). Find it in the GLO GIS viewer or the <a href="https://data-glo.hub.arcgis.com/" target="_blank" rel="noopener">GLO open-data hub</a> (active and inactive lease layer), then pull the scanned file: lease, assignments, releases and pooling approvals.</li>
+        <li><strong>University Lands:</strong> the <a href="https://universitylands.utsystem.edu/Resources/GIS" target="_blank" rel="noopener">UL GIS downloads</a> include blocks, sections, oil and gas leases and wellbores. Reconcile them against county assignments and confirm with UL leasing staff.</li>
+        <li><strong>Riverbeds:</strong> the beds of navigable streams belong to the Permanent School Fund. Check the Pecos River bed tracts whenever a lateral crosses the river.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Railroad Commission: the operator's filings are free evidence</h3>
+  <div class="table-scroll"><table class="mid-table">
+    <thead><tr><th>RRC record</th><th>What it does for title</th></tr></thead>
+    <tbody>
+      <tr><td><a href="https://gis.rrc.texas.gov/GISViewer/" target="_blank" rel="noopener">GIS Viewer</a></td><td>Wells, permitted and as-drilled laterals, survey and abstract lines. Shows which sections a lateral crosses.</td></tr>
+      <tr><td>W-1 and plat; as-drilled plat and directional survey</td><td>First and last take points and lease lines. Completed lateral length per tract is how allocation-well participation is usually computed.</td></tr>
+      <tr><td>P-16 acreage designation</td><td>The tracts the operator says are in the well. Compare it to your tract list. It's a regulatory filing, not a title determination or an allocation formula.</td></tr>
+      <tr><td>P-4 history</td><td>Who operated and purchased, and when. Needed for lease-maintenance questions and for knowing where to send requirements.</td></tr>
+      <tr><td>Production Data Query (PDQ)</td><td>Zero-production months for cessation and termination analysis. Oil is reported by lease ID, gas by well. Reconcile against the P-4 and P-17.</td></tr>
+      <tr><td>Allocation and PSA wells</td><td>Under long-standing RRC practice, a PSA well needs a production sharing agreement signed by at least 65% of the working and royalty owners in each tract. An allocation well relies on the operator's good-faith claim. Allocation-well permits have been challenged in court, so check current RRC rules and case status before relying on them.</td></tr>
+      <tr><td>Rule 37 spacing exceptions</td><td>Notice goes to affected persons, including unleased mineral owners on adjacent tracts. Your title work produces that list.</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>CAD mineral rolls</strong> list the owner, address, interest type and the decimal the operator is paying, usually by RRC lease number. They make a free cross-check of your decimals and a lead list for missing heirs. They're a January 1 snapshot, usually at unit level, and they can omit very small interests. A missing roll entry doesn't mean no ownership.</p>
+
+  <h3>Texas law that changes the ownership math</h3>
+  <p>These are the decisions a runsheet and fraction engine have to respect. The software flags them, and the examining attorney decides them. Check pin cites and any later history before you rely on a case in an opinion.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Issue</th><th>Authority</th><th>What it does to your runsheet</th></tr></thead>
+    <tbody>
+      <tr><td>Over-conveyance under a warranty</td><td><em>Duhig v. Peavy-Moore Lumber</em> (Tex. 1940)</td><td>When a warranty deed's grant and reservation can't both be satisfied, the reservation fails first. Fill the grantee's share before the grantor's. Doesn't apply to quitclaims.</td></tr>
+      <tr><td>Reading the whole deed</td><td><em>Luckel v. White</em> (Tex. 1991); <em>Concord Oil v. Pennzoil</em> (Tex. 1998)</td><td>Harmonize every clause within the four corners. A fraction in the granting clause can give way to the rest of the deed. Flag deeds whose clauses state different fractions.</td></tr>
+      <tr><td>Double fractions ("1/2 of 1/8")</td><td><em>Hysaw v. Dawkins</em> (Tex. 2016); <em>Van Dyke v. Navigator Group</em> (Tex. 2023); <em>ConocoPhillips v. Hahn</em> (Tex. 2024)</td><td>In older instruments, a double fraction using 1/8 is presumed to mean the whole estate (the "estate misconception"). So "1/2 of 1/8" is usually a floating ½. Only language in the instrument itself rebuts that. <strong>Re-check legacy runsheets that booked a fixed 1/16.</strong></td></tr>
+      <tr><td>Outstanding NPRI burden</td><td><em>Wenske v. Ealy</em> (Tex. 2017)</td><td>An existing NPRI burdens the reserved and conveyed mineral interests proportionately unless the deed clearly puts it on one side.</td></tr>
+      <tr><td>NPRI and pooling</td><td><em>Brown v. Smith</em> (Tex. 1943); <em>Montgomery v. Rittersbacher</em> (Tex. 1968)</td><td>A pooling doesn't bind an NPRI owner who hasn't joined or ratified. List every NPRI under a unit or allocation well with its ratification status. This is a classic DOI error.</td></tr>
+      <tr><td>Executive rights</td><td><em>Altman v. Blake</em> (1986); <em>French v. Chevron</em> (1995); <em>KCM Fin. v. Bradshaw</em> (2015); <em>Texas Outfitters v. Nicholson</em> (2019)</td><td>Record which of the five mineral attributes each interest carries. The executive's lease binds non-executive interests, and the executive owes them utmost good faith.</td></tr>
+      <tr><td>ORRI survival</td><td><em>Sunac v. Parkes</em> (Tex. 1967)</td><td>An ORRI dies with its lease unless an anti-washout clause carries it to a new lease. Record each ORRI's scope and any renewal/extension clause.</td></tr>
+      <tr><td>Royalty valuation</td><td><em>Heritage v. NationsBank</em> (1996); <em>Burlington v. Texas Crude</em> (2019); <em>Devon v. Sheppard</em> (2023)</td><td>These don't change decimals. They change how the royalty is valued. Record each lease's valuation clause (at the well, gross proceeds, cost-free, add-back).</td></tr>
+      <tr><td>Lease termination</td><td><em>Clifton v. Koontz</em> (1959); <em>Anadarko v. Thompson</em> (2002); <em>Endeavor v. Discovery</em> (2018); <em>Point Energy v. MRC Permian</em> (2023)</td><td>A lease ends automatically when paying production stops, subject to its savings clauses. Calendar retained-acreage and continuous-development deadlines. Before honoring a top lease, check the force-majeure clause and any notices, which are often unrecorded, so ask the operator.</td></tr>
+      <tr><td>Horizontals across tract lines</td><td><em>Browning Oil v. Luecke</em> (Tex. App. 2000); <em>Lightning Oil v. Anadarko</em> (Tex. 2017)</td><td>Allocate by a reasonable method, usually completed lateral in the tract over total lateral, unless a PSA sets the formula. The surface owner, not the mineral lessee, grants subsurface pass-through.</td></tr>
+      <tr><td>Notice and purchasers</td><td>Prop. Code §§13.001–.002; <em>Westland Oil v. Gulf Oil</em> (1982)</td><td>You're charged with unrecorded agreements that recorded instruments refer to, such as farmouts and JOAs. Chase every one. A quitclaim grantee generally can't be a bona fide purchaser.</td></tr>
+      <tr><td>Strips and rights-of-way</td><td><em>Cantley v. Gulf</em> (1940); <em>Angelo v. Biscamp</em> (1969); <em>J. Hiram Moore v. Greer</em> (2005); <em>Brightwell v. I-GN R.R.</em> (1932)</td><td>A conveyance of the adjoining land presumptively carries a narrow strip (strip and gore). A railroad "right of way" deed usually conveys only an easement. Pull the railroad's acquisition instrument for every right-of-way a lateral crosses.</td></tr>
+      <tr><td>Adverse possession</td><td>CPRC §§16.024–.028; <em>Natural Gas Pipeline v. Pool</em> (Tex. 2003)</td><td>After severance, possessing the surface doesn't reach the minerals. Texas has no dormant mineral act. Find the severance date before you credit any limitation title.</td></tr>
+      <tr><td>Technical defects</td><td>CPRC §16.033</td><td>A 2-year limitation period cures many formal defects, such as acknowledgment problems. Note the recording date.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Heirship and probate in Texas</h3>
+  <div class="grid2">
+    <ul>
+      <li><strong>Affidavit of heirship (Est. Code §203.001):</strong> after 5 years of record it becomes prima facie evidence. Use disinterested affiants, record it in every county where the minerals are, and calendar the 5-year date. For large interests or disputed families, require a judgment declaring heirship.</li>
+      <li><strong>Muniment of title:</strong> a will probated this way makes the order a transfer instrument. Wills generally must be offered within 4 years of death. An unprobated will doesn't pass title.</li>
+      <li><strong>Small estate affidavit:</strong> passes only homestead real property. <strong>Don't accept it as the source of mineral title.</strong></li>
+      <li><strong>Transfer-on-death deeds</strong> (since 2015): search for one before applying intestacy.</li>
+    </ul>
+    <ul>
+      <li><strong>Intestacy, separate property with spouse and children:</strong> the spouse gets a <em>life estate in ⅓</em> of the real property, including minerals. The children get the remainder plus the other ⅔. Both the life tenant and the remaindermen must sign leases.</li>
+      <li><strong>Community property:</strong> it all goes to the surviving spouse only if all the decedent's descendants are also the spouse's. Deaths before Sep 1, 1993 follow the older rule. <strong>Always apply the law in force on the date of death.</strong></li>
+      <li><strong>Out-of-state probate:</strong> record an authenticated copy in each Texas county (Est. Code ch. 503). Until you do, the chain is broken.</li>
+      <li><strong>Missing owners:</strong> a receivership (CPRC §64.091) lets a court-appointed receiver sign the lease. Title needs the whole proceeding file. ClaimItTexas shows which operator holds an owner's proceeds in suspense.</li>
+    </ul>
+  </div>
+  <p class="small muted">Payment timing under Nat. Res. Code §91.402: first payment within 120 days after the end of the month of first sale, then 60 days (oil) or 90 days (gas). A division order can't amend the lease. Mergers vest property without a deed (Bus. Orgs. Code §10.008), so record the certificate of merger in each county to close the chain.</p>
+</section>

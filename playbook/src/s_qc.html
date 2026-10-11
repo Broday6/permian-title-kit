@@ -1,0 +1,59 @@
+<section id="redflags">
+  <h2><span class="tag">Red flags</span>What gets missed, and how it costs you</h2>
+  <p>These are the defects that cause most Permian title surprises. Build each one into your runsheet template as a required check, and into your automation as a rule that raises a flag.</p>
+  <div class="table-scroll"><table class="wide-table">
+    <thead><tr><th>Red flag</th><th>Where it hides</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Mineral tax suits and tax deeds</strong></td><td>District court civil index (delinquent ad valorem tax suits against minerals, often against "unknown owners"), sheriff's and tax resale deeds</td><td>Search district court for every owner and for the legal description. Check the service and notice in the suit before you rely on the tax deed.</td></tr>
+      <tr><td><strong>Out-of-county and out-of-state probate</strong></td><td>The decedent's home county, not the land's county</td><td>Use obituaries and genealogy sources to find the domicile. Record certified copies, or use ancillary probate or an affidavit of heirship.</td></tr>
+      <tr><td><strong>Unprobated deaths and heirship gaps</strong></td><td>Grantor disappears from the index, or a later deed comes from "heirs of"</td><td>Affidavit of heirship from a disinterested witness, family tree, and spouse/community property analysis. In Texas, compute intestate shares under the Estates Code.</td></tr>
+      <tr><td><strong>Name variants and misindexing</strong></td><td>Initials, nicknames, married names, "et ux," misspellings, trusts and estates, corporate renames</td><td>Expand aliases automatically. Search by legal description where the county allows it. Check the SOS for mergers and name changes.</td></tr>
+      <tr><td><strong>Carried-forward exceptions</strong></td><td>"Save and except," "less and except," and "subject to" clauses in a deed 3 or 4 links back</td><td>Read every vesting deed in full. Each exception becomes its own line in the takeoff until it's resolved.</td></tr>
+      <tr><td><strong>Double fractions and fixed/floating royalty</strong></td><td>"1/2 of 1/8 royalty," "1/16 royalty," "1/2 of the royalty" in pre-1980 deeds and reservations</td><td>Flag every royalty fraction for attorney review under current Texas law (see the Texas section). Don't let software decide fixed vs floating.</td></tr>
+      <tr><td><strong>Term royalties and term minerals</strong></td><td>"For 15 years and as long thereafter as oil, gas or other minerals are produced"</td><td>Pull the production history for the whole term window, including any cessation, to decide whether the interest expired.</td></tr>
+      <tr><td><strong>NPRI and pooling</strong></td><td>A reserved NPRI under a tract in a pooled unit or allocation well</td><td>In Texas the executive can't pool an NPRI without the NPRI owner's joinder. Get ratifications before the pay deck is set.</td></tr>
+      <tr><td><strong>Unreleased liens</strong></td><td>Old vendor's liens, deeds of trust covering minerals, judgments, federal tax liens</td><td>Run lien and judgment indices for each owner. Get releases or subordinations, or document limitations.</td></tr>
+      <tr><td><strong>State and federal land traps</strong></td><td>Relinquishment Act leases not filed with the GLO, University Lands, NMSLO leases, federal assignments not approved by BLM, depth-severed operating rights</td><td>Check the agency record as well as the county record. The agency's approval is part of the chain.</td></tr>
+      <tr><td><strong>Strips, gores and rights-of-way</strong></td><td>Railroad and highway strips, roads, old townsite plats, riverbeds</td><td>Decide fee vs easement for each strip. Apply strip-and-gore analysis. Check whether a riverbed is state-owned.</td></tr>
+      <tr><td><strong>Litigation and bankruptcy</strong></td><td>Lis pendens, partition and quiet title suits, PACER bankruptcies of an owner or lessee</td><td>Search lis pendens and district court for every owner, and PACER for entity owners and operators.</td></tr>
+      <tr><td><strong>Trust and entity authority</strong></td><td>Trustee deeds without the trust, terminated trusts with no distribution deeds, dissolved corporations</td><td>Get a certificate of trust or the trust instrument and SOS status, and record a distribution or wind-up deed if needed.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="qc">
+  <h2><span class="tag">Quality control</span>The QC gate and the numbers to manage by</h2>
+  <div class="grid2">
+    <div>
+      <h3>Before anything ships</h3>
+      <ul class="checklist" data-store="qc">
+        <li><input type="checkbox" id="qc1"><label for="qc1">Every runsheet row has a linked image and a recording reference.</label></li>
+        <li><input type="checkbox" id="qc2"><label for="qc2">Grantor and grantee searched for every owner, with alias expansion logged.</label></li>
+        <li><input type="checkbox" id="qc3"><label for="qc3">Probate, district court, liens, judgments and lis pendens searched for every owner in the window.</label></li>
+        <li><input type="checkbox" id="qc4"><label for="qc4">Every link in the chain ties to a prior vesting instrument, with no orphan conveyances.</label></li>
+        <li><input type="checkbox" id="qc5"><label for="qc5">Interests in each tract and depth add up to exactly 1 (8/8) in exact fractions.</label></li>
+        <li><input type="checkbox" id="qc6"><label for="qc6">Every royalty fraction, term interest and NPRI is flagged for review.</label></li>
+        <li><input type="checkbox" id="qc7"><label for="qc7">Lease status confirmed against RRC or OCD production and recorded releases.</label></li>
+        <li><input type="checkbox" id="qc8"><label for="qc8">Decimals reconciled to the pay deck or division order, with variances explained.</label></li>
+        <li><input type="checkbox" id="qc9"><label for="qc9">State and federal records checked where the tract touches them.</label></li>
+        <li><input type="checkbox" id="qc10"><label for="qc10">Certified-through date stamped on the deliverable and in the tracker.</label></li>
+      </ul>
+      <p class="small muted">Checkmarks are saved in this browser only.</p>
+    </div>
+    <div>
+      <h3>KPIs for the land department</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Metric</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td>Cycle time per tract, by product</td><td>The number your deal team feels</td></tr>
+          <tr><td>Cost per tract (internal + contract + records)</td><td>Tells you whether to buy or build</td></tr>
+          <tr><td>QC defect rate per tract</td><td>Shows which contractors and tools to trust</td></tr>
+          <tr><td>AI-abstracted fields accepted without edits</td><td>The real accuracy of your automation</td></tr>
+          <tr><td>Instrument recall against attorney exhibits</td><td>Measures whether the search missed anything</td></tr>
+          <tr><td>Pay-deck variance closed per month</td><td>Unpaid or overpaid decimals are recoverable money</td></tr>
+          <tr><td>Curative items open, by age</td><td>Old curative holds up payment and closings</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>

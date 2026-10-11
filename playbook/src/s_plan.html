@@ -1,0 +1,82 @@
+<section id="team">
+  <h2><span class="tag">People and economics</span>Who does the work, and what it costs</h2>
+  <div class="grid2">
+    <div>
+      <h3>The operating model</h3>
+      <ul>
+        <li><strong>In-house core:</strong> a land manager who owns the title product menu and the tracker; one or two senior title landmen who review and QC rather than abstract; a GIS/data analyst; and, if you build, one engineer who owns the pipeline and the fraction engine.</li>
+        <li><strong>Contract brokers</strong> for courthouse-heavy counties (late-index counties, plant visits, heirship legwork). Give each one a seat in your system and your runsheet template so the work comes back in your format.</li>
+        <li><strong>Title attorneys</strong> for drilling, division order and acquisition opinions, and for every legal-effect call the software flags.</li>
+        <li><strong>One rule:</strong> before anyone opens an index, check the title register for existing work on that tract. Duplicate runs are the most common waste in land departments.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Cost benchmarks (2026)</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th>Item</th><th>Range</th></tr></thead>
+        <tbody>
+          <tr><td>Contract landman, fully weighted</td><td class="num">$500–$650/day</td></tr>
+          <tr><td>Permian field landman, entry → senior title specialist</td><td class="num">$400 → $1,200/day + per diem</td></tr>
+          <tr><td>Midland O&amp;G title abstractor</td><td class="num">≈ $29–$62/hr</td></tr>
+          <tr><td>Records (TexasFile / CourthouseDirect TVP Plus)</td><td class="num">$1/page · $1/doc</td></tr>
+          <tr><td>Tracts.co seat</td><td class="num">$250/day or $2,500/mo</td></tr>
+          <tr><td>AI compute at 30k pages/month</td><td class="num">&lt; ≈ $1,000/mo</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small muted">Day rates are from Enverus's 2026 land-workflow analysis and Permian job-market sources. Title opinion fees vary too much by firm and complexity to benchmark publicly, so get quotes per unit. Track contractor value as day rate ÷ instruments verified per day.</p>
+    </div>
+  </div>
+</section>
+
+<section id="plan">
+  <h2><span class="tag">Rollout</span>The first 90 days</h2>
+  <div class="grid3">
+    <div class="rule-box"><span class="label">Days 1–30: Standardize</span>
+      <ul>
+        <li>Adopt the five products, the runsheet schema, the file-naming key and the QC gate on this page.</li>
+        <li>Inventory every opinion, runsheet and abstract you own. Register each by tract with its certified-through date.</li>
+        <li>Open TexasFile and CourthouseDirect TVP Plus accounts. Get BLM Login.gov access for MLRS reports.</li>
+        <li>Load the GIS base: RRC surveys and wells, GLO and University Lands leases, BLM CadNSDI, NMSLO status, OCD wells.</li>
+        <li>Build and test the fraction engine. Pick 20 already-opined tracts as the gold set.</li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Days 31–60: Pilot</span>
+      <ul>
+        <li>Run the vendor bake-off on the gold set: Enverus Courthouse + Tracts, Energy Domain TitleLab, and one young AI title tool.</li>
+        <li>Stand up the in-house extraction path (OCR + vision model + schema + review screen) on the same 20 tracts.</li>
+        <li>Score instrument recall, field accuracy, decimal match and review minutes per instrument.</li>
+        <li>Start the name-variant library and corporate-succession table.</li>
+      </ul>
+    </div>
+    <div class="rule-box"><span class="label">Days 61–90: Production</span>
+      <ul>
+        <li>Put live deals through the winning path with Tier A / Tier B review.</li>
+        <li>Turn on the KPI dashboard: cycle time, cost per tract, QC defects, auto-accept rate.</li>
+        <li>Start monthly pay-deck reconciliation against your computed decimals.</li>
+        <li>Launch the curative tracker with owners and due dates.</li>
+        <li>Make the build-vs-buy call based on the bake-off numbers, not on the demos.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="sources">
+  <h2><span class="tag">Sources</span>Where this came from, and what to re-check</h2>
+  <p>This page combines a senior land practitioner's operating method with research done on Oct 1, 2026. Vendor ownership, pricing and county coverage come from vendor pages, county pages and press releases as indexed by search. Many primary pages couldn't be opened directly during the research, so <strong>re-check county coverage years, platform URLs and fees at project start</strong>. Case law and statutes are cited for orientation. Have counsel confirm pin cites, later history and any 2025–26 changes before relying on them in an opinion. Speed claims for AI tools are vendor claims.</p>
+  <div class="grid2">
+    <ul class="small">
+      <li><a href="https://www.glo.texas.gov/archives-heritage/search-our-collections/land-grant-search" target="_blank" rel="noopener">GLO Land Grant Database</a> · <a href="https://www.glo.texas.gov/land/gis-maps-and-data" target="_blank" rel="noopener">GLO GIS</a> · <a href="https://www.glo.texas.gov/sites/default/files/2025-10/Guidelines%20for%20Relinquishment%20Act%20Leasing.pdf" target="_blank" rel="noopener">RAL leasing guidelines (2025)</a></li>
+      <li><a href="https://universitylands.utsystem.edu/Resources/GIS" target="_blank" rel="noopener">University Lands GIS</a></li>
+      <li><a href="https://www.rrc.texas.gov/resource-center/research/data-sets-available-for-download/" target="_blank" rel="noopener">RRC data downloads</a> · <a href="https://gis.rrc.texas.gov/GISViewer/" target="_blank" rel="noopener">RRC GIS Viewer</a> · <a href="https://www.arcgis.com/home/item.html?id=4ef2ab14e55a406ca68d0c0221f2ef8a" target="_blank" rel="noopener">Statewide land grid (RRC version)</a></li>
+      <li><a href="https://www.texasfile.com/pricing/" target="_blank" rel="noopener">TexasFile pricing</a> · <a href="https://www.courthousedirect.com/SignUpPricing.aspx" target="_blank" rel="noopener">CourthouseDirect pricing</a> · <a href="https://www.courthousedirect.com/docs/LegalSearchInfoPricing.pdf" target="_blank" rel="noopener">CourthouseDirect Legal Search</a></li>
+      <li><a href="https://www.enverus.com/products/courthouse/" target="_blank" rel="noopener">Enverus Courthouse</a> · <a href="https://tracts.co/pricing/" target="_blank" rel="noopener">Tracts.co pricing</a> · <a href="https://www.energydomain.com/titlelab" target="_blank" rel="noopener">Energy Domain TitleLab</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="https://www.blm.gov/services/land-records/mlrs" target="_blank" rel="noopener">BLM MLRS</a> · <a href="https://reports.blm.gov/reports/MLRS" target="_blank" rel="noopener">MLRS reports</a> · <a href="https://gbp-blm-egis.hub.arcgis.com/pages/newmexico" target="_blank" rel="noopener">BLM CadNSDI (NM)</a></li>
+      <li><a href="https://www.federalregister.gov/documents/2026/04/29/2026-08280/revisions-to-regulations-regarding-oil-and-gas-leasing-fees-rentals-and-royalties" target="_blank" rel="noopener">BLM royalty direct final rule (2026)</a> · <a href="https://www.federalregister.gov/documents/2026/06/24/2026-12734/oil-and-gas-leasing" target="_blank" rel="noopener">Proposed leasing/bonding rule (Jun 2026)</a></li>
+      <li><a href="https://mapservice.nmstatelands.org/GISDataDownloads/" target="_blank" rel="noopener">NMSLO GIS downloads</a> · <a href="https://www.srca.nm.gov/parts/title19/19.015.0013.html" target="_blank" rel="noopener">19.15.13 NMAC (pooling)</a> · <a href="https://www.emnrd.nm.gov/ocd/wp-content/uploads/sites/6/public-notice-evidentiary-requirements-gc.pdf" target="_blank" rel="noopener">OCD all-owner notice exhibit (Dec 2025)</a></li>
+      <li><a href="https://basinlandrecords.com/creddy.html" target="_blank" rel="noopener">BasinLandRecords (Eddy/Lea)</a> · <a href="http://liveweb.leacounty-nm.org/" target="_blank" rel="noopener">Lea County Liveweb</a> · <a href="https://caselaw.findlaw.com/court/nm-court-of-appeals/1981656.html" target="_blank" rel="noopener">TexasFile v. Lea County (2019)</a></li>
+      <li><a href="https://www.enverus.com/blog/land-title-workflow-cost/" target="_blank" rel="noopener">Enverus: land title workflow cost</a> · <a href="https://tracts.co/key-metrics-every-land-manager-should-have-when-running-title/" target="_blank" rel="noopener">Tracts: land manager metrics</a></li>
+    </ul>
+  </div>
+</section>

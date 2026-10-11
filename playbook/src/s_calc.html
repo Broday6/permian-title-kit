@@ -1,0 +1,44 @@
+<section id="math">
+  <h2><span class="tag">Ownership math</span>Decimal interest calculator</h2>
+  <p>This calculator works the way your fraction engine should: exact fractions all the way through, rounded to eight places only at the end. Type fractions as written in the instrument (<code>3/16</code>, <code>1/2 of 1/8</code>, <code>18.75%</code>). For a horizontal allocation or PSA well, choose how tract participation is set: by acreage, or by completed lateral length in the tract.</p>
+  <form class="calc" id="calc" autocomplete="off">
+    <fieldset>
+      <label for="c-type">Interest type
+        <select id="c-type">
+          <option value="mineral">Mineral owner (leased): royalty</option>
+          <option value="npri_fixed">NPRI, fixed (fraction of production)</option>
+          <option value="npri_float">NPRI, floating (fraction of royalty)</option>
+          <option value="orri">Overriding royalty (ORRI)</option>
+          <option value="wi">Working interest → NRI</option>
+        </select>
+      </label>
+      <div class="row2">
+        <label for="c-acres">Gross tract acres<input type="text" id="c-acres" value="640" inputmode="decimal"></label>
+        <label for="c-owned" id="c-owned-label">Undivided mineral interest<input type="text" id="c-owned" value="1/16"></label>
+      </div>
+      <div class="row2">
+        <label for="c-royalty">Lease royalty<input type="text" id="c-royalty" value="1/4"></label>
+        <label for="c-burden" id="c-burden-label" hidden>Burden fraction<input type="text" id="c-burden" value="1/32"></label>
+      </div>
+      <label for="c-orri" id="c-orri-label" hidden>Existing ORRIs on the lease (for NRI)<input type="text" id="c-orri" value="1/40"></label>
+      <div>
+        <span class="small muted">Tract participation</span>
+        <div class="radios" role="group" aria-label="Tract participation method">
+          <button type="button" class="chip" data-method="none" aria-pressed="false">Tract only</button>
+          <button type="button" class="chip" data-method="acreage" aria-pressed="true">Unit by acreage</button>
+          <button type="button" class="chip" data-method="lateral" aria-pressed="false">Allocation by lateral</button>
+        </div>
+      </div>
+      <div class="row2" id="c-acreage">
+        <label for="c-inunit">Tract acres in unit<input type="text" id="c-inunit" value="640"></label>
+        <label for="c-unit">Unit acres<input type="text" id="c-unit" value="1280"></label>
+      </div>
+      <div class="row2" id="c-lateral" hidden>
+        <label for="c-tl">Lateral feet in tract<input type="text" id="c-tl" value="5,000"></label>
+        <label for="c-al">Total completed lateral feet<input type="text" id="c-al" value="10,000"></label>
+      </div>
+    </fieldset>
+    <div class="result" aria-live="polite" id="c-out"></div>
+  </form>
+  <p class="small muted">NRA is shown on a 1/8 basis (NMA × royalty ÷ 1/8), the convention most mineral buyers price on. Confirm which basis your counterparty uses. An unleased Texas cotenant is paid a share of net proceeds after costs, not a royalty, so price that case separately. A tract fully inside one unit gives the same decimal by acreage as NMA ÷ unit acres × royalty.</p>
+</section>
